@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un Mémoire</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Ajouter un Mémoire</h1>
+  <!-- Formulaire pour Master -->
+  <form id="masterForm" th:action="@{/memoires/ajouter}" method="post">
+    <input type="hidden" name="type" value="MASTER">
+    <h3>Formulaire pour Master</h3>
+    <div class="mb-3">
+      <label for="titreMASTER" class="form-label">Titre :</label>
+      <input type="text" class="form-control" id="titreMASTER" name="titre" required>
+    </div>
+    <div class="mb-3">
+      <label for="etudiantNomMASTER" class="form-label">Nom de l'Étudiant :</label>
+      <input type="text" class="form-control" id="etudiantNomMASTER" name="etudiantNom" required>
+    </div>
+    <div class="mb-3">
+      <label for="etudiantPrenomMASTER" class="form-label">Prénom de l'Étudiant :</label>
+      <input type="text" class="form-control" id="etudiantPrenomMASTER" name="etudiantPrenom" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="encadrantNomMASTER" class="form-label">Nom de l'Encadrant :</label>
+      <input type="text" class="form-control" id="encadrantNomMASTER" name="encadrantNom" required>
+    </div>
+    <div class="mb-3">
+      <label for="encadrantPrenomMASTER" class="form-label">Prénom de l'Encadrant :</label>
+      <input type="text" class="form-control" id="encadrantPrenomMASTER" name="encadrantPrenom" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="anneeMASTER" class="form-label">Année :</label>
+      <input type="number" class="form-control" id="anneeMASTER" name="annee" min="1900" max="2099" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="exemplairesMASTER" class="form-label">Nombre d'Exemplaires :</label>
+      <input type="number" class="form-control" id="exemplairesMASTER" name="exemplaires" min="1" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="ufrNomMaster" class="form-label">UFR</label>
+      <select id="ufrNomMaster" name="ufrNom" class="form-select" onchange="updateDepartements()" required>
+        <option value="">-- Sélectionner un UFR --</option>
+        <option value="UFR Sciences et Techniques (ST)">UFR Sciences et Techniques (ST)</option>
+        <option value="UFR Lettres, Art, Sciences Humaines (LASHU)">UFR Lettres, Art, Sciences Humaines (LASHU)</option>
+        <option value="UFR Sciences Economiques et Sociales (SES)">UFR Sciences Economiques et Sociales (SES)</option>
+        <option value="UFR Sciences Santé (SS)">UFR Sciences Santé (SS)</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="departementNomMaster" class="form-label">Département</label>
+      <select id="departementNomMaster" name="departementNom" class="form-select" onchange="updateFilieres()" required>
+        <option value="">-- Sélectionner un département --</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="filiereNomMaster" class="form-label">Filière</label>
+      <select id="filiereNomMaster" name="filiereNom" class="form-select" required>
+        <option value="">-- Sélectionner une filière --</option>
+      </select>
+    </div>
+
+    <div class="d-grid">
+      <button type="submit" class="btn btn-success">Ajouter Mémoire Master</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const data = {
+    "UFR Sciences et Techniques (ST)": {
+      "Géographie": ["Aménagement du territoire", "Environnement"],
+      "Mathématiques": ["Mathématiques appliquées", "Mathématiques Pures"],
+      "Informatique": ["Génie logiciel", "Réseaux", "Intelligence Artificielle (IA)"],
+      "Chimie": ["Chimie du Solide et des Materiaux (CSM)", "Synthèse Organique des Produits Naturels (SOPN)"],
+      "Physique": ["Physique des matériaux", "Science des Atmosphères des Océans (SAO)", "Energies Renouvelables"],
+      "Agroforésterie": ["Agroforésterie"]
+    },
+    "UFR Lettres, Art, Sciences Humaines (LASHU)": {
+      "Histoire": ["Archéologie", "Géopolitique", "Histoire de la Séné-Gambie", "Egyptologie"],
+      "Lettres Modernes (LM)": ["Etudes Littéraires", "Sciences du Langage"],
+      "Langues Etrangères Appliquées (LEA)": ["Tourisme", "Développement Local", "Langues et Civilisations"]
+    },
+    "UFR Sciences Economiques et Sociales (SES)": {
+      "Management Informatique des Organisations(MIO)": ["Méthodes Informatiques Appliquées à la Gestion (MIAGE)", "Management Informatique des Organisations(MIO)", "Management des Systèmes Informatique Appliqué(MSIA)"],
+      "Sociologie": ["Sociologie"],
+      "Economie-Gestion (ECO-GES)": ["Finance et Développement", "Evaluation d'impact", "Economie", "Gestion"],
+      "Droit": ["Droit des Collectivités Locales", "Droit Humanitaire", "Droit des affaires"],
+      "Tourisme": ["Tourisme"]
+    },
+    "UFR Sciences Santé (SS)": {
+      "Santé": ["Médecine", "Pharmacie", "Sciences infirmières", "Biologie", "Obstétrique"]
+    }
+  };
+
+  // Mise à jour des départements pour le formulaire Master
+  function updateDepartements() {
+    const ufrSelect = document.getElementById("ufrNomMaster");
+    const departementSelect = document.getElementById("departementNomMaster");
+    const selectedUFR = ufrSelect.value;
+
+    departementSelect.innerHTML = '<option value="">-- Sélectionner un département --</option>';
+
+    if (data[selectedUFR]) {
+      Object.keys(data[selectedUFR]).forEach(departement => {
+        const option = document.createElement("option");
+        option.value = departement;
+        option.textContent = departement;
+        departementSelect.appendChild(option);
+      });
+    }
+
+    document.getElementById("filiereNomMaster").innerHTML = '<option value="">-- Sélectionner une filière --</option>';
+  }
+
+  // Mise à jour des filières pour le formulaire Master
+  function updateFilieres() {
+    const departementSelect = document.getElementById("departementNomMaster");
+    const filiereSelect = document.getElementById("filiereNomMaster");
+    const selectedUFR = document.getElementById("ufrNomMaster").value;
+    const selectedDepartement = departementSelect.value;
+
+    filiereSelect.innerHTML = '<option value="">-- Sélectionner une filière --</option>';
+
+    if (data[selectedUFR] && data[selectedUFR][selectedDepartement]) {
+      data[selectedUFR][selectedDepartement].forEach(filiere => {
+        const option = document.createElement("option");
+        option.value = filiere;
+        option.textContent = filiere;
+        filiereSelect.appendChild(option);
+      });
+    }
+  }
+</script>
+</body>
+</html>

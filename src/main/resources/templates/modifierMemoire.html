@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Liste des Mémoires</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+  <h2>Modifier un Mémoire</h2>
+
+  <!-- Formulaire de recherche -->
+  <form th:action="@{/memoires/modifier/recherche}" method="get" class="mb-4">
+    <div class="row">
+      <div class="col">
+        <input type="text" class="form-control" name="cote" placeholder="Cote" />
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="titre" placeholder="Titre" />
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="etudiant" placeholder="Etudiant" />
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="encadrant" placeholder="Encadrant" />
+      </div>
+      <div class="col">
+        <input type="number" class="form-control" name="annee" placeholder="Année" />
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="filiere" placeholder="Filière" />
+      </div>
+      <div class="col">
+        <button type="submit" class="btn btn-success">Rechercher</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Message d'erreur ou d'information -->
+  <div th:if="${message}" class="alert alert-info">
+    <span th:text="${message}"></span>
+  </div>
+
+  <!-- Liste des mémoires trouvés -->
+  <div th:if="${memoires != null}">
+    <h3>Liste des mémoires trouvés</h3>
+    <ul>
+      <li th:each="memoire : ${memoires}">
+        <a th:href="@{/memoires/modifier/{id}(id=${memoire.id})}" th:text="${memoire.titre}"></a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Formulaire de modification du mémoire -->
+  <div th:if="${memoire != null}">
+    <form th:action="@{/memoires/modifier}" th:object="${memoire}" method="post">
+      <!-- Id caché -->
+      <input type="hidden" th:field="*{id}" />
+
+      <!-- Côte -->
+      <div class="form-group mb-3">
+        <label for="cote">Côte</label>
+        <input type="text" id="cote" th:field="*{cote}" class="form-control" readonly />
+      </div>
+
+      <!-- Titre -->
+      <div class="form-group mb-3">
+        <label for="titre">Titre</label>
+        <input type="text" id="titre" th:field="*{titre}" class="form-control" />
+      </div>
+
+      <!-- Étudiant (Nom et Prénom dans une seule liste déroulante) -->
+      <div class="form-group mb-3">
+        <label for="etudiant" class="form-label">Étudiant</label>
+        <input type="text" id="etudiant" name="etudiantNomComplet" th:field="*{etudiant.nomComplet}"
+               class="form-control" list="etudiant-list" placeholder="Saisissez ou choisissez un étudiant" />
+        <datalist id="etudiant-list">
+          <option th:each="etd : ${etudiants}" th:value="${etd.nom} + ' ' + ${etd.prenom}" th:data-id="${etd.id}" />
+        </datalist>
+        <input type="hidden" id="etudiantId" th:field="*{etudiant.id}" />
+      </div>
+
+      <!-- Encadrant (Nom et Prénom dans une seule liste déroulante) -->
+      <div class="form-group mb-3">
+        <label for="encadrant" class="form-label">Encadrant</label>
+        <input type="text" id="encadrant" th:field="*{encadrant.nomComplet}" class="form-control"
+               list="encadrant-list" placeholder="Saisissez ou choisissez un encadrant" />
+        <datalist id="encadrant-list">
+          <option th:each="enc : ${encadrants}" th:value="${enc.nom} + ' ' + ${enc.prenom}" />
+        </datalist>
+        <input type="hidden" id="encadrantId" th:field="*{encadrant.id}" />
+      </div>
+
+      <!-- Filière -->
+      <div class="form-group mb-3">
+        <label for="filiere" class="form-label">Filière</label>
+        <input type="text" id="filiere" th:field="*{filiere.nom}" class="form-control" list="filiere-list"
+               placeholder="Saisissez ou choisissez une filière" />
+        <datalist id="filiere-list">
+          <option th:each="filier : ${filieres}" th:value="${filier.nom}" />
+        </datalist>
+      </div>
+
+      <!-- Année -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="annee">Année</label>
+          <input type="number" id="annee" th:field="*{annee}" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label for="exemplaires">Nombre d'exemplaires</label>
+          <input type="number" id="exemplaires" th:field="*{exemplaires}" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Bouton de soumission -->
+      <button type="submit" class="btn btn-success">Modifier</button>
+    </form>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Script pour synchroniser l'id et le nom complet
+  document.getElementById('etudiant').addEventListener('input', function (e) {
+    const options = document.querySelectorAll('#etudiant-list option');
+    const hiddenInput = document.getElementById('etudiantId');
+    hiddenInput.value = ''; // Réinitialiser
+    options.forEach(option => {
+      if (option.value === e.target.value) {
+        hiddenInput.value = option.getAttribute('data-id');
+      }
+    });
+  });
+    document.getElementById('encadrant').addEventListener('input', function (e) {
+    const options = document.querySelectorAll('#encadrant-list option');
+    const hiddenInput = document.getElementById('encadrantId');
+    hiddenInput.value = ''; // Réinitialiser
+    options.forEach(option => {
+      if (option.value === e.target.value) {
+        hiddenInput.value = option.getAttribute('data-id');
+      }
+    });
+  });
+</script>
+</body>
+</html>

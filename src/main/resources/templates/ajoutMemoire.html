@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un Mémoire</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Ajouter un Mémoire</h1>
+
+  <!-- Formulaire pour Licence -->
+  <form id="licenceForm" th:action="@{/memoires/ajouter}" method="post">
+    <input type="hidden" name="type" value="LICENCE">
+    <h3>Formulaire pour Licence</h3>
+    <div class="mb-3">
+      <label for="titreLICENCE" class="form-label">Titre :</label>
+      <input type="text" class="form-control" id="titreLICENCE" name="titre" required>
+    </div>
+    <div class="mb-3">
+      <label for="etudiantNomLICENCE" class="form-label">Nom de l'Étudiant :</label>
+      <input type="text" class="form-control" id="etudiantNomLICENCE" name="etudiantNom" required>
+    </div>
+    <div class="mb-3">
+      <label for="etudiantPrenomLICENCE" class="form-label">Prénom de l'Étudiant :</label>
+      <input type="text" class="form-control" id="etudiantPrenomLICENCE" name="etudiantPrenom" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="encadrantNomLICENCE" class="form-label">Nom de l'Encadrant :</label>
+      <input type="text" class="form-control" id="encadrantNomLICENCE" name="encadrantNom" required>
+    </div>
+    <div class="mb-3">
+      <label for="encadrantPrenomLICENCE" class="form-label">Prénom de l'Encadrant :</label>
+      <input type="text" class="form-control" id="encadrantPrenomLICENCE" name="encadrantPrenom" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="anneeLICENCE" class="form-label">Année :</label>
+      <input type="number" class="form-control" id="anneeLICENCE" name="annee" min="1900" max="2099" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="exemplairesLICENCE" class="form-label">Nombre d'Exemplaires :</label>
+      <input type="number" class="form-control" id="exemplairesLICENCE" name="exemplaires" min="1" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="ufrNom" class="form-label">UFR</label>
+      <select id="ufrNom" name="ufrNom" class="form-select" onchange="updateDepartements()" required>
+        <option value="">-- Sélectionner un UFR --</option>
+        <option value="UFR Sciences et Techniques (ST)">UFR Sciences et Techniques (ST)</option>
+        <option value="UFR Lettres, Art, Sciences Humaines (LASHU)">UFR Lettres, Art, Sciences Humaines (LASHU)</option>
+        <option value="UFR Sciences Economiques et Sociales (SES)">UFR Sciences Economiques et Sociales (SES)</option>
+        <option value="UFR Sciences Santé (SS)">UFR Sciences Santé (SS)</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="departementNom" class="form-label">Département</label>
+      <select id="departementNom" name="departementNom" class="form-select" onchange="updateFilieres()" required>
+        <option value="">-- Sélectionner un département --</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="filiereNom" class="form-label">Filière</label>
+      <select id="filiereNom" name="filiereNom" class="form-select" required>
+        <option value="">-- Sélectionner une filière --</option>
+      </select>
+    </div>
+
+    <div class="d-grid">
+      <button type="submit" class="btn btn-success">Ajouter Mémoire Licence</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function showForm(formId) {
+    const forms = ['licenceForm', 'masterForm', 'doctoratForm'];
+    forms.forEach(id => {
+      document.getElementById(id).style.display = id === formId ? 'block' : 'none';
+    });
+  }
+
+  const data = {
+    "UFR Sciences et Techniques (ST)": {
+     "Géographie": ["Aménagement du territoire", "Environnement"],
+      "Mathématiques": ["Mathématiques appliquées", "Mathématiques Pures"],
+      "Informatique": ["Génie logiciel", "Réseaux", "Intelligence Artificielle (IA)"],
+      "Chimie": ["Chimie du Solide et des Materiaux (CSM)", "Synthèse Organique des Produits Naturels (SOPN)"],
+      "Physique": ["Physique des matériaux", "Science des Atmosphères des Océans (SAO)", "Energies Renouvelables"],
+      "Agroforésterie": ["Agroforésterie"]
+    },
+     "UFR Lettres, Art, Sciences Humaines (LASHU)": {
+      "Histoire": ["Archéologie", "Géopolitique", "Histoire de la Séné-Gambie", "Egyptologie"],
+      "Lettres Modernes (LM)": ["Etudes Littéraires", "Sciences du Langage"],
+      "Langues Etrangères Appliquées (LEA)": ["Tourisme", "Développement Local", "Langues et Civilisations"]
+    },
+    "UFR Sciences Economiques et Sociales (SES)": {
+      "Management Informatique des Organisations(MIO)": ["Méthodes Informatiques Appliquées à la Gestion (MIAGE)", "Management Informatique des Organisations(MIO)", "Management des Systèmes Informatique Appliqué(MSIA)"],
+      "Sociologie": ["Sociologie"],
+      "Economie-Gestion (ECO-GES)": ["Finance et Développement", "Evaluation d'impact", "Economie", "Gestion"],
+      "Droit": ["Droit des Collectivités Locales", "Droit Humanitaire", "Droit des affaires"],
+      "Tourisme": ["Tourisme"]
+    },
+    "UFR Sciences Santé (SS)": {
+      "Santé": ["Médecine", "Pharmacie", "Sciences infirmières", "Biologie", "Obstétrique"]
+    }
+  };
+
+  function updateDepartements() {
+    const ufrSelect = document.getElementById("ufrNom");
+    const departementSelect = document.getElementById("departementNom");
+    const selectedUFR = ufrSelect.value;
+
+    departementSelect.innerHTML = '<option value="">-- Sélectionner un département --</option>';
+
+    if (data[selectedUFR]) {
+      Object.keys(data[selectedUFR]).forEach(departement => {
+        const option = document.createElement("option");
+        option.value = departement;
+        option.textContent = departement;
+        departementSelect.appendChild(option);
+      });
+    }
+
+    document.getElementById("filiereNom").innerHTML = '<option value="">-- Sélectionner une filière --</option>';
+  }
+
+  function updateFilieres() {
+    const departementSelect = document.getElementById("departementNom");
+    const filiereSelect = document.getElementById("filiereNom");
+    const selectedUFR = document.getElementById("ufrNom").value;
+    const selectedDepartement = departementSelect.value;
+
+    filiereSelect.innerHTML = '<option value="">-- Sélectionner une filière --</option>';
+
+    if (data[selectedUFR] && data[selectedUFR][selectedDepartement]) {
+      data[selectedUFR][selectedDepartement].forEach(filiere => {
+        const option = document.createElement("option");
+        option.value = filiere;
+        option.textContent = filiere;
+        filiereSelect.appendChild(option);
+      });
+    }
+  }
+</script>
+
+</body>
+</html>

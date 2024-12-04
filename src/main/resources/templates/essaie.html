@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de Bord - Gestion des Mémoires</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- FontAwesome CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}"/>
+  <script src="../static/js/charts.js" th:src="@{/js/charts.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+<!-- Conteneur principal -->
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse" id="sidebar">
+      <div class="position-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">
+              <i class="fas fa-tachometer-alt"></i> Tableau de Bord
+            </a>
+          </li>
+          <br> <br>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book"></i> Mémoires Licence
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/ajoutMemoire"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
+              <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Liste</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book"></i> Mémoires Master
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/ajoutMaster"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
+              <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Liste</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book"></i> Mémoires Thèse
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/ajoutThese"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
+              <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Liste</a></li>
+            </ul>
+          </li>
+          <br>   <br><br> <br>
+          <hr>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book"></i> Gestion des utilisateurs
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Modifier</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Liste</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Contenu principal -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-6">
+    <div class="header">
+      <!-- Header -->
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Université Assane SECK</a>
+          <button
+                  class="navbar-toggler"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#navbarNav"
+                  aria-controls="navbarNav"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Tableau de bord</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                        class="nav-link dropdown-toggle"
+                        id="licenceDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                >
+                  Licence
+                </a>
+                <ul class="dropdown-menu custom-dropdown" aria-labelledby="licenceDropdown">
+                  <li><a class="dropdown-item" href="/ajoutMemoire">Ajout</a></li>
+                  <li><a class="dropdown-item" href="/modifier">Modification</a></li>
+                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                        class="nav-link dropdown-toggle"
+                        id="memoirsDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                >
+                  Memoires
+                </a>
+                <ul class="dropdown-menu custom-dropdown" aria-labelledby="memoirsDropdown">
+                  <li><a class="dropdown-item" href=/ajoutMaster>Ajout</a></li>
+                  <li><a class="dropdown-item" href="/modifier">Modification</a></li>
+                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                        class="nav-link dropdown-toggle"
+                        id="thesesDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                >
+                  Theses
+                </a>
+                <ul class="dropdown-menu custom-dropdown" aria-labelledby="thesesDropdown">
+                  <li><a class="dropdown-item" href="/ajoutThese">Ajout</a></li>
+                  <li><a class="dropdown-item" href="/modifier">Modification</a></li>
+                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                        class="nav-link dropdown-toggle"
+                        id="usersDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                >
+                  Gestion des utilisateurs
+                </a>
+                <ul class="dropdown-menu custom-dropdown" aria-labelledby="usersDropdown">
+                  <li><a class="dropdown-item" href="#">Ajout</a></li>
+                  <li><a class="dropdown-item" href="#">Modification</a></li>
+                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                </ul>
+              </li>
+            </ul>
+            <!-- Right Section -->
+            <div class="d-flex align-items-center right-icons">
+              <button class="btn btn-share me-2">
+                <i class="fas fa-share-alt"></i> Partager
+              </button>
+              <button class="btn btn-download me-2">
+                <i class="fas fa-download"></i> Télécharger
+              </button>
+              <i
+                      class="fas fa-bell notification-icon me-2"
+                      onclick="toggleSidebar('sidebar-notification')"
+              ></i>
+              <div class="user-icon" onclick="toggleSidebar('sidebar-user')">
+                <i class="fas fa-user"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+    </div>
+      <br>
+      <hr>
+      <!-- Main Content Here -->
+    <div class="content">
+          <!-- Statistiques -->
+      <div class="row mb-4">
+        <!-- Message d'erreur général -->
+        <div th:if="${errorMessage != null}" class="alert alert-danger">
+          <p th:text="${errorMessage}"></p>
+        </div>
+
+        <div th:unless="${errorMessage != null}" class="row mb-4">
+          <div class="row">
+            <!-- Licence -->
+            <div class="col-lg-3 col-md-4 mb-4">
+              <div class="card stats-card h-100">
+                <div class="card-header">Licence</div>
+                <div class="card-body">
+                  <h3 class="fw-bold" th:text="${licenceCount}">0</h3>
+                  <p class="small">Mémoires enregistrés</p>
+                  <a href="Licence.html" class="btn btn-details">Voir Détails</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Master -->
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card stats-card h-100">
+                <div class="card-header">Master</div>
+                <div class="card-body">
+                  <h3 class="fw-bold" th:text="${masterCount}">0</h3>
+                  <p class="small">Mémoires enregistrés</p>
+                  <a href="ListeMemoire.html" class="btn btn-details">Voir Détails</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Doctorat -->
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card stats-card h-100">
+                <div class="card-header">Doctorat</div>
+                <div class="card-body">
+                  <h3 class="fw-bold" th:text="${doctoratCount}">0</h3>
+                  <p class="small">Mémoires enregistrés</p>
+                  <a href="These.html" class="btn btn-details">Voir Détails</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card stats-card h-100">
+                <div class="card-header">Statistiques</div>
+                <div class="card-body">
+                  <h3 class="fw-bold">2024</h3>
+                  <p class="small">Année académique</p>
+                  <a href="Statistique.html" class="btn btn-details">Voir Détails</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+          <!-- diagramme en barre des memoires-->
+      <div class="charts-container">
+        <div class="chart-wrapper">
+          <h4 class="chart-title">Diagramme en Barres</h4>
+          <canvas id="statsChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+          <h4 class="chart-title">Diagramme en Courbes</h4>
+          <canvas id="evolutionCharts"></canvas>
+        </div>
+        <div class="chart-wrapper">
+          <h4 class="chart-title">Diagramme Circulaire</h4>
+          <canvas id="pieChart"></canvas>
+        </div>
+      </div>
+
+      <h4 class="text-center mb-4">Recherche de Mémoires</h4>
+      <!-- Formulaire de recherche -->
+      <form id="searchForm" class="mb-4" action="/memoires/liste" method="get">
+        <div class="row align-items-end">
+          <!-- Critère : Côte -->
+          <div class="col-md-2 mb-2">
+            <label for="searchCote" class="form-label">Côte</label>
+            <input type="text" class="form-control" id="searchCote" name="cote" placeholder="Ex. LAF13/2">
+          </div>
+
+          <!-- Critère : Titre -->
+          <div class="col-md-2 mb-2">
+            <label for="searchTitre" class="form-label">Titre</label>
+            <input type="text" class="form-control" id="searchTitre" name="titre" placeholder="Titre du mémoire">
+          </div>
+
+          <!-- Critère : Étudiant -->
+          <div class="col-md-2 mb-2">
+            <label for="searchEtudiant" class="form-label">Étudiant</label>
+            <input type="text" class="form-control" id="searchEtudiant" name="etudiant" placeholder="Nom de l'étudiant">
+          </div>
+          <!-- Critère : Encadrant -->
+          <div class="col-md-2 mb-2">
+            <label for="searchEncadrant" class="form-label">Encadrant</label>
+            <input type="text" class="form-control" id="searchEncadrant" name="encadrant" placeholder="Nom de l'encadrant">
+          </div>
+
+          <!-- Critère : Année -->
+          <div class="col-md-2 mb-2">
+            <label for="searchAnnee" class="form-label">Année</label>
+            <input type="number" class="form-control" id="searchAnnee" name="annee" placeholder="Ex. 2024">
+          </div>
+
+          <!-- Critère : Filière -->
+          <div class="col-md-2 mb-2">
+            <label for="searchFiliere" class="form-label">Filière</label>
+            <input type="text" class="form-control" id="searchFiliere" name="filiere" placeholder="Agroforesterie">
+          </div>
+          <!-- Bouton de recherche avec une icône -->
+          <div class="col-md-2 mb-2">
+            <button type="submit" class="btn btn-success w-80">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Liste des Mémoires -->
+      <div class="container">
+        <!-- Résultats de la recherche  -->
+        <div th:if="${memoires != null && !memoires.isEmpty()}">
+          <h2 class="text-success mb-3"> Résultats de la recherche</h2>
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th>Numéro</th>
+              <th>Cote</th>
+              <th>Titre</th>
+              <th>Étudiant</th>
+              <th>Encadrant</th>
+              <th>Filière</th>
+              <th>Année</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="memoire, iterStat : ${memoires}">
+              <td th:text="${iterStat.index + 1}"></td>
+              <td th:text="${memoire.cote}"></td>
+              <td th:text="${memoire.titre}"></td>
+              <td th:text="${memoire.etudiant.nom} + ' ' + ${memoire.etudiant.prenom}"></td>
+              <td th:text="${memoire.encadrant.nom} + ' ' + ${memoire.encadrant.prenom}"></td>
+              <td th:text="${memoire.filiere.nom}"></td>
+              <td th:text="${memoire.annee}"></td>
+              <td>
+                <a th:href="@{/memoires/modifier/{id}(id=${memoire.id})}" class="btn btn-edit btn-sm me-1">
+                  <i class="fas fa-edit"></i> Modifier
+                </a>
+                <a th:href="@{/memoires/supprimer/{id}(id=${memoire.id})}"
+                   class="btn btn-delete btn-sm"
+                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce mémoire ?')">
+                  <i class="fas fa-trash-alt"></i> Supprimer
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Message si aucun résultat trouvé après recherche -->
+        <div th:if="${memoires != null and #lists.isEmpty(memoires)}" class="alert alert-warning">
+          <strong>Attention!</strong> Aucun mémoire trouvé pour les critères de recherche.
+        </div>
+
+        <!-- Liste complète des mémoires groupés -->
+        <div th:if="${memoires == null}">
+          <div th:each="ufrEntry : ${memoiresGroupes}">
+            <div class="table-container">
+              <h2 class="text-success mb-3" th:text="${ufrEntry.key}">Nom de l'UFR</h2>
+
+              <div th:each="departementEntry : ${ufrEntry.value}">
+                <h4 class="text-success mb-3" th:text="${departementEntry.key}">Nom du Département</h4>
+
+                <table class="table table-hover">
+                  <thead>
+                  <tr>
+                    <th>Numéro</th>
+                    <th>Cote</th>
+                    <th>Titre</th>
+                    <th>Étudiant</th>
+                    <th>Encadrant</th>
+                    <th>Filière</th>
+                    <th>Année</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each="memoire, iterStat : ${departementEntry.value}">
+                    <td th:text="${iterStat.index + 1}"></td>
+                    <td th:text="${memoire.cote}"></td>
+                    <td th:text="${memoire.titre}"></td>
+                    <td th:text="${memoire.etudiant.nom} + ' ' + ${memoire.etudiant.prenom}"></td>
+                    <td th:text="${memoire.encadrant.nom} + ' ' + ${memoire.encadrant.prenom}"></td>
+                    <td th:text="${memoire.filiere.nom}"></td>
+                    <td th:text="${memoire.annee}"></td>
+                    <td>
+                      <a th:href="@{/memoires/modifier/{id}(id=${memoire.id})}" class="btn btn-edit btn-sm me-1">
+                        <i class="fas fa-edit"></i> Modifier
+                      </a>
+                      <a th:href="@{/memoires/supprimer/{id}(id=${memoire.id})}"
+                         class="btn btn-delete btn-sm"
+                         onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce mémoire ?')">
+                        <i class="fas fa-trash-alt"></i> Supprimer
+                      </a>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+
+  </div>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        var stats = /*[[${stats}]]*/;  // Injecter la liste stats ici
+        var annees = /*[[${annees}]]*/;  // Injecter la liste des années
+        var licenceCounts = /*[[${licenceCounts}]]*/;  // Nombre de mémoires de Licence par année
+        var masterCounts = /*[[${masterCounts}]]*/;  // Nombre de mémoires de Master par année
+        var doctoratCounts = /*[[${doctoratCounts}]]*/;  // Nombre de mémoires de Doctorat par année
+        console.log("Données Thymeleaf :", { stats, annees, licenceCounts, masterCounts, doctoratCounts });
+        // Appeler initCharts avec les données
+        initCharts(stats, annees, licenceCounts, masterCounts, doctoratCounts);
+        /*]]>*/
+    </script>
+</html>

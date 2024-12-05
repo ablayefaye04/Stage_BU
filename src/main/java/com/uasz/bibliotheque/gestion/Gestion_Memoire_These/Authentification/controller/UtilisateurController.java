@@ -54,7 +54,7 @@ public class UtilisateurController {
                 String role = utilisateur.getRoles().get(0).getRole();
                 switch (role) {
                     case "Responsable":
-                        return "redirect:/listeResponsables";
+                        return "redirect:/dashboard";
                     case "Stager":
                         return "redirect:/dashboard1";
                     default:
@@ -69,9 +69,9 @@ public class UtilisateurController {
      * Affiche le tableau de bord pour le rôle "Admin".
      */
 
-    @GetMapping("/dashboard1")
+    @GetMapping("/dashboard")
     public String afficherDashboardStager() {
-        return "dashbord1";
+        return "essaie";
     }
 
 

@@ -15,6 +15,7 @@ import java.util.Date;
 public class GestionMemoireTheseApplication implements CommandLineRunner {
 	@Autowired
 	private MemoireService memoireService; // Injection du service
+	@Autowired
 	private UtilisateurService utilisateurService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -24,6 +25,7 @@ public class GestionMemoireTheseApplication implements CommandLineRunner {
 	}
 	@Override
 	public void run(String... args) throws Exception {
+
 		Role Responsable = utilisateurService.ajouter_role(new Role("Responsable"));
 		Role stager = utilisateurService.ajouter_role(new Role("Stager"));
 		String password = passwordEncoder.encode("Passer123");
@@ -51,7 +53,7 @@ public class GestionMemoireTheseApplication implements CommandLineRunner {
 		utilisateurService.ajouter_UtilisateurRoles(user_2, stager);
 
 		// Insertion d'une nouvelle mémoire
-	/*	memoireService.ajouterMemoire(
+		memoireService.ajouterMemoire(
 				"UFR Sciences Santé (SS)",                   // Nom de l'UFR
 				"Santé",               // Nom du département
 				"Médecine",             // Nom de la filière
@@ -113,7 +115,7 @@ public class GestionMemoireTheseApplication implements CommandLineRunner {
 				"Salif",                                      // Prénom de l'encadrant
 				"Sene"                                        // Nom de l'encadrant
 		);
-		System.out.println("Mémoire ajoutée avec succès !");*/
+		System.out.println("Mémoire ajoutée avec succès !");
 
 	}
 }

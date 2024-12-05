@@ -32,4 +32,8 @@ public class EtudiantService {
     public Etudiant createNewStudent(Etudiant student) {
         return etudiantRepository.save(student);
     }
+    public Optional<Etudiant> findByNomComplet(String nomComplet) {
+        return etudiantRepository.findByNomComplet(nomComplet);
+    }
+
 }

@@ -135,34 +135,33 @@ public class MemoireService {
         // Vérifie si le mémoire existe
         Memoire memoireExistante = getMemoireById(id);
         if (memoireExistante == null) {
-            throw new IllegalArgumentException("Memory with ID " + id + " does not exist.");
+            throw new IllegalArgumentException("Mémoire avec ID " + id + " n'existe pas.");
         }
 
-        // Gestion de l'étudiant
+        // Gestion de l'étudiant : Recherche par nom et prénom, ou ajout si non trouvé
         Etudiant etudiant = null;
         if (memoireModifiee.getEtudiant() != null) {
-            if (memoireModifiee.getEtudiant().getId() != null) {
-                // Si l'ID de l'étudiant est fourni, récupérer l'étudiant existant
-                etudiant = etudiantService.findById(memoireModifiee.getEtudiant().getId());
-            } else {
-                // Sinon, créer un nouvel étudiant avec les informations fournies
-                etudiant = etudiantService.createNewStudent(memoireModifiee.getEtudiant());
-            }
+            String etudiantNom = memoireModifiee.getEtudiant().getNom();
+            String etudiantPrenom = memoireModifiee.getEtudiant().getPrenom();
+
+            // Recherche de l'étudiant par nom et prénom, sinon création
+            etudiant = etudiantRepository.findByNomAndPrenom(etudiantNom, etudiantPrenom)
+                    .orElseGet(() -> etudiantRepository.save(new Etudiant(null, etudiantNom, etudiantPrenom)));
         }
 
-        // Gestion de l'encadrant
+        // Gestion de l'encadrant : Recherche par nom, prénom et filière, ou ajout si non trouvé
         Encadrant encadrant = null;
         if (memoireModifiee.getEncadrant() != null) {
-            if (memoireModifiee.getEncadrant().getId() != null) {
-                // Si l'ID de l'encadrant est fourni, récupérer l'encadrant existant
-                encadrant = encadrantService.findById(memoireModifiee.getEncadrant().getId());
-            } else {
-                // Sinon, créer un nouvel encadrant avec les informations fournies
-                encadrant = encadrantService.createNewSupervisor(memoireModifiee.getEncadrant());
-            }
+            String encadrantNom = memoireModifiee.getEncadrant().getNom();
+            String encadrantPrenom = memoireModifiee.getEncadrant().getPrenom();
+            Filiere filiere = memoireModifiee.getFiliere(); // Assurez-vous que la filière est correcte dans `memoireModifiee`
+
+            // Recherche de l'encadrant par nom, prénom et filière, sinon création
+            encadrant = encadrantRepository.findByNomAndPrenomAndFiliere(encadrantNom, encadrantPrenom, filiere)
+                    .orElseGet(() -> encadrantRepository.save(new Encadrant(null, encadrantNom, encadrantPrenom, filiere)));
         }
 
-        // Gestion de la filière
+        // Gestion de la filière : Recherche ou création si nécessaire
         Filiere filiere = null;
         if (memoireModifiee.getFiliere() != null && memoireModifiee.getFiliere().getNom() != null) {
             filiere = filiereService.findByNom(memoireModifiee.getFiliere().getNom())
@@ -177,21 +176,15 @@ public class MemoireService {
         memoireExistante.setAnnee(memoireModifiee.getAnnee());
         memoireExistante.setExemplaires(memoireModifiee.getExemplaires());
 
-        // Mise à jour de la cote si l'année ou d'autres paramètres pertinents changent
-        boolean coteDoitChanger =
-                !Objects.equals(memoireExistante.getAnnee(), memoireModifiee.getAnnee()) ||
-                        !Objects.equals(memoireExistante.getFiliere(), filiere) ||
-                        memoireExistante.getExemplaires() != memoireModifiee.getExemplaires();
-
-        if (coteDoitChanger) {
-            TypeMemoire type = memoireExistante.getType(); // Assurez-vous que TypeMemoire est bien défini
-            String nouvelleCote = genererCote(type, filiere, memoireModifiee.getAnnee(), memoireModifiee.getExemplaires());
-            memoireExistante.setCote(nouvelleCote);
-        }
+        // Regénérer la cote avec les nouvelles informations
+        TypeMemoire type = memoireExistante.getType();
+        String nouvelleCote = genererCote(type, filiere, memoireModifiee.getAnnee(), memoireModifiee.getExemplaires());
+        memoireExistante.setCote(nouvelleCote);  // Mise à jour de la cote
 
         // Sauvegarde et retour de l'entité mise à jour
         return memoireRepository.save(memoireExistante);
     }
+
 
     public List<Memoire> rechercherMemos(Map<String, String> params) {
         Specification<Memoire> spec = Specification.where(null);

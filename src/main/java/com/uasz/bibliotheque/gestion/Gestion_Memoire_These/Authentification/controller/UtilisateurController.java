@@ -54,24 +54,15 @@ public class UtilisateurController {
                 String role = utilisateur.getRoles().get(0).getRole();
                 switch (role) {
                     case "Responsable":
-                        return "redirect:/dashboard";
+                        return "redirect:/memoires/liste";
                     case "Stager":
-                        return "redirect:/dashboard1";
+                        return "redirect:/memoires/liste";
                     default:
                         return "redirect:/login?error=role_inconnu";
                 }
             }
         }
         return "redirect:/login";
-    }
-
-    /**
-     * Affiche le tableau de bord pour le rôle "Admin".
-     */
-
-    @GetMapping("/dashboard")
-    public String afficherDashboardStager() {
-        return "essaie";
     }
 
 

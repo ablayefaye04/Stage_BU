@@ -1,4 +1,6 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Role;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.MemoireService;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.service.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ public class GestionMemoireTheseApplication implements CommandLineRunner {
 	}
 	@Override
 	public void run(String... args) throws Exception {
-		/*Role Responsable = utilisateurService.ajouter_role(new Role("Responsable"));
+		Role Responsable = utilisateurService.ajouter_role(new Role("Responsable"));
 		Role stager = utilisateurService.ajouter_role(new Role("Stager"));
 		String password = passwordEncoder.encode("Passer123");
 
@@ -46,7 +48,7 @@ public class GestionMemoireTheseApplication implements CommandLineRunner {
 		//user_2.setActive(true);
 		//user_2.setLog("Ingénierie de Connaissances");
 		utilisateurService.ajouter_Utilisateur(user_2);
-		utilisateurService.ajouter_UtilisateurRoles(user_2, stager);*/
+		utilisateurService.ajouter_UtilisateurRoles(user_2, stager);
 
 		// Insertion d'une nouvelle mémoire
 		memoireService.ajouterMemoire(

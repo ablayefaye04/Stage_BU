@@ -21,56 +21,54 @@
 <body>
 
 <style>
-  .sidebar-custom {
-    background-color: #004d40; /* Vert foncé */
-    color: white;
-    height: 100vh;
-  }
+          .sidebar-custom {
+            background-color: #004d40; /* Vert foncé */
+            color: white;
+            height: 100vh;
+          }
 
-  .sidebar-custom .nav-link {
-    color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
+          .sidebar-custom .nav-link {
+            color: white;
+            transition: background-color 0.3s ease, color 0.3s ease;
+          }
 
-  .sidebar-custom .nav-link:hover {
-    background-color: #00796b; /* Vert un peu plus clair */
-    color: #ffffff;
-  }
+          .sidebar-custom .nav-link:hover {
+            background-color: #00796b; /* Vert un peu plus clair */
+            color: #ffffff;
+          }
 
-  .sidebar-custom .nav-link.active {
-    background-color: #00574b; /* Accent vert pour le lien actif */
-    color: white;
-  }
+          .sidebar-custom .nav-link.active {
+            background-color: #00574b; /* Accent vert pour le lien actif */
+            color: white;
+          }
 
-  .sidebar-custom .dropdown-toggle::after {
-    color: white;
-  }
+          .sidebar-custom .dropdown-toggle::after {
+            color: white;
+          }
 
-  .sidebar-custom .collapse .nav-link {
-    padding-left: 20px;
-  }
-  .custom-header {
-  background-color: #064e3b; /* Vert foncé */
-  width: 100%; /* S'étend sur toute la largeur de l'écran */
-  padding: 1rem 0; /* Ajoute un peu de padding pour une meilleure esthétique */
-}
+          .sidebar-custom .collapse .nav-link {
+            padding-left: 20px;
+          }
+          .custom-header {
+          background-color: #064e3b; /* Vert foncé */
+          width: 100%; /* S'étend sur toute la largeur de l'écran */
+          padding: 1rem 0; /* Ajoute un peu de padding pour une meilleure esthétique */
+        }
 
-.navbar-dark .navbar-nav .nav-link {
-  color: #ffffff; /* Texte en blanc pour contraster avec le fond */
-}
+        .navbar-dark .navbar-nav .nav-link {
+          color: #ffffff; /* Texte en blanc pour contraster avec le fond */
+        }
 
-.navbar-dark .navbar-nav .nav-link:hover {
-  color: #b3e6c1; /* Couleur légèrement différente au survol */
-}
-.custom-header {
-  margin: 15px; /* Évite toute marge externe */
-  padding: 0; /* Évite tout espace interne */
-  width: 100%;/* Garantie que la largeur s'étend */
-  height: 70px
-}
-
+        .navbar-dark .navbar-nav .nav-link:hover {
+          color: #b3e6c1; /* Couleur légèrement différente au survol */
+        }
+        .custom-header {
+          margin: 15px; /* Évite toute marge externe */
+          padding: 0; /* Évite tout espace interne */
+          width: 100%;/* Garantie que la largeur s'étend */
+          height: 70px
+        }
 </style>
-
 
 <!-- Conteneur principal -->
 <div class="container-fluid">
@@ -277,29 +275,29 @@
             </div>
 
             <script>
-  function toggleSidebar(id) {
-    const sidebar = document.getElementById(id);
-    sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
-  }
+                  function toggleSidebar(id) {
+                    const sidebar = document.getElementById(id);
+                    sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
+                  }
 
-  function logout() {
-    alert('Déconnexion réussie !');
-    // Remplacez par la logique de déconnexion réelle ou une redirection.
-    window.location.href = '/logout';
-  }
+                  function logout() {
+                    alert('Déconnexion réussie !');
+                    // Remplacez par la logique de déconnexion réelle ou une redirection.
+                    window.location.href = '/logout';
+                  }
 
-  window.onclick = function (event) {
-    const userSidebar = document.getElementById('sidebar-user');
-    const notificationSidebar = document.getElementById('sidebar-notification');
+                  window.onclick = function (event) {
+                    const userSidebar = document.getElementById('sidebar-user');
+                    const notificationSidebar = document.getElementById('sidebar-notification');
 
-    if (!event.target.closest('.user-icon') && userSidebar) {
-      userSidebar.style.display = 'none';
-    }
-    if (!event.target.closest('.notification-icon') && notificationSidebar) {
-      notificationSidebar.style.display = 'none';
-    }
-  };
-</script>
+                    if (!event.target.closest('.user-icon') && userSidebar) {
+                      userSidebar.style.display = 'none';
+                    }
+                    if (!event.target.closest('.notification-icon') && notificationSidebar) {
+                      notificationSidebar.style.display = 'none';
+                    }
+                  };
+            </script>
 
           </div>
         </div>

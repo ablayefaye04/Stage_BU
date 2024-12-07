@@ -1,5 +1,7 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service;
 
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repository.UtilisateurRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.*;
@@ -24,6 +26,8 @@ public class MemoireService {
 
     @Autowired
     private UfrRepository ufrRepository;
+    @Autowired
+    public UserRepository userRepository;
 
     @Autowired
     private EtudiantRepository etudiantRepository;
@@ -333,4 +337,9 @@ public class MemoireService {
                 ));
     }
 
+    //Mon code pour recuperer les information de l'utilisateur qui est connecter
+    public Utilisateur recherche_Utilisateur(String username){
+        Utilisateur user = userRepository.findUtilisateurByUsername(username);
+        return user;
+}
 }

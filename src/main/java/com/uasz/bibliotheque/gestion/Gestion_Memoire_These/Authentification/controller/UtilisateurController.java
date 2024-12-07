@@ -130,27 +130,10 @@ public class UtilisateurController {
      * Affiche la liste des utilisateurs.
      */
     @GetMapping("/listeResponsables")
-    public String listeResponsables(Model model, Principal principal) {
+    public String listeResponsables(Model model) {
         // Récupère la liste des responsables depuis le service
         List<Utilisateur> responsables = utilisateurService.listUtilisateur();
         model.addAttribute("listeResponsables", responsables); // Transfert des données au modèle
-
-        // Gestion de l'utilisateur connecté
-        if (principal != null) {
-            Utilisateur utilisateur = utilisateurService.recherche_Utilisateur(principal.getName());
-            if (utilisateur != null) {
-                // Ajouter les informations de l'utilisateur au modèle
-                model.addAttribute("nom", utilisateur.getNom());
-                model.addAttribute("prenom", utilisateur.getPrenom());
-
-                // Extraire les rôles et les ajouter
-                String roles = utilisateur.getRoles().stream()
-                        .map(Role::getRole)
-                        .reduce((role1, role2) -> role1 + ", " + role2)
-                        .orElse("Aucun rôle");
-                model.addAttribute("roles", roles);
-            }
-        }
         return "Responsable"; // Assurez-vous que ce nom correspond au fichier Thymeleaf (ex: responsables.html)
     }
 

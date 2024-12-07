@@ -1,5 +1,7 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.controler;
 
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Role;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.Filie
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.MemoireService;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.utils.MemoireSpecifications;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,6 +75,9 @@ public class MemoireController {
             @RequestParam("encadrantNom") String encadrantNom,
             @RequestParam("encadrantPrenom") String encadrantPrenom,
             Model model) {
+
+
+
 
         // Vérification de la présence de tous les paramètres
         if (ufrNom == null || ufrNom.isEmpty()) {
@@ -153,6 +159,7 @@ public class MemoireController {
 
             // Ajouter un message de succès au modèle
             model.addAttribute("message", "Mémoire ajouté avec succès !");
+
             return "redirect:/memoires/liste";
 
         } catch (RuntimeException e) {
@@ -221,8 +228,26 @@ public class MemoireController {
             @RequestParam(required = false) String etudiant,
             @RequestParam(required = false) String encadrant,
             @RequestParam(required = false) Integer annee,
-            Model model
+            Model model, Principal principal
     ) {
+
+        // Gestion de l'utilisateur connecté
+        if (principal != null) {
+            Utilisateur utilisateur = memoireService.recherche_Utilisateur(principal.getName());
+            if (utilisateur != null) {
+                // Ajouter les informations de l'utilisateur au modèle
+                model.addAttribute("nom", utilisateur.getNom());
+                model.addAttribute("prenom", utilisateur.getPrenom());
+
+                // Extraire les rôles et les ajouter
+                String roles = utilisateur.getRoles().stream()
+                        .map(Role::getRole)
+                        .reduce((role1, role2) -> role1 + ", " + role2)
+                        .orElse("Aucun rôle");
+                model.addAttribute("roles", roles);
+            }
+        }
+
         // Définir une spécification de base
         Specification<Memoire> spec = Specification.where(null);
 

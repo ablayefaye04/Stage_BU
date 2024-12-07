@@ -20,71 +20,137 @@
 </head>
 <body>
 
+<style>
+  .sidebar-custom {
+    background-color: #004d40; /* Vert foncé */
+    color: white;
+    height: 100vh;
+  }
+
+  .sidebar-custom .nav-link {
+    color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .sidebar-custom .nav-link:hover {
+    background-color: #00796b; /* Vert un peu plus clair */
+    color: #ffffff;
+  }
+
+  .sidebar-custom .nav-link.active {
+    background-color: #00574b; /* Accent vert pour le lien actif */
+    color: white;
+  }
+
+  .sidebar-custom .dropdown-toggle::after {
+    color: white;
+  }
+
+  .sidebar-custom .collapse .nav-link {
+    padding-left: 20px;
+  }
+  .custom-header {
+  background-color: #064e3b; /* Vert foncé */
+  width: 100%; /* S'étend sur toute la largeur de l'écran */
+  padding: 1rem 0; /* Ajoute un peu de padding pour une meilleure esthétique */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #ffffff; /* Texte en blanc pour contraster avec le fond */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: #b3e6c1; /* Couleur légèrement différente au survol */
+}
+.custom-header {
+  margin: 15px; /* Évite toute marge externe */
+  padding: 0; /* Évite tout espace interne */
+  width: 100%;/* Garantie que la largeur s'étend */
+  height: 70px
+}
+
+</style>
+
+
 <!-- Conteneur principal -->
 <div class="container-fluid">
   <div class="row">
 
     <!-- Sidebar -->
-    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse" id="sidebar">
-      <div class="position-sticky">
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar-custom collapse" id="sidebar">
+      <div class="position-sticky pt-3">
         <ul class="nav flex-column">
+          <!-- Tableau de bord -->
           <li class="nav-item">
             <a class="nav-link active" href="#">
-              <i class="fas fa-tachometer-alt"></i> Tableau de Bord
+              <i class="fas fa-tachometer-alt me-2"></i>
+              <span>Tableau de Bord</span>
             </a>
           </li>
-          <br> <br>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-book"></i> Mémoires Licence
+
+          <!-- Mémoires Licence -->
+          <li class="nav-item">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#memoireLicence">
+              <i class="fas fa-book me-2"></i>
+              <span>Mémoires Licence</span>
             </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/ajoutMemoire"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-              <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Liste</a></li>
+            <ul class="collapse list-unstyled ps-3" id="memoireLicence">
+              <li><a class="nav-link" href="/ajoutMemoire"><i class="fas fa-plus-circle me-2"></i> Ajouter</a></li>
+              <li><a class="nav-link" href="/modifier"><i class="fas fa-edit me-2"></i> Modifier</a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-list me-2"></i> Liste</a></li>
             </ul>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-book"></i> Mémoires Master
+
+          <!-- Mémoires Master -->
+          <li class="nav-item">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#memoireMaster">
+              <i class="fas fa-graduation-cap me-2"></i>
+              <span>Mémoires Master</span>
             </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/ajoutMaster"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-              <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Liste</a></li>
+            <ul class="collapse list-unstyled ps-3" id="memoireMaster">
+              <li><a class="nav-link" href="/ajoutMaster"><i class="fas fa-plus-circle me-2"></i> Ajouter</a></li>
+              <li><a class="nav-link" href="/modifier"><i class="fas fa-edit me-2"></i> Modifier</a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-list me-2"></i> Liste</a></li>
             </ul>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-book"></i> Mémoires Thèse
+
+          <!-- Mémoires Thèse -->
+          <li class="nav-item">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#memoireThese">
+              <i class="fas fa-university me-2"></i>
+              <span>Mémoires Thèse</span>
             </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/ajoutThese"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-              <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
-              <li><a class="dropdown-item" href="#"><i class="fas fa-list"></i> Liste</a></li>
+            <ul class="collapse list-unstyled ps-3" id="memoireThese">
+              <li><a class="nav-link" href="/ajoutThese"><i class="fas fa-plus-circle me-2"></i> Ajouter</a></li>
+              <li><a class="nav-link" href="/modifier"><i class="fas fa-edit me-2"></i> Modifier</a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-list me-2"></i> Liste</a></li>
             </ul>
           </li>
-          <br>   <br><br> <br>
-          <hr>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-book"></i> Gestion des utilisateurs
+
+          <!-- Gestion des utilisateurs -->
+          <li class="nav-item">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#gestionUtilisateurs">
+              <i class="fas fa-users me-2"></i>
+              <span>Gestion des Utilisateurs</span>
             </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/listeResponsables"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-              <li><a class="dropdown-item" href="/listeResponsables"><i class="fas fa-list"></i> Liste</a></li>
+            <ul class="collapse list-unstyled ps-3" id="gestionUtilisateurs">
+              <li><a class="nav-link" href="/listeResponsables"><i class="fas fa-user-plus me-2"></i> Ajouter</a></li>
+              <li><a class="nav-link" href="/listeResponsables"><i class="fas fa-list me-2"></i> Liste</a></li>
             </ul>
           </li>
         </ul>
       </div>
     </nav>
+
     <!-- Contenu principal -->
     <main class="col-md-9 ms-sm-auto col-lg-10 px-6">
-    <div class="header">
-      <!-- Header -->
-      <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Université Assane SECK</a>
+        <div class="header">
+            <!-- Header -->
+            <nav class="navbar navbar-expand-lg navbar-dark custom-header">
+                <div class="container">
+
+
+        <a class="navbar-brand" href="#">Université Assane SECK</a>
           <button
                   class="navbar-toggler"
                   type="button"
@@ -178,14 +244,63 @@
               <button class="btn btn-download me-2">
                 <i class="fas fa-download"></i> Télécharger
               </button>
-              <i
-                      class="fas fa-bell notification-icon me-2"
-                      onclick="toggleSidebar('sidebar-notification')"
-              ></i>
+
+              <!-- Icône de notification -->
+              <i class="fas fa-bell notification-icon me-2" onclick="toggleSidebar('sidebar-notification')"></i>
+
+              <!-- Icône utilisateur -->
               <div class="user-icon" onclick="toggleSidebar('sidebar-user')">
                 <i class="fas fa-user"></i>
               </div>
+
+              <!-- Menu contextuel utilisateur -->
+              <!-- Menu contextuel utilisateur -->
+              <div id="sidebar-user" class="dropdown-menu p-3" style="display: none; position: absolute; right: 10px; top: 50px;">
+                <p class="mb-2 font-weight-bold">Connecté en tant que :</p>
+                <p class="mb-2" th:text="'Nom : ' + ${nom}">Nom</p>
+                <p class="mb-2" th:text="'Prénom : ' + ${prenom}">Prénom</p>
+                <p class="mb-2" th:text="'Rôle : ' + ${roles}">Rôle(s)</p>
+
+
+                <!-- Bouton de déconnexion avec redirection -->
+                <a class="btn btn-danger btn-sm w-100" href="/logout">Se déconnecter</a>
+
+                <hr />
+
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-bell me-2 text-primary"></i>
+                  <span id="notification-count" class="badge bg-danger">3</span>
+                  <span class="ms-2">Notifications</span>
+                </div>
+              </div>
+
             </div>
+
+            <script>
+  function toggleSidebar(id) {
+    const sidebar = document.getElementById(id);
+    sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function logout() {
+    alert('Déconnexion réussie !');
+    // Remplacez par la logique de déconnexion réelle ou une redirection.
+    window.location.href = '/logout';
+  }
+
+  window.onclick = function (event) {
+    const userSidebar = document.getElementById('sidebar-user');
+    const notificationSidebar = document.getElementById('sidebar-notification');
+
+    if (!event.target.closest('.user-icon') && userSidebar) {
+      userSidebar.style.display = 'none';
+    }
+    if (!event.target.closest('.notification-icon') && notificationSidebar) {
+      notificationSidebar.style.display = 'none';
+    }
+  };
+</script>
+
           </div>
         </div>
       </nav>

@@ -1,5 +1,7 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service;
 
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repository.UtilisateurRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.*;
@@ -265,5 +267,12 @@ public class MemoireService {
                         Collectors.counting() // Compter les mémoires dans chaque année
                 ));
     }
+//Mon code pour recuperer les information de l'utilisateur qui est connecter
 
+    @Autowired
+    public UserRepository userRepository;
+    public Utilisateur recherche_Utilisateur(String username){
+        Utilisateur user = userRepository.findUtilisateurByUsername(username);
+        return user;
+}
 }

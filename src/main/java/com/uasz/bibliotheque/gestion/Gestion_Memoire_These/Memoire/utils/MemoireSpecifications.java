@@ -1,5 +1,6 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.utils;
 
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.TypeMemoire;
 import org.springframework.data.jpa.domain.Specification;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.Memoire;
 
@@ -72,6 +73,10 @@ public class MemoireSpecifications {
     public static Specification<Memoire> withFiliere(String filiere) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("filiere").get("nom"), filiere);
+    }
+    public static Specification<Memoire> withType(TypeMemoire type) {
+        return (root, query, criteriaBuilder) ->
+                type != null ? criteriaBuilder.equal(root.get("type"), type) : criteriaBuilder.conjunction();
     }
 
 }

@@ -128,8 +128,6 @@ public class MemoireService {
         memoireRepository.save(memoire);
     }
 
-
-
     // Méthode pour modifier un mémoire existant
     public Memoire modifierMemoire(Long id, Memoire memoireModifiee) {
         // Vérifie si le mémoire existe
@@ -138,30 +136,31 @@ public class MemoireService {
             throw new IllegalArgumentException("Mémoire avec ID " + id + " n'existe pas.");
         }
 
-        // Gestion de l'étudiant : Recherche par nom et prénom, ou ajout si non trouvé
+        // Gestion de l'étudiant
         Etudiant etudiant = null;
         if (memoireModifiee.getEtudiant() != null) {
-            String etudiantNom = memoireModifiee.getEtudiant().getNom();
-            String etudiantPrenom = memoireModifiee.getEtudiant().getPrenom();
-
-            // Recherche de l'étudiant par nom et prénom, sinon création
-            etudiant = etudiantRepository.findByNomAndPrenom(etudiantNom, etudiantPrenom)
-                    .orElseGet(() -> etudiantRepository.save(new Etudiant(null, etudiantNom, etudiantPrenom)));
+            if (memoireModifiee.getEtudiant().getId() != null) {
+                // Si l'ID de l'étudiant est fourni, récupérer l'étudiant existant
+                etudiant = etudiantService.findById(memoireModifiee.getEtudiant().getId());
+            } else {
+                // Sinon, créer un nouvel étudiant avec les informations fournies
+                etudiant = etudiantService.createNewStudent(memoireModifiee.getEtudiant());
+            }
         }
 
-        // Gestion de l'encadrant : Recherche par nom, prénom et filière, ou ajout si non trouvé
+        // Gestion de l'encadrant
         Encadrant encadrant = null;
         if (memoireModifiee.getEncadrant() != null) {
-            String encadrantNom = memoireModifiee.getEncadrant().getNom();
-            String encadrantPrenom = memoireModifiee.getEncadrant().getPrenom();
-            Filiere filiere = memoireModifiee.getFiliere(); // Assurez-vous que la filière est correcte dans `memoireModifiee`
-
-            // Recherche de l'encadrant par nom, prénom et filière, sinon création
-            encadrant = encadrantRepository.findByNomAndPrenomAndFiliere(encadrantNom, encadrantPrenom, filiere)
-                    .orElseGet(() -> encadrantRepository.save(new Encadrant(null, encadrantNom, encadrantPrenom, filiere)));
+            if (memoireModifiee.getEncadrant().getId() != null) {
+                // Si l'ID de l'encadrant est fourni, récupérer l'encadrant existant
+                encadrant = encadrantService.findById(memoireModifiee.getEncadrant().getId());
+            } else {
+                // Sinon, créer un nouvel encadrant avec les informations fournies
+                encadrant = encadrantService.createNewSupervisor(memoireModifiee.getEncadrant());
+            }
         }
 
-        // Gestion de la filière : Recherche ou création si nécessaire
+        // Gestion de la filière
         Filiere filiere = null;
         if (memoireModifiee.getFiliere() != null && memoireModifiee.getFiliere().getNom() != null) {
             filiere = filiereService.findByNom(memoireModifiee.getFiliere().getNom())
@@ -177,7 +176,7 @@ public class MemoireService {
         memoireExistante.setExemplaires(memoireModifiee.getExemplaires());
 
         // Regénérer la cote avec les nouvelles informations
-        TypeMemoire type = memoireExistante.getType();
+        TypeMemoire type = memoireExistante.getType(); // Assurez-vous que TypeMemoire est bien défini
         String nouvelleCote = genererCote(type, filiere, memoireModifiee.getAnnee(), memoireModifiee.getExemplaires());
         memoireExistante.setCote(nouvelleCote);  // Mise à jour de la cote
 
@@ -207,6 +206,17 @@ public class MemoireService {
         }
         if (params.containsKey("filiere") && !params.get("filiere").isEmpty()) {
             spec = spec.and(MemoireSpecifications.withFiliere(params.get("filiere")));
+        }
+        // Ajouter un filtre pour le type de mémoire (Licence, Master, Doctorat)
+        if (params.containsKey("type") && !params.get("type").isEmpty()) {
+            String typeParam = params.get("type");
+            try {
+                TypeMemoire typeMemoire = TypeMemoire.valueOf(typeParam.toUpperCase());  // Assurez-vous que la valeur est en majuscule pour correspondre à l'enum
+                spec = spec.and(MemoireSpecifications.withType(typeMemoire));
+            } catch (IllegalArgumentException e) {
+                // Si le type n'est pas valide, loggez l'erreur
+                System.out.println("Type invalide : " + typeParam);
+            }
         }
 
         return memoireRepository.findAll(spec);
@@ -263,6 +273,63 @@ public class MemoireService {
                 .collect(Collectors.groupingBy(
                         Memoire::getAnnee,   // Regrouper par l'année
                         Collectors.counting() // Compter les mémoires dans chaque année
+                ));
+    }
+
+    //liste de licences
+    public Map<String, Map<String, List<Memoire>>> getMemoiresLicenceGroupes() {
+        // Récupérer tous les mémoires de type Licence
+        List<Memoire> memoiresLicence = memoireRepository.findByType(TypeMemoire.LICENCE);
+
+        if (memoiresLicence == null || memoiresLicence.isEmpty()) {
+            return new HashMap<>(); // Retourne un map vide s'il n'y a pas de mémoire
+        }
+
+        // Grouper les mémoires par UFR > Département
+        return memoiresLicence.stream()
+                .collect(Collectors.groupingBy(
+                        memoire -> memoire.getFiliere().getDepartement().getUfr().getNom(),
+                        Collectors.groupingBy(
+                                memoire -> memoire.getFiliere().getDepartement().getNom()
+                        )
+                ));
+    }
+
+    //liste de masters
+    public Map<String, Map<String, List<Memoire>>> getMemoiresMasterGroupes() {
+        // Récupérer tous les mémoires de type Master
+        List<Memoire> memoiresMaster = memoireRepository.findByType(TypeMemoire.MASTER);
+
+        if (memoiresMaster == null || memoiresMaster.isEmpty()) {
+            return new HashMap<>(); // Retourne un map vide s'il n'y a pas de mémoire
+        }
+
+        // Grouper les mémoires par UFR > Département
+        return memoiresMaster.stream()
+                .collect(Collectors.groupingBy(
+                        memoire -> memoire.getFiliere().getDepartement().getUfr().getNom(),
+                        Collectors.groupingBy(
+                                memoire -> memoire.getFiliere().getDepartement().getNom()
+                        )
+                ));
+    }
+
+    //liste de these
+    public Map<String, Map<String, List<Memoire>>> getMemoiresDoctoratGroupes() {
+        // Récupérer tous les mémoires de type Doctorat
+        List<Memoire> memoiresDoctorat = memoireRepository.findByType(TypeMemoire.DOCTORAT);
+
+        if (memoiresDoctorat == null || memoiresDoctorat.isEmpty()) {
+            return new HashMap<>(); // Retourne un map vide s'il n'y a pas de mémoire
+        }
+
+        // Grouper les mémoires par UFR > Département
+        return memoiresDoctorat.stream()
+                .collect(Collectors.groupingBy(
+                        memoire -> memoire.getFiliere().getDepartement().getUfr().getNom(),
+                        Collectors.groupingBy(
+                                memoire -> memoire.getFiliere().getDepartement().getNom()
+                        )
                 ));
     }
 

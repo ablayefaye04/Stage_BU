@@ -59,6 +59,7 @@
   </div>
 
   <!-- Formulaire de modification du mémoire -->
+  <!-- Formulaire de modification du mémoire -->
   <div th:if="${memoire != null}">
     <form th:action="@{/memoires/modifier}" th:object="${memoire}" method="post">
       <!-- Id caché -->
@@ -78,18 +79,24 @@
 
       <!-- Étudiant (Nom et Prénom dans une seule liste déroulante) -->
       <div class="form-group mb-3">
-        <label for="etudiantNom">Nom de l'Étudiant :</label>
-        <input type="text" id="etudiantNom" th:field="*{etudiant.nom}" required />
-        <label for="etudiantPrenom">Prénom de l'Étudiant :</label>
-        <input type="text" id="etudiantPrenom" th:field="*{etudiant.prenom}" required />
+        <label for="etudiant" class="form-label">Étudiant</label>
+        <input type="text" id="etudiant" name="etudiantNomComplet" th:field="*{etudiant.nomComplet}"
+               class="form-control" list="etudiant-list" placeholder="Saisissez ou choisissez un étudiant" />
+        <datalist id="etudiant-list">
+          <option th:each="etd : ${etudiants}" th:value="${etd.nom} + ' ' + ${etd.prenom}" th:data-id="${etd.id}" />
+        </datalist>
+        <input type="hidden" id="etudiantId" th:field="*{etudiant.id}" />
       </div>
 
       <!-- Encadrant (Nom et Prénom dans une seule liste déroulante) -->
       <div class="form-group mb-3">
-        <label for="encadrantNom">Nom de l'Encadrant :</label>
-        <input type="text" id="encadrantNom" th:field="*{encadrant.nom}" required />
-        <label for="encadrantPrenom">Prénom de l'Encadrant :</label>
-        <input type="text" id="encadrantPrenom" th:field="*{encadrant.prenom}" required />
+        <label for="encadrant" class="form-label">Encadrant</label>
+        <input type="text" id="encadrant" th:field="*{encadrant.nomComplet}" class="form-control"
+               list="encadrant-list" placeholder="Saisissez ou choisissez un encadrant" />
+        <datalist id="encadrant-list">
+          <option th:each="enc : ${encadrants}" th:value="${enc.nom} + ' ' + ${enc.prenom}" />
+        </datalist>
+        <input type="hidden" id="encadrantId" th:field="*{encadrant.id}" />
       </div>
 
       <!-- Filière -->

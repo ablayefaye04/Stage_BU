@@ -95,7 +95,7 @@
             <ul class="collapse list-unstyled ps-3" id="memoireLicence">
               <li><a class="nav-link" href="/ajoutMemoire"><i class="fas fa-plus-circle me-2"></i> Ajouter</a></li>
               <li><a class="nav-link" href="/modifier"><i class="fas fa-edit me-2"></i> Modifier</a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-list me-2"></i> Liste</a></li>
+              <li><a class="nav-link" href="/memoires/licences"><i class="fas fa-list me-2"></i> Liste</a></li>
             </ul>
           </li>
 
@@ -105,10 +105,11 @@
               <i class="fas fa-graduation-cap me-2"></i>
               <span>Mémoires Master</span>
             </a>
+
             <ul class="collapse list-unstyled ps-3" id="memoireMaster">
               <li><a class="nav-link" href="/ajoutMaster"><i class="fas fa-plus-circle me-2"></i> Ajouter</a></li>
               <li><a class="nav-link" href="/modifier"><i class="fas fa-edit me-2"></i> Modifier</a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-list me-2"></i> Liste</a></li>
+              <li><a class="nav-link" href="/memoires/masters"><i class="fas fa-list me-2"></i> Liste</a></li>
             </ul>
           </li>
 
@@ -121,7 +122,7 @@
             <ul class="collapse list-unstyled ps-3" id="memoireThese">
               <li><a class="nav-link" href="/ajoutThese"><i class="fas fa-plus-circle me-2"></i> Ajouter</a></li>
               <li><a class="nav-link" href="/modifier"><i class="fas fa-edit me-2"></i> Modifier</a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-list me-2"></i> Liste</a></li>
+              <li><a class="nav-link" href="/memoires/doctorats"><i class="fas fa-list me-2"></i> Liste</a></li>
             </ul>
           </li>
 
@@ -179,7 +180,7 @@
                 <ul class="dropdown-menu custom-dropdown" aria-labelledby="licenceDropdown">
                   <li><a class="dropdown-item" href="/ajoutMemoire">Ajout</a></li>
                   <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                  <li><a class="dropdown-item" href="/memoires/licences">Liste</a></li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
@@ -196,7 +197,7 @@
                 <ul class="dropdown-menu custom-dropdown" aria-labelledby="memoirsDropdown">
                   <li><a class="dropdown-item" href=/ajoutMaster>Ajout</a></li>
                   <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                  <li><a class="dropdown-item" href="/memoires/masters">Liste</a></li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
@@ -213,7 +214,7 @@
                 <ul class="dropdown-menu custom-dropdown" aria-labelledby="thesesDropdown">
                   <li><a class="dropdown-item" href="/ajoutThese">Ajout</a></li>
                   <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                  <li><a class="dropdown-item" href="/memoires/doctorats">Liste</a></li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
@@ -228,9 +229,9 @@
                   Gestion des utilisateurs
                 </a>
                 <ul class="dropdown-menu custom-dropdown" aria-labelledby="usersDropdown">
-                  <li><a class="dropdown-item" href="#">Ajout</a></li>
-                  <li><a class="dropdown-item" href="#">Modification</a></li>
-                  <li><a class="dropdown-item" href="#">Liste</a></li>
+                  <li><a class="dropdown-item" href="listeResponsables">Ajout</a></li>
+                  <li><a class="dropdown-item" href="listeResponsables">Modification</a></li>
+                  <li><a class="dropdown-item" href="listeResponsables">Liste</a></li>
                 </ul>
               </li>
             </ul>
@@ -324,7 +325,7 @@
                 <div class="card-body">
                   <h3 class="fw-bold" th:text="${licenceCount}">0</h3>
                   <p class="small">Mémoires enregistrés</p>
-                  <a href="Licence.html" class="btn btn-details">Voir Détails</a>
+                  <a href="/memoires/licences" class="btn btn-details">Voir Détails</a>
                 </div>
               </div>
             </div>
@@ -336,7 +337,7 @@
                 <div class="card-body">
                   <h3 class="fw-bold" th:text="${masterCount}">0</h3>
                   <p class="small">Mémoires enregistrés</p>
-                  <a href="ListeMemoire.html" class="btn btn-details">Voir Détails</a>
+                  <a href="/memoires/masters" class="btn btn-details">Voir Détails</a>
                 </div>
               </div>
             </div>
@@ -348,7 +349,7 @@
                 <div class="card-body">
                   <h3 class="fw-bold" th:text="${doctoratCount}">0</h3>
                   <p class="small">Mémoires enregistrés</p>
-                  <a href="These.html" class="btn btn-details">Voir Détails</a>
+                  <a href="/memoires/doctorats" class="btn btn-details">Voir Détails</a>
                 </div>
               </div>
             </div>

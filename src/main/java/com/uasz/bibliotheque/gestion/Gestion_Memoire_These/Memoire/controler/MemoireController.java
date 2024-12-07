@@ -76,9 +76,6 @@ public class MemoireController {
             @RequestParam("encadrantPrenom") String encadrantPrenom,
             Model model) {
 
-
-
-
         // Vérification de la présence de tous les paramètres
         if (ufrNom == null || ufrNom.isEmpty()) {
             logger.error("Le nom de l'UFR est manquant");
@@ -391,11 +388,41 @@ public class MemoireController {
     @PostMapping("/memoires/modifier")
     public String modifierMemoire(@ModelAttribute Memoire memoire, RedirectAttributes redirectAttributes) {
         try {
-            // Modification du mémoire avec la logique déjà vue
+            // Vérifie si le mémoire à modifier existe
+            Memoire memoireExistant = memoireService.getMemoireById(memoire.getId());
+            if (memoireExistant == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Mémoire introuvable !");
+                return "redirect:/memoires/liste";
+            }
+
+            // Récupère l'étudiant et l'encadrant à partir de leurs ID respectifs
+            if (memoire.getEtudiant() != null && memoire.getEtudiant().getId() != null) {
+                Etudiant etudiant = etudiantService.findById(memoire.getEtudiant().getId());
+                if (etudiant != null) {
+                    memoire.setEtudiant(etudiant); // Met à jour l'étudiant
+                } else {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Étudiant introuvable !");
+                    return "redirect:/memoires/liste";
+                }
+            }
+
+            if (memoire.getEncadrant() != null && memoire.getEncadrant().getId() != null) {
+                Encadrant encadrant = encadrantService.findById(memoire.getEncadrant().getId());
+                if (encadrant != null) {
+                    memoire.setEncadrant(encadrant); // Met à jour l'encadrant
+                } else {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Encadrant introuvable !");
+                    return "redirect:/memoires/liste";
+                }
+            }
+
+            // Effectue la modification du mémoire
             memoireService.modifierMemoire(memoire.getId(), memoire);
             redirectAttributes.addFlashAttribute("successMessage", "Mémoire mis à jour avec succès !");
             return "redirect:/memoires/liste";
+
         } catch (Exception e) {
+            // Capture les erreurs inattendues
             redirectAttributes.addFlashAttribute("errorMessage", "Une erreur est survenue lors de la mise à jour du mémoire.");
             return "redirect:/memoires/liste";
         }

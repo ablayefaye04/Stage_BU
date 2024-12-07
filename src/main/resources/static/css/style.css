@@ -324,3 +324,32 @@ canvas {
 
 }
 
+
+/* Titre vert */
+.green-title {
+    color: #1b9a76; /* Vert spécifique */
+    font-size: 2rem; /* Taille du titre */
+    font-weight: bold; /* Grasset du texte */
+    margin-bottom: 20px; /* Espacement sous le titre */
+}
+
+/* Alignement et espacement des éléments (titre + icônes) */
+.header-title {
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    text-align: center; /* Assure que tout est centré */
+}
+
+
+/* Espacement entre les icônes et le titre */
+.ms-3 {
+    margin-left: 1rem; /* Espacement entre les icônes et le titre */
+}
+
+/* Ajouter un effet de survol sur les boutons pour améliorer l'interaction */
+.btn:hover {
+    transform: scale(1.1); /* Agrandir légèrement au survol */
+    transition: transform 0.2s ease;
+}
+

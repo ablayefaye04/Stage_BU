@@ -306,14 +306,14 @@ public class MemoireController {
      * Affiche la page de modification avec ou sans recherche.
      */
     @RequestMapping(value = "/modifier", method = RequestMethod.GET)
-    public String afficherFormulaireRecherche(Model model) {
+    public String afficherFormulaireRechercheModification(Model model) {
         model.addAttribute("memoire", new Memoire()); // Mémoire vide pour le formulaire
         model.addAttribute("etudiants", etudiantService.findAll());
         model.addAttribute("encadrants", encadrantService.findAll());
         model.addAttribute("filieres", filiereService.findAll());
         return "modifierMemoire";
     }
-
+    
     /**
      * Affiche le formulaire pré-rempli pour un mémoire donné.
      */
@@ -337,9 +337,9 @@ public class MemoireController {
 
     /**
      * Recherche des mémoires en fonction des critères fournis.
-     */
+     */ //Pour la modification
     @GetMapping("/memoires/modifier/recherche")
-    public String rechercherMemos(
+    public String rechercherMemosModifier(
             @RequestParam(required = false) String cote,
             @RequestParam(required = false) String filiere,
             @RequestParam(required = false) String titre,
@@ -380,11 +380,13 @@ public class MemoireController {
         return "modifierMemoire";
     }
 
+    //Suppression
     @GetMapping("/memoires/supprimer/{id}")
     public String supprimerMemoire(@PathVariable Long id) {
         memoireService.deleteMemoire(id);
         return "redirect:/memoires/liste"; // Redirection après suppression
     }
+
     @PostMapping("/memoires/modifier")
     public String modifierMemoire(@ModelAttribute Memoire memoire, RedirectAttributes redirectAttributes) {
         try {

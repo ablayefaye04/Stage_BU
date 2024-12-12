@@ -27,7 +27,7 @@ public class GestionMemoireTheseApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		/*Role Responsable = utilisateurService.ajouter_role(new Role("Responsable"));
+		Role Responsable = utilisateurService.ajouter_role(new Role("Responsable"));
 		Role stager = utilisateurService.ajouter_role(new Role("Stager"));
 		String password = passwordEncoder.encode("Passer123");
 
@@ -118,6 +118,5 @@ public class GestionMemoireTheseApplication implements CommandLineRunner {
 		);
 		System.out.println("Mémoire ajoutée avec succès !");
 
-	}*/
 	}
 }

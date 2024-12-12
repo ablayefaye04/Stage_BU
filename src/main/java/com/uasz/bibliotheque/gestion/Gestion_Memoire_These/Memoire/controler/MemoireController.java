@@ -313,7 +313,7 @@ public class MemoireController {
         model.addAttribute("filieres", filiereService.findAll());
         return "modifierMemoire";
     }
-    
+
     /**
      * Affiche le formulaire pré-rempli pour un mémoire donné.
      */

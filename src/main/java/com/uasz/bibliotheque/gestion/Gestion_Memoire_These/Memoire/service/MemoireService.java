@@ -341,5 +341,16 @@ public class MemoireService {
     public Utilisateur recherche_Utilisateur(String username){
         Utilisateur user = userRepository.findUtilisateurByUsername(username);
         return user;
-}
+    }
+    public List<Memoire> findByAnneeAndType(int annee, String type) {
+        try {
+            // Conversion si nécessaire
+            TypeMemoire typeEnum = TypeMemoire.valueOf(type.toUpperCase());
+            return memoireRepository.findByAnneeAndType(annee, typeEnum);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Type de mémoire invalide : " + type, e);
+        }
+    }
+
+
 }

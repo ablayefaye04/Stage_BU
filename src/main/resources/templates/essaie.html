@@ -240,9 +240,44 @@
               <button class="btn btn-share me-2">
                 <i class="fas fa-share-alt"></i> Partager
               </button>
-              <button class="btn btn-download me-2">
-                <i class="fas fa-download"></i> Télécharger
-              </button>
+                <!-- Bouton Télécharger -->
+                <button class="btn btn-download me-2" data-bs-toggle="modal" data-bs-target="#downloadModal">
+                    <i class="fas fa-download"></i> Télécharger
+                </button>
+
+                <!-- Modale -->
+              <!-- Modale -->
+              <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="downloadModalLabel">Saisir l'année et le type</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="yearForm" th:action="@{/rechercheParAnnee}" method="get">
+                        <div class="mb-3">
+                          <label for="yearInput" class="form-label">Année</label>
+                          <input type="number" class="form-control" id="yearInput" name="annee" placeholder="Entrez une année" required>
+                        </div>
+                        <div class="mb-3">
+                          <label for="typeSelect" class="form-label">Type</label>
+                          <select class="form-select" id="typeSelect" name="type" required>
+                            <option value="" disabled selected>Choisir un type</option>
+                            <option value="LICENCE">Thèse</option>
+                            <option value="MASTER">Mémoire</option>
+                            <option value="Doctorant">Doctorat</option>
+                          </select>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                          <button type="submit" class="btn btn-primary">Rechercher</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <!-- Icône de notification -->
               <i class="fas fa-bell notification-icon me-2" onclick="toggleSidebar('sidebar-notification')"></i>
@@ -298,7 +333,21 @@
                       notificationSidebar.style.display = 'none';
                     }
                   };
-            </script>
+
+  document.getElementById('confirmButton').addEventListener('click', function () {
+    const year = document.getElementById('yearInput').value;
+    if (year) {
+      alert(`Vous avez confirmé l'année : ${year}`);
+      // Ajoutez ici le code pour télécharger ou effectuer l'action souhaitée
+      const modal = bootstrap.Modal.getInstance(document.getElementById('downloadModal'));
+      modal.hide();
+    } else {
+      alert('Veuillez entrer une année avant de confirmer.');
+    }
+  });
+
+
+              </script>
 
           </div>
         </div>

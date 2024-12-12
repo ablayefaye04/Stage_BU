@@ -2,6 +2,7 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.Memoire;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,5 +29,8 @@ public interface MemoireRepository extends JpaRepository<Memoire, Long>, JpaSpec
     long countByTypeAndAnnee(TypeMemoire type, int annee);
 
     Optional<Memoire> findByTitre(String titre);
+
+    @Query("SELECT m FROM Memoire m WHERE m.annee = :annee AND m.type = :type")
+    List<Memoire> findByAnneeAndType(@Param("annee") int annee, @Param("type") TypeMemoire type);
 
 }

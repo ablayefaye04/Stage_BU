@@ -430,4 +430,26 @@ public class MemoireController {
         }
     }
 
+    @GetMapping("/rechercheParAnnee")
+    public String rechercheParAnnee(@RequestParam("annee") int annee,
+                                    @RequestParam("type") TypeMemoire type,
+                                    Model model) {
+        try {
+           // TypeMemoire typeEnum = TypeMemoire.valueOf(type.toUpperCase());
+            List<Memoire> resultats = memoireService.findByAnneeAndType(annee, String.valueOf(type));
+            model.addAttribute("resultats", resultats);
+            model.addAttribute("anneeRecherchee", annee);
+            model.addAttribute("typeRecherche", type);
+            if (resultats.isEmpty()) {
+                model.addAttribute("message", "Aucun mémoire trouvé pour l'année " + annee + " et le type " + type);
+            }
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("erreur", "Type de mémoire invalide : " + type);
+        } catch (Exception e) {
+            model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
+        }
+        return "resultatsRecherche";
+    }
+
+
 }

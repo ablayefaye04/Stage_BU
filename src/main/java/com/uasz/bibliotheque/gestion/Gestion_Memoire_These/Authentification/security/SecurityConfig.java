@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/js/**", "/css/**", "/img/**").permitAll()
 
                         // Autoriser les pages publiques
-                        .requestMatchers("/login", "/logout", "/register", "/error","/logs","/sessions","/Responsable").permitAll()
+                        .requestMatchers("/login", "/logout","/resultatsRecherche", "/register", "/error","/logs","/sessions","/Responsable").permitAll()
 
                         // Autoriser l'accès à H2 console (pour le développement uniquement)
                         .requestMatchers("/h2/**").permitAll()

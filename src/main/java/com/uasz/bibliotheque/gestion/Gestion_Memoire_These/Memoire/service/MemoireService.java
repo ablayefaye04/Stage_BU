@@ -231,10 +231,6 @@ public class MemoireService {
         Memoire memoire = getMemoireById(id); // Vérifie si le mémoire existe
         memoireRepository.delete(memoire); // Supprime le mémoire
     }
-    public List<Memoire> getMemoiresByType(TypeMemoire typeMemoire) {
-        return memoireRepository.findByType(typeMemoire);
-    }
-
 
     public Map<String, Map<String, List<Memoire>>> getMemoiresGroupes() {
         List<Memoire> memoires = getAllMemoires();
@@ -255,15 +251,6 @@ public class MemoireService {
 
     public List<Memoire> searchMemos(Specification<Memoire> spec) {
         return memoireRepository.findAll(spec);
-    }
-
-    public Map<Integer, Long> countMemosByYear() {
-        List<Object[]> result = memoireRepository.countMemosGroupedByYear();
-        Map<Integer, Long> memoiresParAnnee = new LinkedHashMap<>();
-        for (Object[] row : result) {
-            memoiresParAnnee.put((Integer) row[0], (Long) row[1]);
-        }
-        return memoiresParAnnee;
     }
 
     public long countMemosByType(TypeMemoire type) {
@@ -351,6 +338,4 @@ public class MemoireService {
             throw new RuntimeException("Type de mémoire invalide : " + type, e);
         }
     }
-
-
 }

@@ -68,6 +68,20 @@
           width: 100%;/* Garantie que la largeur s'étend */
           height: 70px
         }
+          .user-icon {
+        position: relative;
+        display: inline-block;
+    }
+
+    .notification-icon {
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.4em 0.6em;
+    }
 </style>
 
 <!-- Conteneur principal -->
@@ -280,7 +294,19 @@
               </div>
 
               <!-- Icône de notification -->
-              <i class="fas fa-bell notification-icon me-2" onclick="toggleSidebar('sidebar-notification')"></i>
+
+              <div class="user-icon position-relative">
+                <a href="/notifications">
+                  <i class="fas fa-bell notification-icon me-2"></i>
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        th:if="${nonLuCount > 0}"
+                        th:text="${nonLuCount}">
+            0
+        </span>
+                </a>
+              </div>
+
+
 
               <!-- Icône utilisateur -->
               <div class="user-icon" onclick="toggleSidebar('sidebar-user')">
@@ -301,11 +327,7 @@
 
                 <hr />
 
-                <div class="d-flex align-items-center">
-                  <i class="fas fa-bell me-2 text-primary"></i>
-                  <span id="notification-count" class="badge bg-danger">3</span>
-                  <span class="ms-2">Notifications</span>
-                </div>
+
               </div>
 
             </div>

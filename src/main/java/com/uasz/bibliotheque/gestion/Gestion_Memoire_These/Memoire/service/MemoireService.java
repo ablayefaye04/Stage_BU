@@ -2,6 +2,7 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service;
 
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repository.UtilisateurRepository;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.*;
@@ -43,6 +44,15 @@ public class MemoireService {
 
     @Autowired
     private FiliereService filiereService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+ 
+
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
+
 
 
     // Récupère toutes les filières
@@ -130,6 +140,24 @@ public class MemoireService {
         memoire.setCote(cote);
 
         memoireRepository.save(memoire);
+
+        // Créez une notification après l'ajout du mémoire
+        String messageNotification = "Un nouveau mémoire a été ajouté : " + titre + " de : " + etudiantNom + " " + etudiantPrenom;
+        notificationService.creerNotification(messageNotification);
+
+        // Journalisation pour vérifier le fonctionnement
+        System.out.println("Notification créée : " + messageNotification);
+
+
+        // Créer des notifications pour les administrateurs
+      /*  List<Utilisateur> admins = utilisateurRepository.findByRoles_Role("ADMIN");
+        for (Utilisateur admin : admins) {
+            Notification notification = new Notification();
+            notification.setUtilisateur(admin);
+            notification.setMessage("Un nouveau mémoire a été ajouté : " + titre);
+           // notification.setViewed("NON_LUE"); // Exemple de statut pour gérer l'état de la notification
+            notificationRepository.save(notification); // Sauvegarder la notification
+    }*/
     }
 
     // Méthode pour modifier un mémoire existant
@@ -185,8 +213,21 @@ public class MemoireService {
         memoireExistante.setCote(nouvelleCote);  // Mise à jour de la cote
 
         // Sauvegarde et retour de l'entité mise à jour
-        return memoireRepository.save(memoireExistante);
+        Memoire memoireSauvegardee = memoireRepository.save(memoireExistante);
+
+        // Création de la notification après mise à jour
+        String titre = memoireSauvegardee.getTitre();
+        String etudiantNom = memoireSauvegardee.getEtudiant() != null ? memoireSauvegardee.getEtudiant().getNom() : "Inconnu";
+        String etudiantPrenom = memoireSauvegardee.getEtudiant() != null ? memoireSauvegardee.getEtudiant().getPrenom() : "Inconnu";
+        String messageNotification = "Le mémoire \"" + titre + "\" de " + etudiantNom + " " + etudiantPrenom + " a été modifié.";
+        notificationService.creerNotification(messageNotification);
+
+        // Journalisation pour vérifier le fonctionnement
+        System.out.println("Notification créée : " + messageNotification);
+
+        return memoireSauvegardee;
     }
+
 
 
     public List<Memoire> rechercherMemos(Map<String, String> params) {
@@ -228,9 +269,28 @@ public class MemoireService {
 
     // Méthode pour supprimer un mémoire par son ID
     public void deleteMemoire(Long id) {
-        Memoire memoire = getMemoireById(id); // Vérifie si le mémoire existe
-        memoireRepository.delete(memoire); // Supprime le mémoire
+        // Vérifie si le mémoire existe
+        Memoire memoire = getMemoireById(id);
+        if (memoire == null) {
+            throw new IllegalArgumentException("Mémoire avec ID " + id + " n'existe pas.");
+        }
+
+        // Récupération des informations pour la notification avant suppression
+        String titre = memoire.getTitre();
+        String etudiantNom = memoire.getEtudiant() != null ? memoire.getEtudiant().getNom() : "Inconnu";
+        String etudiantPrenom = memoire.getEtudiant() != null ? memoire.getEtudiant().getPrenom() : "Inconnu";
+
+        // Supprime le mémoire
+        memoireRepository.delete(memoire);
+
+        // Création de la notification
+        String messageNotification = "Le mémoire \"" + titre + "\" de " + etudiantNom + " " + etudiantPrenom + " a été supprimé.";
+        notificationService.creerNotification(messageNotification);
+
+        // Journalisation pour vérifier le fonctionnement
+        System.out.println("Notification créée : " + messageNotification);
     }
+
 
     public Map<String, Map<String, List<Memoire>>> getMemoiresGroupes() {
         List<Memoire> memoires = getAllMemoires();

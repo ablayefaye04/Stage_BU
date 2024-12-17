@@ -6,6 +6,7 @@ import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.mode
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repository.RoleRepository;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repository.UtilisateurRepository;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,18 @@ public class UtilisateurService {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
-    public Utilisateur ajouter_Utilisateur(Utilisateur user){
+    @Autowired
+    private NotificationService notificationService;
+
+    public Utilisateur ajouter_Utilisateur(Utilisateur user) {
+        System.out.println("Ajout d'utilisateur : " + user.getNom());
         utilisateurRepository.save(user);
+        String messageNotification = "Un nouvel utilisateur a été créé : " + user.getNom();
+        notificationService.creerNotification(messageNotification);
+        System.out.println("Notification créée avec succès.");
         return user;
     }
+
 
     public Role ajouter_role(Role role){
         roleRepository.save(role);
@@ -66,9 +75,21 @@ public class UtilisateurService {
 
     public List<Utilisateur> listUtilisateur(){ return  utilisateurRepository.findAll() ;}
 
-    public void supprimerResponsable(Utilisateur user){
+    public void supprimerResponsable(Utilisateur user) {
+        if (user == null || !utilisateurRepository.existsById(user.getId())) {
+            throw new IllegalArgumentException("Utilisateur introuvable ou déjà supprimé.");
+        }
+        // Création de la notification
+        String messageNotification = "Le responsable " + user.getNom() + " " + user.getPrenom() + " a été supprimé.";
+        notificationService.creerNotification(messageNotification);
+
+        // Suppression de l'utilisateur
         utilisateurRepository.delete(user);
+
+        // Journalisation
+        System.out.println("Notification créée : " + messageNotification);
     }
+
 
     public void modifierUtilisateur(Utilisateur user){
         utilisateurRepository.save(user);

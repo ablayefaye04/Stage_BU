@@ -152,7 +152,7 @@ public class UtilisateurController {
         User.setNom(utilisateur.getNom());
         User.setPrenom(utilisateur.getPrenom());
         User.setUsername(utilisateur.getUsername());
-        utilisateurRepository.save(User);
+        utilisateurService.modifierUtilisateur(User);
         return "redirect:/listeResponsables";
     }
 

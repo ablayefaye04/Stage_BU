@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -158,14 +159,96 @@ public class UtilisateurController {
 
 
     @PostMapping("/supprimerResponsable")
-    public  String supprimer_Etudiant(Utilisateur user){
+    public String supprimerResponsable(Utilisateur user) {
+
+
+        if (user.getUsername() != null && !user.getUsername().isEmpty()) {
+            emailService.sendAccountDeletionEmail(user.getUsername());
+        } else {
+            System.err.println("L'adresse e-mail est nulle, impossible d'envoyer le mail.");
+        }
+
         utilisateurService.supprimerResponsable(user);
-        return "redirect:/listeResponsables" ;
+
+        return "redirect:/listeResponsables";
     }
 
-    @GetMapping("/error_email")
-    public String AfficherErreurEmail(){
-        return "error";
+
+
+    @GetMapping("/profil")
+    public String afficherProfil(Model model, Principal principal) {
+        if (principal != null) {
+            Utilisateur utilisateur = utilisateurService.recherche_Utilisateur(principal.getName());
+            model.addAttribute("utilisateur", utilisateur);
+        }
+        return "profil"; // Assurez-vous de créer un fichier `profil.html`
     }
+
+    @PostMapping("/modifierMotDePasse")
+    public String modifierMotDePasse(
+            @RequestParam String ancienPassword,
+            @RequestParam String nouveauPassword,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        Utilisateur utilisateur = utilisateurService.recherche_Utilisateur(principal.getName());
+
+        // Vérifier si l'ancien mot de passe est correct
+        if (!passwordEncoder.matches(ancienPassword, utilisateur.getPassword())) {
+            redirectAttributes.addFlashAttribute("erreur", "Ancien mot de passe incorrect !");
+            return "redirect:/profil";
+        }
+
+        // Mettre à jour le mot de passe avec le nouveau haché
+        utilisateur.setPassword(passwordEncoder.encode(nouveauPassword));
+        utilisateurService.modifierUtilisateur(utilisateur);
+
+        redirectAttributes.addFlashAttribute("message", "Mot de passe modifié avec succès !");
+        return "redirect:/profil";
+    }
+    @PostMapping("/modifierProfil")
+    public String modifierProfil(
+            @RequestParam String nom,
+            @RequestParam String prenom,
+            @RequestParam String username,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        Utilisateur utilisateur = utilisateurService.recherche_Utilisateur(principal.getName());
+
+        // Vérifier si l'email est déjà utilisé par un autre utilisateur
+        Utilisateur utilisateurExistant = utilisateurService.recherche_Utilisateur(username);
+        if (utilisateurExistant != null && !utilisateurExistant.getUsername().equals(utilisateur.getUsername())) {
+            redirectAttributes.addFlashAttribute("erreur", "Cet email est déjà utilisé !");
+            return "redirect:/profil";
+        }
+
+        // Mise à jour des informations
+        utilisateur.setNom(nom);
+        utilisateur.setPrenom(prenom);
+        utilisateur.setUsername(username);
+
+        utilisateurService.modifierUtilisateur(utilisateur);
+
+        redirectAttributes.addFlashAttribute("message", "Informations mises à jour avec succès !");
+        return "redirect:/profil";
+    }
+
+
+    @GetMapping("/online")
+    public String afficherUtilisateursEnLigne(Model model) {
+        List<Utilisateur> utilisateursEnLigne = utilisateurService.getUtilisateursEnLigne();
+        model.addAttribute("utilisateursEnLigne", utilisateursEnLigne);
+        return "usersOnline"; // Renvoie vers la page HTML
+    }
+
 
 }

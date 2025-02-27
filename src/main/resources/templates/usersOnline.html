@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Utilisateurs en ligne</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h2>Liste des utilisateurs en ligne</h2>
+<table border="1">
+  <thead>
+  <tr>
+    <th>Nom</th>
+    <th>Prénom</th>
+    <th>Email</th>
+    <th>Statut</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="utilisateur : ${utilisateursEnLigne}">
+    <td th:text="${utilisateur.nom}"></td>
+    <td th:text="${utilisateur.prenom}"></td>
+    <td th:text="${utilisateur.username}"></td>
+    <td>🟢 En ligne</td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

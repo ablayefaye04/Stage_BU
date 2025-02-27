@@ -1,7 +1,10 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.security;
 
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.service.UtilisateurService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
@@ -9,17 +12,23 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private static final String[] FOR_RESPONSABLE = {"/Admin/**"}; // Routes accessibles aux Admin
-    private static final String[] FOR_STAGER = {"/User/**"}; // Routes accessibles aux User
+    private static final String[] FOR_RESPONSABLE = {"/Admin/**"};
+    private static final String[] FOR_STAGER = {"/User/**"};
+
+    @Autowired
+    @Lazy
+    private UtilisateurService utilisateurService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Encodage des mots de passe avec BCrypt
+        return new BCryptPasswordEncoder();
     }
+
     @Bean
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
@@ -28,39 +37,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Désactiver CSRF si vous testez en local, à activer en production
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        // Autoriser l'accès aux ressources statiques
                         .requestMatchers("/js/**", "/css/**", "/img/**").permitAll()
-
-                        // Autoriser les pages publiques
-                        .requestMatchers("/login", "/logout","/resultatsRecherche", "/register", "/error","/logs","/sessions","/Responsable","/notifications").permitAll()
-
-                        // Autoriser l'accès à H2 console (pour le développement uniquement)
+                        .requestMatchers("/login", "/logout", "/resultatsRecherche", "/register", "/error", "/logs", "/sessions", "/Responsable", "/notifications").permitAll()
                         .requestMatchers("/h2/**").permitAll()
-
-                        // Restrictions basées sur les rôles
                         .requestMatchers(FOR_RESPONSABLE).hasRole("Admin")
                         .requestMatchers(FOR_STAGER).hasRole("User")
-
-                        // Toute autre requête nécessite une authentification
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Page de connexion personnalisée
-                        .usernameParameter("username") // Nom du champ pour le nom d'utilisateur
-                        .passwordParameter("password") // Nom du champ pour le mot de passe
-                        .defaultSuccessUrl("/") // Redirection après connexion réussie
-                        .permitAll() // Permettre l'accès à la page de connexion
+                        .loginPage("/login")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/", true) // Redirection après connexion
+                        .successHandler((request, response, authentication) -> {
+                            utilisateurService.setUserOnline(authentication.getName());
+                            response.sendRedirect("/"); // Rediriger après connexion réussie
+                        })
+                        .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // URL pour la déconnexion
-                        .logoutSuccessUrl("/login?logout=true") // Redirection après déconnexion
-                        .invalidateHttpSession(true) // Invalider la session après déconnexion
-                        .deleteCookies("JSESSIONID") // Supprimer le cookie de session
-                        .permitAll() // Autoriser la déconnexion pour tous
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            if (authentication != null && authentication.getName() != null) {
+                                utilisateurService.setUserOffline(authentication.getName());
+                            }
+                            response.sendRedirect("/login?logout=true");
+                        })
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
                 );
-
 
         return http.build();
     }

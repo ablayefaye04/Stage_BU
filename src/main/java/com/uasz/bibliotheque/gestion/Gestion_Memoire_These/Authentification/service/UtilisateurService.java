@@ -9,6 +9,7 @@ import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repo
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -98,5 +99,28 @@ public class UtilisateurService {
     public Role recherche_role(String roleName) {
         return roleRepository.findRoleByRole(roleName);
     }
+
+    public void setUserOnline(String username) {
+        Utilisateur utilisateur = utilisateurRepository.findByUsername(username);
+        if (utilisateur != null) {
+            utilisateur.setOnline(true);
+            utilisateurRepository.save(utilisateur);
+        }
+    }
+
+    public void setUserOffline(String username) {
+        Utilisateur utilisateur = utilisateurRepository.findByUsername(username);
+        if (utilisateur != null) {
+            utilisateur.setOnline(false);
+            utilisateurRepository.save(utilisateur);
+        }
+    }
+
+    public List<Utilisateur> getUtilisateursEnLigne() {
+        return utilisateurRepository.findByIsOnline(true);
+    }
+
+
+    // Autres méthodes (par exemple savePasswordResetToken, findByPasswordResetToken, etc.)
 
 }

@@ -18,4 +18,9 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     // Vérifie si un utilisateur existe par son username (ou email)
     boolean existsByUsername(String username);
 
+    Utilisateur findByUsername(String username);
+    List<Utilisateur> findByIsOnline(boolean isOnline);
+
+
+
 }

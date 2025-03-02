@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Ajoute ton fichier CSS -->
+</head>
+<body>
+<div class="container">
+    <h2>Mon Profil</h2>
+
+    <!-- SECTION : Modification du mot de passe -->
+    <div class="section">
+        <h3>Modifier mon mot de passe</h3>
+
+        <!-- Message de succès / erreur -->
+        <p th:if="${erreurMotDePasse}" th:text="${erreurMotDePasse}" class="error"></p>
+        <p th:if="${messageMotDePasse}" th:text="${messageMotDePasse}" class="success"></p>
+
+        <form action="/modifierMotDePasse" method="post">
+            <label for="ancienMotDePasse">Ancien mot de passe :</label>
+            <input type="password" id="ancienMotDePasse" name="ancienMotDePasse" required>
+
+            <label for="nouveauMotDePasse">Nouveau mot de passe :</label>
+            <input type="password" id="nouveauMotDePasse" name="nouveauMotDePasse" required>
+
+            <label for="confirmationMotDePasse">Confirmer le nouveau mot de passe :</label>
+            <input type="password" id="confirmationMotDePasse" name="confirmationMotDePasse" required>
+
+            <button type="submit">Modifier le mot de passe</button>
+        </form>
+    </div>
+
+    <!-- SECTION : Modification des informations personnelles -->
+    <div class="section">
+        <h3>Modifier mes informations personnelles</h3>
+
+        <!-- Message de succès / erreur -->
+        <p th:if="${erreurProfil}" th:text="${erreurProfil}" class="error"></p>
+        <p th:if="${messageProfil}" th:text="${messageProfil}" class="success"></p>
+
+        <form action="/modifierProfil" method="post">
+            <label for="nom">Nom :</label>
+            <input type="text" id="nom" name="nom" th:value="${utilisateur.nom}" required>
+
+            <label for="prenom">Prénom :</label>
+            <input type="text" id="prenom" name="prenom" th:value="${utilisateur.prenom}" required>
+
+            <label for="username">Email :</label>
+            <input type="email" id="username" name="username" th:value="${utilisateur.username}" required>
+
+            <button type="submit">Modifier les informations</button>
+        </form>
+    </div>
+
+    <p>Statut : <span th:text="${utilisateur.isOnline} ? '🟢 En ligne' : '🔴 Hors ligne'"></span></p>
+
+</div>
+
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 50%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+        }
+
+        h3 {
+            color: #555;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+
+</body>
+</html>

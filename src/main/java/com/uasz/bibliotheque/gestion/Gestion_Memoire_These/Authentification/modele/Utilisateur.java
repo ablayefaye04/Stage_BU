@@ -28,4 +28,6 @@ public class Utilisateur {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 
+    private boolean isOnline = false; // Nouvel attribut pour l'état de connexion
+
 }

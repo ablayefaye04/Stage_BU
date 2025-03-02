@@ -23,4 +23,10 @@ public class Filiere {
 
     @OneToMany(mappedBy = "filiere")
     private List<Memoire> memoires;  // Association avec Memoire
+
+    // Constructeur avec paramètre nom et departement (ajouté manuellement)
+    public Filiere(String nom, Departement departement) {
+        this.nom = nom;
+        this.departement = departement;
+    }
 }

@@ -20,5 +20,9 @@ public class Ufr {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "ufr")
-    private Set<Departement> departements;}
+    private Set<Departement> departements;
+    // Constructeur avec paramètre nom (ajouté manuellement)
+    public Ufr(String nom) {
+        this.nom = nom;
+    }}
 

@@ -16,4 +16,5 @@ public interface DepartementRepository  extends JpaRepository<Departement, Long>
     Optional<Departement> findByNomAndUfr(String nom, Ufr ufr);
 
     List<Departement> findByUfr(Ufr ufr);
+    boolean existsByNomAndUfr(String nom, Ufr ufr);
 }

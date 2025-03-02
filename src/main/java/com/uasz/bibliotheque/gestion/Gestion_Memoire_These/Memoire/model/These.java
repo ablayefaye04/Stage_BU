@@ -1,33 +1,37 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Departement {
+public class These {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nom;
+
+    @Column(name = "cote", nullable = false)
+    private String cote;
+    private String titre;
+
+    @ManyToOne
+    @JoinColumn(name = "etudiant_id")
+    private Etudiant etudiant;
+
+    @ManyToOne
+    @JoinColumn(name = "encadrant_id")
+    private Encadrant encadrant;
+    private int annee;
+    private int exemplaires;  // Le nombre d'exemplaires
 
     @JsonBackReference // Empêche la sérialisation de l'UFR dans Departement
     @ManyToOne
-    @JoinColumn(name = "ufr_id")
-    private Ufr ufr;
+    @JoinColumn(name = "ecoleDoctorat_id")
+    private EcoleDoctorat ecoleDoctorat;
 
-    @OneToMany(mappedBy = "departement")
-    private Set<Filiere> filieres;
-
-    // Constructeur avec paramètre nom et ufr (ajouté manuellement)
-    public Departement(String nom, Ufr ufr) {
-        this.nom = nom;
-        this.ufr = ufr;
-    }
 }

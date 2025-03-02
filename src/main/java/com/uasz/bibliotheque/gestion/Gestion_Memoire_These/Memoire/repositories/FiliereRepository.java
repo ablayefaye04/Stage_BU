@@ -12,6 +12,7 @@ public interface FiliereRepository extends JpaRepository<Filiere, Long> {
 
     // Rechercher une filière par son nom
     Optional<Filiere> findByNom(String nom);
+    boolean existsByNomAndDepartement(String nom, Departement departement);
     List<Filiere> findByDepartementId(Long departementId);
     Optional<Filiere> findByNomAndDepartement(String nom, Departement departement);
 

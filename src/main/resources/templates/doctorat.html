@@ -17,348 +17,211 @@
     <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}"/>
     <script src="../static/js/charts.js" th:src="@{/js/charts.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .ufr-section {
+    margin-bottom: 40px;
+    padding: 20px;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
 
+.ufr-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.ecole-doctorale {
+    font-size: 18px;
+    font-weight: 500;
+    color: #16a085;
+}
+
+.total-theses {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e74c3c;
+    margin-bottom: 10px;
+}
+
+.theses-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.theses-table th, .theses-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.theses-table th {
+    background-color: #34495e;
+    color: white;
+}
+
+.odd-row {
+    background-color: #ecf0f1;
+}
+
+.even-row {
+    background-color: #ffffff;
+}
+/* Masquer les icônes par défaut, les afficher sur survol */
+.actions {
+    display: none;
+}
+
+tr:hover .actions {
+    display: block;
+}
+
+.edit-icon, .delete-icon {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.edit-icon img, .delete-icon img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Style pour le modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    margin: 15% auto;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    </style>
 </head>
 <body>
+<div th:each="entry, entryStat : ${thesesParUFR}" class="ufr-section">
+    <h2 class="ufr-title" th:text="${entry.key}">UFR Nom</h2>
+    <h3 class="ecole-doctorale" th:text="${ecoleDoctoraleData[entry.key]}">École Doctorale Nom</h3>
+    <p class="total-theses">Total de thèses : <span th:text="${#lists.size(entry.value)}"></span></p>
 
-<!-- Conteneur principal -->
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse" id="sidebar">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-tachometer-alt"></i> Tableau de Bord
-                        </a>
-                    </li>
-                    <br> <br>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-book"></i> Mémoires Licence
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/ajoutMemoire"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-                            <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
-                            <li><a class="dropdown-item" href="/memoires/licences"><i class="fas fa-list"></i> Liste</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-book"></i> Mémoires Master
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/ajoutMaster"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-                            <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
-                            <li><a class="dropdown-item" href="/memoires/masters"><i class="fas fa-list"></i> Liste</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-book"></i> Mémoires Thèse
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/ajoutThese"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-                            <li><a class="dropdown-item" href="/modifier"><i class="fas fa-edit"></i> Modifier</a></li>
-                            <li><a class="dropdown-item" href="/memoires/doctorats"><i class="fas fa-list"></i> Liste</a></li>
-                        </ul>
-                    </li>
-                    <br>   <br><br> <br>
-                    <hr>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-book"></i> Gestion des utilisateurs
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/listeResponsables"><i class="fas fa-plus-circle"></i> Ajouter</a></li>
-                            <li><a class="dropdown-item" href="/listeResponsables"><i class="fas fa-list"></i> Liste</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <!-- Contenu principal -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-6">
-            <div class="header">
-                <!-- Header -->
-                <nav class="navbar navbar-expand-lg navbar-dark">
-                    <div class="container-fluid">
-                        <a class="navbar-brand" href="#">Université Assane SECK</a>
-                        <button
-                                class="navbar-toggler"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#navbarNav"
-                                aria-controls="navbarNav"
-                                aria-expanded="false"
-                                aria-label="Toggle navigation"
-                        >
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav me-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="#">Tableau de bord</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a
-                                            class="nav-link dropdown-toggle"
-                                            id="licenceDropdown"
-                                            href="#"
-                                            role="button"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false"
-                                    >
-                                        Licence
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown" aria-labelledby="licenceDropdown">
-                                        <li><a class="dropdown-item" href="/ajoutMemoire">Ajout</a></li>
-                                        <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                                        <li><a class="dropdown-item" href="/memoires/licences">Liste</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a
-                                            class="nav-link dropdown-toggle"
-                                            id="memoirsDropdown"
-                                            href="#"
-                                            role="button"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false"
-                                    >
-                                        Memoires
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown" aria-labelledby="memoirsDropdown">
-                                        <li><a class="dropdown-item" href="/ajoutMaster>Ajout"> Ajout</a></li>
-                                        <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                                        <li><a class="dropdown-item" href="/memoires/masters">Liste</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a
-                                            class="nav-link dropdown-toggle"
-                                            id="thesesDropdown"
-                                            href="#"
-                                            role="button"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false"
-                                    >
-                                        Theses
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown" aria-labelledby="thesesDropdown">
-                                        <li><a class="dropdown-item" href="/ajoutThese">Ajout</a></li>
-                                        <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                                        <li><a class="dropdown-item" href="/memoires/doctorats">Liste</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a
-                                            class="nav-link dropdown-toggle"
-                                            id="usersDropdown"
-                                            href="#"
-                                            role="button"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false"
-                                    >
-                                        Gestion des utilisateurs
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown" aria-labelledby="usersDropdown">
-                                        <li><a class="dropdown-item" href="listeResponsables">Ajout</a></li>
-                                        <li><a class="dropdown-item" href="listeResponsables">Modification</a></li>
-                                        <li><a class="dropdown-item" href="listeResponsables">Liste</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            <!-- Right Section -->
-                            <div class="d-flex align-items-center right-icons">
-                                <button class="btn btn-share me-2">
-                                    <i class="fas fa-share-alt"></i> Partager
-                                </button>
-                                <button class="btn btn-download me-2">
-                                    <i class="fas fa-download"></i> Télécharger
-                                </button>
-                                <i
-                                        class="fas fa-bell notification-icon me-2"
-                                        onclick="toggleSidebar('sidebar-notification')"
-                                ></i>
-                                <div class="user-icon" onclick="toggleSidebar('sidebar-user')">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                            </div>
+    <table class="theses-table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Cote</th>
+            <th>Titre</th>
+            <th>Étudiant</th>
+            <th>Encadrant</th>
+            <th>Année</th>
+            <th>Exemplaires</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="these, stat : ${entry.value}" th:class="${stat.odd} ? 'odd-row' : 'even-row'">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${these.cote}"></td>
+            <td th:text="${these.titre}"></td>
+            <td th:text="${these.etudiant.nom}"></td>
+            <td th:text="${these.encadrant.nom}"></td>
+            <td th:text="${these.annee}"></td>
+            <td th:text="${these.exemplaires}"></td>
+            <td>
+                <button class="btn btn-info btn-sm" data-toggle="modal" th:attr="data-target='#form_Modifier_These'+${these.id}">Modifier</button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" th:attr="data-target='#form_Supprimer_These'+${these.id}">Supprimer</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Popups -->
+<div th:each="these : ${entry.value}">
+    <!-- Popup Modifier -->
+    <div class="modal fade" th:attr="id='form_Modifier_These'+${these.id}">
+        <div class="modal-dialog">
+            <div class="modal-content panel-info">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" data-dismiss="modal">x</button>
+                    <h4 class="modal-title">Modifier Thèse</h4>
+                </div>
+                <form th:action="@{/theses/modifier}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" th:value="${these.id}" />
+                        <div class="form-group">
+                            <label>Titre</label>
+                            <input type="text" class="form-control" name="titre" th:value="${these.titre}" />
+                        </div>
+                        <div class="form-group">
+                            <label>Année</label>
+                            <input type="number" class="form-control" name="annee" th:value="${these.annee}" />
                         </div>
                     </div>
-                </nav>
-            </div>
-            <br>
-            <div class="d-flex">
-                <h2 class="text-center text-success">Gestion des mémoires de Thèse</h2>
-                <a href="/memoires/doctorats" class="btn btn-success me-1" title="Liste de mémoire de Licence">
-                    <i class="bi bi-card-list"></i>
-                </a>
-                <a href="/ajoutThese" class="btn btn-success me-1" title="Ajouter un mémoire">
-                    <i class="fas fa-plus"></i>
-                </a>
-                <a href="/supprimer" class="btn btn-warning me-1" title="Supprimer les mémoires">
-                    <i class="bi bi-archive-fill"></i>
-                </a>
-                <a href="/modifier" class="btn btn-secondary" title="Modifier les mémoires">
-                    <i class="fas fa-cogs"></i>
-                </a>
-            </div>
-            <hr>
-            <!-- Main Content Here -->
-            <div class="content">
-                <div th:if="${nombreMemoires != null}">
-                    <h5>Nombre total de mémoires de Thèses : <span th:text="${nombreMemoires}"></span></h5>
-                </div>
-                <!-- Formulaire de recherche -->
-                <h3 class="text-center text-success">Recherche de Mémoires de Thèses</h3>
-
-                <!-- Formulaire de recherche -->
-                <form id="searchForm" class="mb-4" action="/memoires/doctorats" method="get">
-                    <div class="row align-items-end">
-                        <!-- Critère : Côte -->
-                        <div class="col-md-2 mb-2">
-                            <label for="searchCote" class="form-label">Côte</label>
-                            <input type="text" class="form-control" id="searchCote" name="cote" placeholder="Ex. LAF13/2">
-                        </div>
-
-                        <!-- Critère : Titre -->
-                        <div class="col-md-2 mb-2">
-                            <label for="searchTitre" class="form-label">Titre</label>
-                            <input type="text" class="form-control" id="searchTitre" name="titre" placeholder="Titre du mémoire">
-                        </div>
-
-                        <!-- Critère : Étudiant -->
-                        <div class="col-md-2 mb-2">
-                            <label for="searchEtudiant" class="form-label">Étudiant</label>
-                            <input type="text" class="form-control" id="searchEtudiant" name="etudiant" placeholder="Nom de l'étudiant">
-                        </div>
-
-                        <!-- Critère : Encadrant -->
-                        <div class="col-md-2 mb-2">
-                            <label for="searchEncadrant" class="form-label">Encadrant</label>
-                            <input type="text" class="form-control" id="searchEncadrant" name="encadrant" placeholder="Nom de l'encadrant">
-                        </div>
-
-                        <!-- Critère : Filière -->
-                        <div class="col-md-2 mb-2">
-                            <label for="searchFiliere" class="form-label">Filière</label>
-                            <input type="text" class="form-control" id="searchFiliere" name="filiere" placeholder="Ex. Informatique">
-                        </div>
-
-                        <!-- Critère : Année -->
-                        <div class="col-md-2 mb-2">
-                            <label for="searchAnnee" class="form-label">Année</label>
-                            <input type="number" class="form-control" id="searchAnnee" name="annee" placeholder="Ex. 2024">
-                        </div>
-
-                        <!-- Bouton de recherche -->
-                        <div class="col-md-2 mb-2">
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="fas fa-search"></i> Rechercher
-                            </button>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-info">Modifier</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                     </div>
                 </form>
-
-                <!-- Résultats de la recherche -->
-                <div th:if="${memoires != null && !memoires.isEmpty()}">
-                    <h4 class="text-success mb-3">
-                        Résultats de la recherche : <span th:text="${nombreMemoiresTrouves}"></span> mémoire(s) trouvé(s)
-                    </h4>
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Côte</th>
-                            <th>Titre</th>
-                            <th>Étudiant</th>
-                            <th>Encadrant</th>
-                            <th>Filière</th>
-                            <th>Année</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="memoire, iterStat : ${memoires}">
-                            <td th:text="${iterStat.index + 1}"></td>
-                            <td th:text="${memoire.cote}"></td>
-                            <td th:text="${memoire.titre}"></td>
-                            <td th:text="${memoire.etudiant.nom} + ' ' + ${memoire.etudiant.prenom}"></td>
-                            <td th:text="${memoire.encadrant.nom} + ' ' + ${memoire.encadrant.prenom}"></td>
-                            <td th:text="${memoire.filiere.nom}"></td>
-                            <td th:text="${memoire.annee}"></td>
-                            <td>
-                                <a th:href="@{/memoires/modifier/{id}(id=${memoire.id})}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Modifier
-                                </a>
-                                <a th:href="@{/memoires/supprimer/{id}(id=${memoire.id})}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce mémoire ?')">
-                                    <i class="fas fa-trash-alt"></i> Supprimer
-                                </a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Message si aucun résultat trouvé -->
-                <div th:if="${memoires != null and #lists.isEmpty(memoires)}" class="alert alert-warning">
-                    <strong>Attention!</strong> Aucun mémoire trouvé pour les critères de recherche.
-                </div>
-                <!-- Liste groupée -->
-                <div th:if="${memoiresGroupes != null}">
-                    <div th:each="ufrEntry : ${memoiresGroupes}">
-                        <h2 class="mt-4" th:text="${ufrEntry.key}">Nom de l'UFR</h2>
-
-                        <div th:each="departementEntry : ${ufrEntry.value}">
-                            <h4 class="mt-3" th:text="${departementEntry.key}">Nom du Département</h4>
-
-                            <table class="table table-bordered table-hover">
-                                <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Cote</th>
-                                    <th>Titre</th>
-                                    <th>Étudiant</th>
-                                    <th>Encadrant</th>
-                                    <th>Filière</th>
-                                    <th>Année</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="memoire, iterStat : ${departementEntry.value}">
-                                    <td th:text="${iterStat.index + 1}"></td>
-                                    <td th:text="${memoire.cote}"></td>
-                                    <td th:text="${memoire.titre}"></td>
-                                    <td th:text="${memoire.etudiant.nom} + ' ' + ${memoire.etudiant.prenom}"></td>
-                                    <td th:text="${memoire.encadrant.nom} + ' ' + ${memoire.encadrant.prenom}"></td>
-                                    <td th:text="${memoire.filiere.nom}"></td>
-                                    <td th:text="${memoire.annee}"></td>
-                                    <td>
-                                        <a th:href="@{/memoires/modifier/{id}(id=${memoire.id})}" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i> Modifier
-                                        </a>
-                                        <a th:href="@{/memoires/supprimer/{id}(id=${memoire.id})}" class="btn btn-danger btn-sm"
-                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce mémoire ?')">
-                                            <i class="fas fa-trash"></i> Supprimer
-                                        </a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </main>
+        </div>
+    </div>
 
+    <!-- Popup Supprimer -->
+    <div class="modal fade" th:attr="id='form_Supprimer_These'+${these.id}">
+        <div class="modal-dialog">
+            <div class="modal-content panel-danger">
+                <div class="modal-header panel-heading">
+                    <button type="button" class="close" data-dismiss="modal">x</button>
+                    <h4 class="modal-title">Supprimer Thèse</h4>
+                </div>
+                <form th:action="@{/theses/supprimer}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" th:value="${these.id}" />
+                        <p>Voulez-vous vraiment supprimer la thèse : <strong th:text="${these.titre}"></strong> ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $(".theses-table").DataTable();
+    });
+</script>
 </body>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

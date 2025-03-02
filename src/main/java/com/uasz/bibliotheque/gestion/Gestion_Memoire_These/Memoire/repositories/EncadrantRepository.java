@@ -1,5 +1,6 @@
 package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories;
 
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.Etudiant;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,7 @@ public interface EncadrantRepository extends JpaRepository<Encadrant, Long> {
     Optional<Encadrant> findByNom(String nom);
 
     Optional<Encadrant> findByNomAndPrenomAndFiliere(String nom, String prenom, Filiere filiere);
+    Optional<Encadrant> findByNomAndPrenom(String nom, String prenom);
 
 
 }

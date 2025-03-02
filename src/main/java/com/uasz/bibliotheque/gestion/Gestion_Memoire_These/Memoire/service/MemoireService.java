@@ -48,12 +48,12 @@ public class MemoireService {
     @Autowired
     private NotificationService notificationService;
 
- 
+
+    @Autowired
+    private TheseRepository theseRepository;
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;
-
-
 
     // Récupère toutes les filières
     public List<Filiere> getAllFilieres() {
@@ -147,17 +147,6 @@ public class MemoireService {
 
         // Journalisation pour vérifier le fonctionnement
         System.out.println("Notification créée : " + messageNotification);
-
-
-        // Créer des notifications pour les administrateurs
-      /*  List<Utilisateur> admins = utilisateurRepository.findByRoles_Role("ADMIN");
-        for (Utilisateur admin : admins) {
-            Notification notification = new Notification();
-            notification.setUtilisateur(admin);
-            notification.setMessage("Un nouveau mémoire a été ajouté : " + titre);
-           // notification.setViewed("NON_LUE"); // Exemple de statut pour gérer l'état de la notification
-            notificationRepository.save(notification); // Sauvegarder la notification
-    }*/
     }
 
     // Méthode pour modifier un mémoire existant
@@ -315,6 +304,10 @@ public class MemoireService {
 
     public long countMemosByType(TypeMemoire type) {
         return memoireRepository.findAllByType(type).size();
+    }
+
+    public long countTheses() {
+        return theseRepository.countTheses();
     }
 
     public Map<Integer, Long> countMemosByTypeAndYear(TypeMemoire type) {

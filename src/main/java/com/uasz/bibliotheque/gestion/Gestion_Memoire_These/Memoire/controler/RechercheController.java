@@ -162,7 +162,7 @@ public class RechercheController {
     }
 
     // Afficher les mémoires de Doctorat
-    @RequestMapping(value = "/memoires/doctorats", method = RequestMethod.GET)
+    @RequestMapping(value = "/theses", method = RequestMethod.GET)
     public String afficherMemoiresDoctorats(
             @RequestParam(required = false) String cote,
             @RequestParam(required = false) String titre,

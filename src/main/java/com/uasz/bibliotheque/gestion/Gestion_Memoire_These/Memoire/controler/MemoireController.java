@@ -178,7 +178,7 @@ public class MemoireController {
             // Compter les mémoires par type
             long licenceCount = memoireService.countMemosByType(TypeMemoire.LICENCE);
             long masterCount = memoireService.countMemosByType(TypeMemoire.MASTER);
-            long doctoratCount = memoireService.countMemosByType(TypeMemoire.DOCTORAT);
+            long doctoratCount = memoireService.countTheses();
 
             model.addAttribute("licenceCount", licenceCount);
             model.addAttribute("masterCount", masterCount);

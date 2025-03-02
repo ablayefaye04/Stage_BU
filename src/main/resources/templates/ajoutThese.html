@@ -2,16 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Ajouter un Mémoire</title>
+    <title>Ajouter de these</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-4">
-    <h1 class="text-center mb-4">Ajouter un Mémoire</h1>
-    <!-- Formulaire pour Master -->
-    <form id="masterForm" th:action="@{/memoires/ajouter}" method="post">
+    <h1 class="text-center mb-4">Ajouter une Thèse</h1>
+    <form id="theseForm" th:action="@{/theses/ajouter}" method="post">
+        <!-- Affichage des erreurs -->
+        <div th:if="${error}">
+            <p style="color: red;" th:text="${error}"></p>
+        </div>
         <input type="hidden" name="type" value="DOCTORAT">
-        <h3>Formulaire pour These</h3>
+        <h3>Formulaire pour Thèse</h3>
         <div class="mb-3">
             <label for="titreTHESE" class="form-label">Titre :</label>
             <input type="text" class="form-control" id="titreTHESE" name="titre" required>
@@ -24,7 +27,6 @@
             <label for="etudiantPrenomTHESE" class="form-label">Prénom de l'Étudiant :</label>
             <input type="text" class="form-control" id="etudiantPrenomTHESE" name="etudiantPrenom" required>
         </div>
-
         <div class="mb-3">
             <label for="encadrantNomTHESE" class="form-label">Nom de l'Encadrant :</label>
             <input type="text" class="form-control" id="encadrantNomTHESE" name="encadrantNom" required>
@@ -33,113 +35,58 @@
             <label for="encadrantPrenomTHESE" class="form-label">Prénom de l'Encadrant :</label>
             <input type="text" class="form-control" id="encadrantPrenomTHESE" name="encadrantPrenom" required>
         </div>
-
         <div class="mb-3">
             <label for="anneeTHESE" class="form-label">Année :</label>
             <input type="number" class="form-control" id="anneeTHESE" name="annee" min="1900" max="2099" required>
         </div>
-
         <div class="mb-3">
             <label for="exemplairesTHESE" class="form-label">Nombre d'Exemplaires :</label>
             <input type="number" class="form-control" id="exemplairesTHESE" name="exemplaires" min="1" required>
         </div>
 
         <div class="mb-3">
-            <label for="ufrNomMaster" class="form-label">UFR</label>
-            <select id="ufrNomMaster" name="ufrNom" class="form-select" onchange="updateDepartements()" required>
-                <option value="">-- Sélectionner un UFR --</option>
-                <option value="UFR Sciences et Techniques (ST)">UFR Sciences et Techniques (ST)</option>
-                <option value="UFR Lettres, Art, Sciences Humaines (LASHU)">UFR Lettres, Art, Sciences Humaines (LASHU)</option>
-                <option value="UFR Sciences Economiques et Sociales (SES)">UFR Sciences Economiques et Sociales (SES)</option>
-                <option value="UFR Sciences Santé (SS)">UFR Sciences Santé (SS)</option>
+            <label for="ecoleDoctorale" class="form-label">Ecole Doctorale</label>
+            <select id="ecoleDoctorale" name="ecoleDoctorale" class="form-select" onchange="updateUFRDisplay()" required
+                    oninvalid="this.setCustomValidity('Veuillez sélectionner une école doctorale.')"
+                    oninput="this.setCustomValidity('')">
+                <option value="">-- Sélectionner une Ecole Doctorale --</option>
+                <option value="Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)">Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)</option>
+                <option value="Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)">Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)</option>
             </select>
         </div>
 
+        <!-- Affichage dynamique de l'UFR -->
         <div class="mb-3">
-            <label for="departementNomMaster" class="form-label">Département</label>
-            <select id="departementNomMaster" name="departementNom" class="form-select" onchange="updateFilieres()" required>
-                <option value="">-- Sélectionner un département --</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="filiereNomMaster" class="form-label">Filière</label>
-            <select id="filiereNomMaster" name="filiereNom" class="form-select" required>
-                <option value="">-- Sélectionner une filière --</option>
-            </select>
+            <label for="ufrAffichage" class="form-label">UFR Associé</label>
+            <input type="text" class="form-control" id="ufrAffichage" name="ufrAffichage" readonly>
         </div>
 
         <div class="d-grid">
-            <button type="submit" class="btn btn-success">Ajouter Mémoire Master</button>
+            <button type="submit" class="btn btn-success">Ajouter Thèse</button>
         </div>
     </form>
 </div>
-
+</body>
 <script>
-  const data = {
-    "UFR Sciences et Techniques (ST)": {
-      "Géographie": ["Aménagement du territoire", "Environnement"],
-      "Mathématiques": ["Mathématiques appliquées", "Mathématiques Pures"],
-      "Informatique": ["Génie logiciel", "Réseaux", "Intelligence Artificielle (IA)"],
-      "Chimie": ["Chimie du Solide et des Materiaux (CSM)", "Synthèse Organique des Produits Naturels (SOPN)"],
-      "Physique": ["Physique des matériaux", "Science des Atmosphères des Océans (SAO)", "Energies Renouvelables"],
-      "Agroforésterie": ["Agroforésterie"]
-    },
-    "UFR Lettres, Art, Sciences Humaines (LASHU)": {
-      "Histoire": ["Archéologie", "Géopolitique", "Histoire de la Séné-Gambie", "Egyptologie"],
-      "Lettres Modernes (LM)": ["Etudes Littéraires", "Sciences du Langage"],
-      "Langues Etrangères Appliquées (LEA)": ["Tourisme", "Développement Local", "Langues et Civilisations"]
-    },
-    "UFR Sciences Economiques et Sociales (SES)": {
-      "Management Informatique des Organisations(MIO)": ["Méthodes Informatiques Appliquées à la Gestion (MIAGE)", "Management Informatique des Organisations(MIO)", "Management des Systèmes Informatique Appliqué(MSIA)"],
-      "Sociologie": ["Sociologie"],
-      "Economie-Gestion (ECO-GES)": ["Finance et Développement", "Evaluation d'impact", "Economie", "Gestion"],
-      "Droit": ["Droit des Collectivités Locales", "Droit Humanitaire", "Droit des affaires"],
-      "Tourisme": ["Tourisme"]
-    },
-    "UFR Sciences Santé (SS)": {
-      "Santé": ["Médecine", "Pharmacie", "Sciences infirmières", "Biologie", "Obstétrique"]
-    }
+  const ecoleDoctoraleData = {
+    "Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)": "UFR Sciences et Techniques (ST)",
+    "Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)": "UFR Lettres, Art, Sciences Humaines (LASHU)"
   };
 
-  // Mise à jour des départements pour le formulaire Master
-  function updateDepartements() {
-    const ufrSelect = document.getElementById("ufrNomMaster");
-    const departementSelect = document.getElementById("departementNomMaster");
-    const selectedUFR = ufrSelect.value;
+  function updateUFRDisplay() {
+    const ecoleSelect = document.getElementById("ecoleDoctorale");
+    const ufrInput = document.getElementById("ufrAffichage");
+    const selectedEcole = ecoleSelect.value;
 
-    departementSelect.innerHTML = '<option value="">-- Sélectionner un département --</option>';
-
-    if (data[selectedUFR]) {
-      Object.keys(data[selectedUFR]).forEach(departement => {
-        const option = document.createElement("option");
-        option.value = departement;
-        option.textContent = departement;
-        departementSelect.appendChild(option);
-      });
-    }
-
-    document.getElementById("filiereNomMaster").innerHTML = '<option value="">-- Sélectionner une filière --</option>';
+    ufrInput.value = ecoleDoctoraleData[selectedEcole] || "";
   }
 
-  // Mise à jour des filières pour le formulaire Master
-  function updateFilieres() {
-    const departementSelect = document.getElementById("departementNomMaster");
-    const filiereSelect = document.getElementById("filiereNomMaster");
-    const selectedUFR = document.getElementById("ufrNomMaster").value;
-    const selectedDepartement = departementSelect.value;
-
-    filiereSelect.innerHTML = '<option value="">-- Sélectionner une filière --</option>';
-
-    if (data[selectedUFR] && data[selectedUFR][selectedDepartement]) {
-      data[selectedUFR][selectedDepartement].forEach(filiere => {
-        const option = document.createElement("option");
-        option.value = filiere;
-        option.textContent = filiere;
-        filiereSelect.appendChild(option);
-      });
+  document.getElementById("theseForm").addEventListener("submit", function(event) {
+    const ufrInput = document.getElementById("ufrAffichage");
+    if (!ufrInput.value) {
+      event.preventDefault();
+      alert("Veuillez sélectionner une École Doctorale valide.");
     }
-  }
+  });
 </script>
-</body>
 </html>

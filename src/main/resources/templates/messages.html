@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Chat Général</title>
+  <!-- Intégration de Font Awesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Style personnalisé -->
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7f6;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Liste des conversations */
+    .conversation-list {
+      width: 300px;
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .conversation-list h2 {
+      margin-top: 0;
+    }
+
+    .conversation-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .conversation-list li {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #34495e;
+    }
+
+    .conversation-list li:hover {
+      background-color: #34495e;
+    }
+
+    /* Section de chat */
+    .chat-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-header {
+      background-color: #3498db;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #ecf0f1;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 70%;
+      position: relative;
+    }
+
+    .message.sent {
+      background-color: #3498db;
+      color: #fff;
+      margin-left: auto;
+    }
+
+    .message.received {
+      background-color: #fff;
+      color: #333;
+      margin-right: auto;
+      border: 1px solid #ddd;
+    }
+
+    .message-actions {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      display: none;
+    }
+
+    .message:hover .message-actions {
+      display: block;
+    }
+
+    .message-actions button {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .message-actions button:hover {
+      opacity: 0.8;
+    }
+
+    .message-date {
+      font-size: 0.8em;
+      color: #777;
+      margin-top: 5px;
+    }
+
+    /* Formulaire d'envoi de message */
+    .chat-form {
+      display: flex;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-form input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .chat-form button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .chat-form button:hover {
+      background-color: #2980b9;
+    }
+
+    /* Notifications */
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #2ecc71;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<!-- Liste des conversations -->
+<div class="conversation-list">
+  <h2>Conversations</h2>
+  <ul>
+    <li>Conversation 1</li>
+    <li>Conversation 2</li>
+    <li>Conversation 3</li>
+  </ul>
+</div>
+
+<!-- Section de chat -->
+<div class="chat-section">
+  <div class="chat-header">
+    <h1>Chat Général</h1>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages" id="chat-messages">
+    <!-- Les messages sont chargés dynamiquement via JavaScript -->
+  </div>
+
+  <!-- Formulaire d'envoi de message -->
+  <form class="chat-form" id="chatForm">
+    <input type="text" id="messageInput" placeholder="Écrire un message..." required>
+    <button type="submit">Envoyer</button>
+  </form>
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification">Ce message a été supprimé.</div>
+
+<script>
+    // Récupérer l'utilisateur actuel
+    const currentUser = "[[${currentUser}]]"; // Utilisateur connecté (injecté par Thymeleaf)
+
+    // Fonction pour charger les messages depuis l'API
+    async function loadMessages() {
+      const response = await fetch('/api/messages');
+      const messages = await response.json();
+      const messagesDiv = document.getElementById('chat-messages');
+      messagesDiv.innerHTML = ''; // Vider les messages actuels
+
+      messages.forEach(message => {
+        const messageElement = document.createElement('div');
+        messageElement.className = message.auteur.username === currentUser ? 'message sent' : 'message received';
+        messageElement.innerHTML = `
+          <div class="message-actions" ${message.auteur.username === currentUser ? '' : 'style="display: none;"'}>
+            <button onclick="editMessage('${message.id}')"><i class="fas fa-edit"></i></button>
+            <button onclick="deleteMessage('${message.id}')"><i class="fas fa-trash"></i></button>
+          </div>
+          <strong>${message.auteur.username}</strong>
+          <p>${message.contenu}</p>
+          <span class="message-date">${new Date(message.dateEnvoi).toLocaleString()}</span>
+        `;
+        messagesDiv.appendChild(messageElement);
+      });
+
+      // Faire défiler vers le dernier message
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Charger les messages au chargement de la page
+    loadMessages();
+
+    // Fonction pour envoyer un message
+    document.getElementById('chatForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const messageInput = document.getElementById('messageInput');
+      const contenu = messageInput.value;
+
+      // Envoyer le message au backend
+      const response = await fetch('/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `contenu=${encodeURIComponent(contenu)}`,
+      });
+
+      if (response.ok) {
+        messageInput.value = ''; // Vider le champ de saisie
+        loadMessages(); // Recharger les messages
+      }
+    });
+
+    // Fonction pour afficher une notification
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+
+    // Fonction pour supprimer un message
+    async function deleteMessage(messageId) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) {
+        const response = await fetch(`/messages/${messageId}`, { method: 'DELETE' });
+        if (response.ok) {
+          showNotification("Ce message a été supprimé.");
+          const messageElement = document.querySelector(`.message[data-id="${messageId}"]`);
+          if (messageElement) {
+            messageElement.innerHTML = '<p style="color: #777;">Message supprimé</p>';
+          }
+        }
+      }
+    }
+
+    // Fonction pour modifier un message
+    async function editMessage(messageId) {
+      const newContent = prompt("Modifier le message :");
+      if (newContent) {
+        const response = await fetch(`/messages/${messageId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ contenu: newContent }),
+        });
+        if (response.ok) {
+          loadMessages(); // Recharger les messages
+        }
+      }
+    }
+  </script>
+</body>
+</html>

@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/js/**", "/css/**", "/img/**").permitAll()
                         .requestMatchers("/login", "/logout", "/resultatsRecherche", "/register", "/error", "/logs", "/sessions", "/Responsable", "/notifications").permitAll()
-                        .requestMatchers("/h2/**").permitAll()
+                        .requestMatchers("/h2/**","/assets/**","/static/**","/static").permitAll()
                         .requestMatchers(FOR_RESPONSABLE).hasRole("Admin")
                         .requestMatchers(FOR_STAGER).hasRole("User")
                         .anyRequest().authenticated()

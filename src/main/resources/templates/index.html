@@ -1,363 +1,159 @@
-"<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Part 1</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/styles.css"/>
-    <script src="../static/js/script.js" th:src="@{/js/script.js}"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <title>
+        Recherche les memoires
+    </title>
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
+    <!-- Nucleo Icons -->
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!-- CSS Files -->
+    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
+    <style>
+        /* Adapter le formulaire à la navbar */
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            padding: 10px 0;
+            width: 100%; /* Prend toute la largeur */
+        }
+
+        /* Conteneur des champs */
+        .search-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            width: 100%; /* Prend toute la largeur */
+            max-width: 900px; /* Évite que les champs s'étalent trop */
+        }
+
+        /* Champs de recherche */
+        .search-container input {
+            flex: 1; /* Permet aux champs de s'adapter */
+            min-width: 120px; /* Largeur minimale */
+            max-width: 200px; /* Largeur maximale */
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        /* Effet au focus */
+        .search-container input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
+        }
+
+        /* Bouton de recherche */
+        .search-button {
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        /* Effet hover sur le bouton */
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Icône à l'intérieur du bouton */
+        .search-button i {
+            font-size: 16px;
+        }
+
+        /* Ajustements pour les petits écrans */
+        @media screen and (max-width: 768px) {
+            .search-container {
+                justify-content: center;
+            }
+
+            .search-container input {
+                width: 100%; /* Les champs prennent toute la largeur */
+                max-width: 100%;
+            }
+
+            .search-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
-<body class="auto-theme">
-<!-- 1ere partie -->
-<div class="sidebar">
-    <!-- Icone pour changement de lumière -->
-    <div class="icon" id="theme-icon">
-        <i class="bi bi-brightness-high"></i>
-        <div class="tooltip">Changer le thème</div>
-    </div>
 
-    <!-- Dropdown pour les thèmes -->
-    <div class="dropdown">
-        <div class="icon" data-theme="light">
-            <i class="bi bi-sun"></i>
-            <div class="tooltip"></div>
-        </div>
-        <div class="icon" data-theme="dark">
-            <i class="bi bi-moon"></i>
-            <div class="tooltip"></div>
-        </div>
-        <div class="icon" data-theme="auto">
-            <i class="bi bi-circle-half"></i>
-            <div class="tooltip"></div>
-        </div>
-    </div>
-    <!-- Icone pour contact -->
-    <div class="icon contact">
-        <i class="bi bi-envelope"></i>
-        <div class="tooltip">Nous contacter</div>
-    </div>
-</div>
-
-<!-- Par du milieu -->
-<div class="scrollable-section">
-    <!-- Flèche en haut de la section défilable -->
-    <div class="dashboard" style="width: 8cm; background-color: #0d4e2f;">
-        <button class="scroll-btn top" onclick="scrollSection('up')"></button>
-        <!-- La section défilable -->
-        <div class="dashboard-title">
-            <i class="bi bi-speedometer"></i> Tableau de Bord
-        </div>
-        <!-- Section Licences -->
-        <div class="section">
-            <div class="section-header" id="section-1">
-                <i class="bi bi-card-text"></i>
-                <span>Licences</span>
-                <button class="toggle-btn" data-target="subsection-1">+</button>
-            </div>
-            <div class="subsections" id="subsection-1">
-                <div class="branch">
-                    <div class="subsection-item">
-                        <i class="bi bi-plus-circle"></i> Ajout
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-pencil-square"></i> Modification
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-list"></i> Listes
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-trash"></i> Suppression
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Section Master -->
-        <div class="section">
-            <div class="section-header" id="section-2">
-                <i class="bi bi-book"></i>
-                <span>Master</span>
-                <button class="toggle-btn" data-target="subsection-2">+</button>
-            </div>
-            <div class="subsections" id="subsection-2">
-                <div class="branch">
-                    <div class="subsection-item">
-                        <i class="bi bi-plus-circle"></i> Ajout
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-pencil-square"></i> Modification
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-list"></i> Listes
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-trash"></i> Suppression
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Section Thèses -->
-        <div class="section">
-            <div class="section-header" id="section-3">
-                <i class="bi bi-file-earmark-text"></i>
-                <span>Thèses</span>
-                <button class="toggle-btn" data-target="subsection-3">+</button>
-            </div>
-            <div class="subsections" id="subsection-3">
-                <div class="branch">
-                    <div class="subsection-item">
-                        <i class="bi bi-plus-circle"></i> Ajout
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-pencil-square"></i> Modification
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-list"></i> Listes
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-trash"></i> Suppression
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Section Utilisateurs -->
-        <div class="section">
-            <div class="section-header" id="section-4">
-                <i class="bi bi-person-fill"></i>
-                <span>Gestion des Utilisateurs</span>
-                <button class="toggle-btn" data-target="subsection-4">+</button>
-            </div>
-            <div class="subsections" id="subsection-4">
-                <div class="branch">
-                    <div class="subsection-item">
-                        <i class="bi bi-person-add"></i> Ajout
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-person-check"></i> Modification
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-person-lines-fill"></i> Listes
-                    </div>
-                    <div class="subsection-item">
-                        <i class="bi bi-person-x"></i> Suppression
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br> <br>
-        <!-- Section Téléchargements -->
-        <div class="section" id="downloads-section">
-            <div class="section-header" id="section-5">
-                <!-- Bouton Télécharger -->
-                <!-- Bouton Télécharger -->
-                <button class="btn-download" data-bs-toggle="modal" data-bs-target="#downloadModal">
-                    <i class="bi bi-cloud-arrow-down-fill"></i>
-                    <span>Téléchargements</span>
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="downloadModalLabel">Saisir l'année et le type</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="yearForm" action="/rechercheParAnnee" method="get">
-                                    <div class="mb-3">
-                                        <label for="yearInput" class="form-label">Année</label>
-                                        <input type="number" class="form-control" id="yearInput" name="annee" placeholder="Entrez une année" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="typeSelect" class="form-label">Type</label>
-                                        <select class="form-select" id="typeSelect" name="type" required>
-                                            <option value="" disabled selected>Choisir un type</option>
-                                            <option value="LICENCE">LICENCE</option>
-                                            <option value="MASTER">MASTER</option>
-                                            <option value="Doctorant">THESE</option>
-                                        </select>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                        <button type="submit" id="confirmButton" class="btn btn-primary">Rechercher</button>
-                                    </div>
-                                </form>
-                            </div>
+<body class="">
+<div class="container position-sticky z-index-sticky top-0">
+    <div class="row">
+        <div class="col-12">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg blur border-radius-lg top-0 z-index-3 shadow position-absolute mt-4 py-2 start-0 end-0 mx-4">
+                <div class="container-fluid ps-2 pe-0">
+                    Recherche
+                    <form id="searchForm" class="search-form" action="/licences/recherche" method="post">
+                        <div class="search-container">
+                            <input type="text" id="searchCote" name="cote" placeholder="Côte (Ex. LAF13/2)">
+                            <input type="text" id="searchTitre" name="titre" placeholder="Titre du mémoire">
+                            <input type="text" id="searchEtudiant" name="etudiant" placeholder="Nom de l'étudiant">
+                            <input type="text" id="searchEncadrant" name="encadrant" placeholder="Nom de l'encadrant">
+                            <input type="text" id="searchFiliere" name="filiere" placeholder="Filière (Ex. Informatique)">
+                            <input type="number" id="searchAnnee" name="annee" placeholder="Année (Ex. 2024)">
+                            <button type="submit" class="search-button">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Section Notifications -->
-        <div class="section" id="notifications-section">
-            <div class="section-header" id="section-6">
-                <i class="bi bi-app-indicator"></i>
-                <span>Notifications</span>
-            </div>
-        </div>
-        <!-- Flèche en bas de la section défilable -->
-        <button class="scroll-btn bottom" onclick="scrollSection('down')"></button>
-    </div>
-</div>
-<!-- Par de la droite -->
-<div class="container">
-    <button class="scroll-btn top" onclick="scrollSection('up')"></button>
-    <!-- Header avec texte animé et icônes -->
-    <div class="main-header">
-        <!-- Bloc du texte animé -->
-        <div class="text-block">
-            <nav class="navbar navbar-expand-lg navbar-dark">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="#">
-                        <span id="typing-text"></span> <!-- Le texte animé sera inséré ici -->
-                    </a>
+                    </form>
                 </div>
             </nav>
-        </div>
-        <!-- Bloc des icônes aligné à droite -->
-        <div class="icon-container">
-            <div class="user-icon position-relative">
-                <a href="/notifications">
-                    <i class="fas fa-bell notification-icon me-2"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                          th:if="${nonLuCount > 0}"
-                          th:text="${nonLuCount}">0</span>
-                </a>
-            </div>
-            <!-- Icône utilisateur -->
-            <div class="user-icon" onclick="toggleSidebar('sidebar-user')">
-                <i class="fas fa-user"></i>
-            </div>
-            <!-- Menu contextuel utilisateur -->
-            <div id="sidebar-user" class="dropdown-menu p-3" style="display: none; position: absolute; right: 10px; top: 50px;">
-                <p class="mb-2 font-weight-bold">Connecté en tant que :</p>
-                <p class="mb-2" th:text="'Nom : ' + ${nom}">Nom</p>
-                <p class="mb-2" th:text="'Prénom : ' + ${prenom}">Prénom</p>
-                <p class="mb-2" th:text="'Rôle : ' + ${roles}">Rôle(s)</p>
-                <!-- Bouton de déconnexion avec redirection -->
-                <a class="btn btn-danger btn-sm w-100" href="/logout">Se déconnecter</a>
-                <hr />
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-bell me-2 text-primary"></i>
-                    <span id="notification-count" class="badge bg-danger">3</span>
-                    <span class="ms-2">Notifications</span>
-                </div>
-            </div>
+            <!-- End Navbar -->
         </div>
     </div>
-    <!-- Bloc de recherche sous le header -->
-    <div class="search-container">
-        <!-- Formulaire de recherche -->
-        <form id="searchForm" action="/memoires/liste" method="get">
-            <div class="row align-items-center justify-content-center">
-                <div class="col-md-1 mb-2">
-                    <input type="text" class="form-control" id="searchCote" name="cote" placeholder="Cote">
-                </div>
-
-                <div class="col-md-1 mb-2">
-                    <input type="text" class="form-control" id="searchTitre" name="titre" placeholder="Titre">
-                </div>
-
-                <div class="col-md-1 mb-2">
-                    <input type="text" class="form-control" id="searchEtudiant" name="etudiant" placeholder="l'étudiant">
-                </div>
-
-                <div class="col-md-1 mb-2">
-                    <input type="text" class="form-control" id="searchEncadrant" name="encadrant" placeholder="l'encadrant">
-                </div>
-
-                <div class="col-md-1 mb-2">
-                    <input type="text" class="form-control" id="searchFiliere" name="filiere" placeholder="Agroforesterie">
-                </div>
-
-                <div class="col-md-1 mb-2">
-                    <input type="number" class="form-control" id="searchAnnee" name="annee" placeholder="2024">
-                </div>
-
-                <div class="col-md-1 mb-2">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
-        <div th:if="${errorMessage != null}" >
-            <p th:text="${errorMessage}"></p>
-        </div>  <hr>
-
-        <!-- Bloc de statistiques -->
-        <div th:unless="${errorMessage != null}" class="row mb-4 mt-4">
-            <div class="stats-container">
-                <!-- Licence -->
-                <div class="stats-card">
-                    <div class="card-text">
-                        <div class="card-header">licence</div>
-                        <h3 class="fw-bold" th:text="${licenceCount}">0</h3>
-                    </div>
-                    <div class="card-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                </div>
-                <!-- Master -->
-                <div class="stats-card">
-                    <div class="card-text">
-                        <div class="card-header">master</div>
-                        <h3 class="fw-bold" th:text="${masterCount}">0</h3>
-                    </div>
-                    <div class="card-icon">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                </div>
-                <!-- Doctorat -->
-                <div class="stats-card">
-                    <div class="card-text">
-                        <div class="card-header">doctorat</div>
-                        <h3 class="fw-bold" th:text="${doctoratCount}">0</h3>
-                    </div>
-                    <div class="card-icon">
-                        <i class="fas fa-university"></i>
-                    </div>
-                </div>
-                <!-- Statistiques -->
-                <div class="stats-card">
-                    <div class="card-text">
-                        <div class="card-header">statistiques</div>
-                        <h3 class="fw-bold">2024</h3>
-                    </div>
-                    <div class="card-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                </div>
-                <!-- diagramme en barre des memoires-->
-                <div class="charts-container">
-                    <div class="chart-wrapper">
-                        <h4 class="chart-title">Diagramme en Barres</h4>
-                        <canvas id="statsChart"></canvas>
-                    </div>
-                    <div class="chart-wrapper">
-                        <h4 class="chart-title">Diagramme en Courbes</h4>
-                        <canvas id="evolutionCharts"></canvas>
-                    </div>
-                    <div class="chart-wrapper">
-                        <h4 class="chart-title">Diagramme Circulaire</h4>
-                        <canvas id="pieChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <button class="scroll-btn bottom" onclick="scrollSection('down')"></button>
 </div>
-<!-- Statistiques -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<main class="main-content  mt-0">
+    <section>
+    </section>
+</main>
+<!--   Core JS Files   -->
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
 </body>
+
 </html>

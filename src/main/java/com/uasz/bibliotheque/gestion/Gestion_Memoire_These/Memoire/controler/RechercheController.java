@@ -25,7 +25,7 @@ public class RechercheController {
     }
 
     // Afficher les mémoires de Licence
-    @RequestMapping(value = "/memoires/licences", method = RequestMethod.GET)
+    @RequestMapping(value = "/licences/recherche", method = RequestMethod.POST)
     public String afficherMemoiresLicence(
             @RequestParam(required = false) String cote,
             @RequestParam(required = false) String titre,
@@ -66,8 +66,8 @@ public class RechercheController {
             hasSearchParams = true;
         }
 
+        // Si la recherche est effectuée, récupérer les résultats
         if (hasSearchParams) {
-            // Effectuer une recherche selon les critères
             List<Memoire> memoiresTrouves = memoireService.searchMemos(spec);
             model.addAttribute("memoires", memoiresTrouves);
             model.addAttribute("nombreMemoiresTrouves", memoiresTrouves.size());
@@ -75,23 +75,15 @@ public class RechercheController {
             if (memoiresTrouves.isEmpty()) {
                 model.addAttribute("message", "Aucun mémoire trouvé pour les critères spécifiés.");
             }
-        } else {
-            // Si aucune recherche n'est effectuée, récupérer les mémoires groupés
-            Map<String, Map<String, List<Memoire>>> memoiresGroupes = memoireService.getMemoiresLicenceGroupes();
-            model.addAttribute("memoiresGroupes", memoiresGroupes);
 
-            // Calculer le nombre total de mémoires
-            int nombreTotalMemoires = memoiresGroupes.values().stream()
-                    .flatMap(map -> map.values().stream())
-                    .mapToInt(List::size)
-                    .sum();
-            model.addAttribute("nombreMemoires", nombreTotalMemoires);
+            model.addAttribute("rechercheEffectuee", true);
+        } else {
+            model.addAttribute("rechercheEffectuee", false);
         }
 
         model.addAttribute("typeMemoire", "Licence");
         return "licence"; // Vue dédiée
     }
-
 
     // Afficher les mémoires de Master
     @RequestMapping(value = "/memoires/masters", method = RequestMethod.GET)

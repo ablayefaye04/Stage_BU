@@ -31,7 +31,13 @@
 
 <body class="g-sidenav-show  bg-gray-100">
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
-
+  <div class="sidenav-header">
+    <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+    <a class="navbar-brand px-4 py-3 m-0" href="#" target="_blank">
+      <img th:src="@{/img/logo1.png}" class="navbar-brand-img" width="35" height="39" alt="main_logo">
+      <span class="ms-1 text-sm text-dark">BU - UASZ</span>
+    </a>
+  </div>
   <hr class="horizontal dark mt-0 mb-2">
   <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
     <ul class="navbar-nav">
@@ -42,13 +48,13 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="listeResponsables">
+        <a class="nav-link text-dark" href="/listeResponsables">
           <i class="fa fa-users" aria-hidden="true"></i>
           <span class="nav-link-text ms-1">Utilisateurs</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="../pages/billing.html">
+        <a class="nav-link text-dark" href="/ajoutMemoire">
           <i class="material-symbols-rounded opacity-5">receipt_long</i>
           <span class="nav-link-text ms-1">Ajout mémoires</span>
         </a>
@@ -96,9 +102,9 @@
   </div>
   <div class="sidenav-footer position-absolute w-100 bottom-0 ">
     <div class="mx-3">
-      <h6>Autres liens</h6>
       <a href="https://uasz.sn"><b>UASZ</b></a> <i class="fa fa-university" aria-hidden="true"></i> <br>
-      <a href="https://www.bibliotheque.uasz.sn"><b>BU</b></a> <img src="bu.png" alt="Icône" width="20" height="20"></i><br>
+      <a href="https://www.bibliotheque.uasz.sn"><b>BU</b></a>
+      <img th:src="@{/img/logo1.png}" alt="Icône" width="20" height="20"><br>
 
       <a href="https://rivieresdusud.uasz.sn"><b>Rivière du Sud</b> <img src="pile-de-livres.png" alt="Icône" width="20" height="20"></a>
 
@@ -262,8 +268,8 @@
           <div class="card-header p-2 ps-3">
             <div class="d-flex justify-content-between">
               <div>
-                <p class="text-sm mb-0 text-capitalize"><b><h4>Licence</h4></b></p>
-                <!--nombre de memoire licence-->
+                <p class="text-sm mb-0 text-capitalize">Licences</p>
+                <h4 class="mb-0" th:text="${licenceCount}"></h4>
               </div>
               <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                 <i class="fa fa-book" aria-hidden="true"></i>
@@ -272,10 +278,6 @@
           </div>
           <hr class="dark horizontal my-0">
           <div class="card-footer p-2 ps-3">
-
-
-            <!--Lien autres page affichage Liste  Licence-->
-
             <style>
                 .btn-rechercher {
                     background-color: rgb(34, 34, 37);
@@ -291,12 +293,7 @@
                     background-color: rgb(54, 54, 57);
                 }
             </style>
-
-            <form th:action="@{/rechercher}" method="get">
-              <a href="/memoires/licences" class="btn-rechercher">Voir plus</a>
-
-            </form>
-
+            <a href="/licence" class="btn-rechercher">Voir plus</a>
           </div>
         </div>
       </div>
@@ -305,11 +302,9 @@
           <div class="card-header p-2 ps-3">
             <div class="d-flex justify-content-between">
               <div>
-                <p class="text-sm mb-0 text-capitalize"><b><h4>Master</h4></b></p>
-
-
+                <p class="text-sm mb-0 text-capitalize">Masters</p>
+                <h4 class="mb-0" th:text="${masterCount}"></h4>
                 <!-- NOMBRE DE MASTER-->
-
               </div>
               <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                 <i class="fa fa-graduation-cap" aria-hidden="true"></i>
@@ -318,11 +313,7 @@
           </div>
           <hr class="dark horizontal my-0">
           <div class="card-footer p-2 ps-3">
-
-
-            <!--Lien autres page affichage Liste Master-->
-
-            <style>
+             <style>
                 .btn-rechercher {
                     background-color: rgb(34, 34, 37);
                     color: white;
@@ -350,11 +341,9 @@
           <div class="card-header p-2 ps-3">
             <div class="d-flex justify-content-between">
               <div>
-                <p class="text-sm mb-0 text-capitalize"><b><h4>Doctorat</h4></b></p>
-
+                <p class="text-sm mb-0 text-capitalize">Doctorats</p>
+                <h4 class="mb-0" th:text="${doctoratCount}"></h4>
                 <!--Affichage nombre totale DOCTORAT -->
-
-
               </div>
               <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                 <i class="fa fa-university" aria-hidden="true"></i>
@@ -363,10 +352,7 @@
           </div>
           <hr class="dark horizontal my-0">
           <div class="card-footer p-2 ps-3">
-
-            <!--Lien autres page affichage Liste Doctorat-->
-
-            <style>
+             <style>
                 .btn-rechercher {
                     background-color: rgb(34, 34, 37);
                     color: white;
@@ -399,7 +385,6 @@
             <div class="d-flex justify-content-between">
               <div>
                 <p class="text-sm mb-0 text-capitalize"><b><h4>Explorez</h4></b></p>
-
               </div>
               <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -408,9 +393,6 @@
           </div>
           <hr class="dark horizontal my-0">
           <div class="card-footer p-2 ps-3">
-
-            <!--Page de recherche , qui permet de rechercher un selon le niveau-->
-
             <style>
                 .btn-rechercher {
                     background-color: rgb(34, 34, 37);
@@ -438,92 +420,74 @@
       </div>
     </div>
 
-
-
-
-    <!-- Les DIAGRAMME -->
-
     <!--LICENCE-->
-
     <div class="row">
+      <!-- Licence -->
       <div class="col-lg-4 col-md-6 mt-4 mb-4">
         <div class="card">
           <div class="card-body">
-            <h6 class="mb-0 ">Statistique Licence</h6>
-
+            <h6 class="mb-0"> Licence</h6>
             <div class="pe-2">
               <div class="chart">
-
-
-                <!--Statistique licence  ON DOIT ENLEVER LA BALISE CANVAS CI-dedous -->
-                <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
+                <canvas id="chart-licence" class="chart-canvas" height="170"></canvas>
               </div>
             </div>
             <hr class="dark horizontal">
-            <div class="d-flex ">
+            <div class="d-flex">
               <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-              <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
+              <p class="mb-0 text-sm">Mis à jour récemment</p>
             </div>
           </div>
         </div>
       </div>
 
-
-
-
-
-      <!--Master-->
+      <!-- Master -->
       <div class="col-lg-4 col-md-6 mt-4 mb-4">
-        <div class="card ">
+        <div class="card">
           <div class="card-body">
-            <h6 class="mb-0 "> Statistique Master </h6>
-
+            <h6 class="mb-0"> Master</h6>
             <div class="pe-2">
               <div class="chart">
-
-                <!--Statistique Master ON DOIT ENLEVER LA BALISE CANVAS CI-dedous -->
-
-                <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
+                <canvas id="chart-master" class="chart-canvas" height="170"></canvas>
               </div>
             </div>
             <hr class="dark horizontal">
-            <div class="d-flex ">
+            <div class="d-flex">
               <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-              <p class="mb-0 text-sm"> updated 4 min ago </p>
+              <p class="mb-0 text-sm">Mis à jour récemment</p>
             </div>
           </div>
         </div>
       </div>
 
-
-
-      <!--DOctorat-->
-
+      <!-- Doctorat -->
       <div class="col-lg-4 mt-4 mb-3">
         <div class="card">
           <div class="card-body">
-            <h6 class="mb-0 ">Statistique Doctorat</h6>
-
+            <h6 class="mb-0"> Doctorat</h6>
             <div class="pe-2">
               <div class="chart">
-                <!--Statistique Doctorat  ON DOIT ENLEVER LA BALISE CANVAS CI-dedous -->
-
+                <canvas id="chart-doctorat" class="chart-canvas" height="170"></canvas>
               </div>
             </div>
             <hr class="dark horizontal">
-            <div class="d-flex ">
+            <div class="d-flex">
               <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-              <p class="mb-0 text-sm">just updated</p>
+              <p class="mb-0 text-sm">Mis à jour récemment</p>
             </div>
           </div>
         </div>
       </div>
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        var annees = /*[[${annees}]]*/ [];
+        var licencesCounts = /*[[${licencesCounts}]]*/ [];
+        var mastersCounts = /*[[${mastersCounts}]]*/ [];
+        var thesesCounts = /*[[${thesesCounts}]]*/ [];
+        /*]]>*/
+      </script>
+
     </div>
-
-
-
-
-
 
 
     <footer class="footer py-4  ">
@@ -640,239 +604,151 @@
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="../assets/js/plugins/chartjs.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
+    document.addEventListener("DOMContentLoaded", function () {
+    var ctxLicence = document.getElementById("chart-licence").getContext("2d");
+    var ctxMaster = document.getElementById("chart-master").getContext("2d");
+    var ctxDoctorat = document.getElementById("chart-doctorat").getContext("2d");
 
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["M", "T", "W", "T", "F", "S", "S"],
-        datasets: [{
-          label: "Views",
-          tension: 0.4,
-          borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "#43A047",
-          data: [50, 45, 22, 28, 50, 60, 76],
-          barThickness: 'flex'
-        }, ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
+    // Vérification des données injectées par Thymeleaf
+    console.log("Années:", annees);
+    console.log("Licences:", licencesCounts);
+    console.log("Masters:", mastersCounts);
+    console.log("Doctorats:", thesesCounts);
+
+    // Graphique Licence
+    new Chart(ctxLicence, {
+        type: "bar",
+        data: {
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Licences",
+                data: licencesCounts,
+                backgroundColor: "#43A047",
+                borderWidth: 1,
+                borderRadius: 4,
+                borderSkipped: false,
+                barThickness: 'flex'
+            }]
         },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: '#e5e5e5'
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        // Utilisation de `stepSize` pour garantir l'affichage des entiers
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
+                        }
+                    }
+                }
             },
-            ticks: {
-              suggestedMin: 0,
-              suggestedMax: 500,
-              beginAtZero: true,
-              padding: 10,
-              font: {
-                size: 14,
-                lineHeight: 2
-              },
-              color: "#737373"
-            },
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#737373',
-              padding: 10,
-              font: {
-                size: 14,
-                lineHeight: 2
-              },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
+                }
             }
-          },
+        }
+    });
+
+   // Graphique Master
+    new Chart(ctxMaster, {
+        type: "line",
+        data: {
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Masters",
+                data: mastersCounts,
+                pointRadius: 3,
+                pointBackgroundColor: "#43A047",
+                pointBorderColor: "transparent",
+                borderColor: "#43A047",
+                backgroundColor: "transparent",
+                tension: 0.4, // Ajoute une courbe lissée
+                borderWidth: 2,
+                fill: true
+            }]
         },
-      },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
+                }
+            }
+        }
     });
 
 
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
-
-    new Chart(ctx2, {
-      type: "line",
-      data: {
-        labels: ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
-        datasets: [{
-          label: "Sales",
-          tension: 0,
-          borderWidth: 2,
-          pointRadius: 3,
-          pointBackgroundColor: "#43A047",
-          pointBorderColor: "transparent",
-          borderColor: "#43A047",
-          backgroundColor: "transparent",
-          fill: true,
-          data: [120, 230, 130, 440, 250, 360, 270, 180, 90, 300, 310, 220],
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
+      // Graphique Doctorat
+      new Chart(ctxDoctorat, {
+          type: "bar",
+          data: {
+              labels: annees,
+              datasets: [{
+                  label: "Nombre de Doctorats",
+                  data: thesesCounts,
+                  tension: 0,
+                  borderWidth: 2,
+                  pointRadius: 3,
+                  pointBackgroundColor: "#43A047",
+                  pointBorderColor: "transparent",
+                  borderColor: "#43A047",
+                  backgroundColor: "transparent",
+                  fill: true
+              }]
           },
-          tooltip: {
-            callbacks: {
-              title: function(context) {
-                const fullMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                return fullMonths[context[0].dataIndex];
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: false, // Ne commence pas à 0
+                      suggestedMin: 1 // Fixe 1 comme valeur minimale de l'axe Y
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function (context) {
+                              return context.dataset.label + ": " + context.raw;
+                          }
+                      }
+                  }
               }
-            }
           }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [4, 4],
-              color: '#e5e5e5'
-            },
-            ticks: {
-              display: true,
-              color: '#737373',
-              padding: 10,
-              font: {
-                size: 12,
-                lineHeight: 2
-              },
-            }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#737373',
-              padding: 10,
-              font: {
-                size: 12,
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
+      });
+  });
 
-    var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
+</script>
 
-    new Chart(ctx3, {
-      type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-          label: "Tasks",
-          tension: 0,
-          borderWidth: 2,
-          pointRadius: 3,
-          pointBackgroundColor: "#43A047",
-          pointBorderColor: "transparent",
-          borderColor: "#43A047",
-          backgroundColor: "transparent",
-          fill: true,
-          data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [4, 4],
-              color: '#e5e5e5'
-            },
-            ticks: {
-              display: true,
-              padding: 10,
-              color: '#737373',
-              font: {
-                size: 14,
-                lineHeight: 2
-              },
-            }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [4, 4]
-            },
-            ticks: {
-              display: true,
-              color: '#737373',
-              padding: 10,
-              font: {
-                size: 14,
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
-  </script>
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {

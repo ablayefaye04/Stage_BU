@@ -11,6 +11,7 @@ import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories.
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories.UfrRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -54,6 +55,11 @@ public class UfrService {
     public List<Ufr> findAllUfrs() {
         return ufrRepository.findAll();
     }
+
+    public Optional<Ufr> findByNom(String name) {
+        return ufrRepository.findByNom(name);
+    }
+
 
     // Récupérer les départements pour un UFR donné
     public List<Departement> findDepartementsByUfr(Ufr ufr) {

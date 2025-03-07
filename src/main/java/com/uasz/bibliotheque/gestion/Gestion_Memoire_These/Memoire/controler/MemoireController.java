@@ -2,6 +2,7 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.controler;
 
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Role;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -12,10 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.*;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories.MemoireRepository;
-import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.EncadrantService;
-import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.EtudiantService;
-import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.FiliereService;
-import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.MemoireService;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.utils.MemoireSpecifications;
 
 import java.security.Principal;
@@ -36,6 +33,12 @@ public class MemoireController {
     EncadrantService encadrantService;
     @Autowired
     FiliereService filiereService;
+    @Autowired
+    private UfrService ufrService;
+
+    @Autowired
+    private DepartementService departementService;
+
 
     //formulaire d'ajout Licence
     @RequestMapping(value = "/ajoutMemoire", method = RequestMethod.GET)
@@ -191,24 +194,26 @@ public class MemoireController {
             // Récupération des statistiques par année et par type
             Map<Integer, Long> licencesParAnnee = memoireService.countMemosByTypeAndYear(TypeMemoire.LICENCE);
             Map<Integer, Long> mastersParAnnee = memoireService.countMemosByTypeAndYear(TypeMemoire.MASTER);
-            Map<Integer, Long> doctoratsParAnnee = memoireService.countMemosByTypeAndYear(TypeMemoire.DOCTORAT);
+            // Récupération des statistiques des thèses par année
+            Map<Integer, Long> thesesParAnnee = memoireService.countThesesByYear();
 
             // Regrouper les années
             Set<Integer> anneesSet = new TreeSet<>();
             anneesSet.addAll(licencesParAnnee.keySet());
             anneesSet.addAll(mastersParAnnee.keySet());
-            anneesSet.addAll(doctoratsParAnnee.keySet());
+            anneesSet.addAll(thesesParAnnee.keySet());
+
             List<Integer> annees = new ArrayList<>(anneesSet);
 
             // Préparer les données pour les graphiques
-            List<Long> licenceCounts = annees.stream().map(year -> licencesParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
-            List<Long> masterCounts = annees.stream().map(year -> mastersParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
-            List<Long> doctoratCounts = annees.stream().map(year -> doctoratsParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
+            List<Long> licencesCounts = annees.stream().map(year -> licencesParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
+            List<Long> mastersCounts = annees.stream().map(year -> mastersParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
+            List<Long> thesesCounts = annees.stream().map(year -> thesesParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
 
             model.addAttribute("annees", annees);
-            model.addAttribute("licenceCounts", licenceCounts);
-            model.addAttribute("masterCounts", masterCounts);
-            model.addAttribute("doctoratCounts", doctoratCounts);
+            model.addAttribute("licencesCounts", licencesCounts);
+            model.addAttribute("mastersCounts", mastersCounts);
+            model.addAttribute("thesesCounts", thesesCounts);
 
         } catch (Exception e) {
             logger.error("Erreur lors de la récupération des statistiques : ", e);
@@ -451,5 +456,57 @@ public class MemoireController {
         return "resultatsRecherche";
     }
 
+
+    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    public String voir(Model model) {
+        return "index"; // Assurez-vous que `formulaireMaster.html` est dans `templates`.
+    }
+
+    /**
+     * Affiche le formulaire de filtrage des mémoires de Licence.
+     */
+    @GetMapping("/licence")
+    public String afficherToutesLesMemoires(Model model) {
+        // Récupérer toutes les mémoires de type LICENCE
+        List<Memoire> memoires = memoireService.getAllMemoiresLicence();
+
+        // Ajouter les mémoires et les UFR au modèle
+        model.addAttribute("memoires", memoires);
+        return "licence";
+    }
+
+
+    /**
+     * Filtre et affiche uniquement les mémoires de Licence.
+     */
+    @PostMapping("/filtre/licence")
+    public String filtrerMemoires(
+            @RequestParam String ufrNom,
+            @RequestParam String departementNom,
+            @RequestParam String filiereNom,
+            Model model) {
+
+        // Récupérer uniquement les mémoires de type LICENCE
+        List<Memoire> memoires = memoireService.getMemoiresLicenceFiltres(ufrNom, departementNom, filiereNom);
+
+        // Grouper les mémoires par UFR > Département
+        Map<String, Map<String, List<Memoire>>> memoiresGroupes = memoires.stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getFiliere().getDepartement().getUfr().getNom(),
+                        Collectors.groupingBy(m -> m.getFiliere().getDepartement().getNom())
+                ));
+
+        // Ajouter les données au modèle
+        model.addAttribute("ufrs", ufrService.findAllUfrs());
+        model.addAttribute("memoiresGroupes", memoiresGroupes);
+        model.addAttribute("selection", Map.of(
+                "ufr", ufrNom,
+                "departement", departementNom,
+                "filiere", filiereNom
+        ));
+        model.addAttribute("rechercheEffectuees", true); // Ajoute un indicateur de recherche
+
+        return "licence";
+    }
 
 }

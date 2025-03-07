@@ -79,4 +79,14 @@ public class MemoireSpecifications {
                 type != null ? criteriaBuilder.equal(root.get("type"), type) : criteriaBuilder.conjunction();
     }
 
+    public static Specification<Memoire> withUFR(String ufrNom) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("filiere").get("departement").get("ufr").get("nom"), ufrNom);
+    }
+
+    public static Specification<Memoire> withDepartement(String departementNom) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("filiere").get("departement").get("nom"), departementNom);
+    }
+
 }

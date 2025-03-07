@@ -12,8 +12,10 @@ import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories.
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories.MemoireRepository;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.repositories.UfrRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -69,6 +71,16 @@ public class FiliereService {
 
     public Filiere createNewField(Filiere field) {
         return filiereRepository.save(field);
+    }
+
+
+    public List<String> getFilieresByDepartement(String departementNom) {
+        return departementRepository.findByNom(departementNom)
+                .map(departement -> filiereRepository.findByDepartement(departement)
+                        .stream()
+                        .map(Filiere::getNom)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList()); // Retourne une liste vide si le département n'existe pas
     }
 
 }

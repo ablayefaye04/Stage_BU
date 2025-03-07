@@ -319,10 +319,38 @@ public class MemoireService {
                         Collectors.counting() // Compter les mémoires dans chaque année
                 ));
     }
+    public Map<Integer, Long> countThesesByYear() {
+        List<These> theses = theseRepository.findAll(); // Récupérer toutes les thèses
+
+        return theses.stream()
+                .collect(Collectors.groupingBy(
+                        These::getAnnee,    // Regrouper par l'année
+                        Collectors.counting() // Compter les thèses dans chaque année
+                ));
+    }
+
 
     //liste de licences
-    public Map<String, Map<String, List<Memoire>>> getMemoiresLicenceGroupes() {
-        // Récupérer tous les mémoires de type Licence
+    /**
+     * Récupère uniquement les mémoires de Licence selon les filtres (UFR, Département, Filière).
+     */
+    public List<Memoire> getMemoiresLicenceFiltres(String ufrNom, String departementNom, String filiereNom) {
+        Specification<Memoire> spec = Specification
+                .where(MemoireSpecifications.withType(TypeMemoire.LICENCE))
+                .and(MemoireSpecifications.withUFR(ufrNom))
+                .and(MemoireSpecifications.withDepartement(departementNom))
+                .and(MemoireSpecifications.withFiliere(filiereNom));
+
+        return memoireRepository.findAll(spec);
+    }
+
+    public List<Memoire> getAllMemoiresLicence() {
+        return memoireRepository.findAll(MemoireSpecifications.withType(TypeMemoire.LICENCE));
+    }
+
+    //listes des licences
+    public Map<String, Map<String, List<Memoire>>> getMemoiresLicencesGroupes() {
+        // Récupérer tous les mémoires de type Master
         List<Memoire> memoiresLicence = memoireRepository.findByType(TypeMemoire.LICENCE);
 
         if (memoiresLicence == null || memoiresLicence.isEmpty()) {
@@ -338,6 +366,7 @@ public class MemoireService {
                         )
                 ));
     }
+
 
     //liste de masters
     public Map<String, Map<String, List<Memoire>>> getMemoiresMasterGroupes() {

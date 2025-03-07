@@ -144,7 +144,7 @@ tr:hover .actions {
         </tr>
         </thead>
         <tbody>
-        <tr th:each="these, stat : ${entry.value}" th:class="${stat.odd} ? 'odd-row' : 'even-row'">
+        <tr th:each="these, stat : ${thesesParUFR[entry.key]}">
             <td th:text="${stat.count}"></td>
             <td th:text="${these.cote}"></td>
             <td th:text="${these.titre}"></td>
@@ -159,60 +159,6 @@ tr:hover .actions {
         </tr>
         </tbody>
     </table>
-</div>
-
-<!-- Popups -->
-<div th:each="these : ${entry.value}">
-    <!-- Popup Modifier -->
-    <div class="modal fade" th:attr="id='form_Modifier_These'+${these.id}">
-        <div class="modal-dialog">
-            <div class="modal-content panel-info">
-                <div class="modal-header panel-heading">
-                    <button type="button" class="close" data-dismiss="modal">x</button>
-                    <h4 class="modal-title">Modifier Thèse</h4>
-                </div>
-                <form th:action="@{/theses/modifier}" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" name="id" th:value="${these.id}" />
-                        <div class="form-group">
-                            <label>Titre</label>
-                            <input type="text" class="form-control" name="titre" th:value="${these.titre}" />
-                        </div>
-                        <div class="form-group">
-                            <label>Année</label>
-                            <input type="number" class="form-control" name="annee" th:value="${these.annee}" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-info">Modifier</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Popup Supprimer -->
-    <div class="modal fade" th:attr="id='form_Supprimer_These'+${these.id}">
-        <div class="modal-dialog">
-            <div class="modal-content panel-danger">
-                <div class="modal-header panel-heading">
-                    <button type="button" class="close" data-dismiss="modal">x</button>
-                    <h4 class="modal-title">Supprimer Thèse</h4>
-                </div>
-                <form th:action="@{/theses/supprimer}" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" name="id" th:value="${these.id}" />
-                        <p>Voulez-vous vraiment supprimer la thèse : <strong th:text="${these.titre}"></strong> ?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-danger">Supprimer</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>

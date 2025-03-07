@@ -132,6 +132,7 @@ public class EcoleDoctoratController {
 
         // Grouper les thèses par UFR
         Map<String, List<These>> thesesParUFR = theses.stream()
+                .filter(these -> these.getEcoleDoctorat() != null && these.getEcoleDoctorat().getUfr() != null)
                 .collect(Collectors.groupingBy(these -> these.getEcoleDoctorat().getUfr().getNom()));
 
         // Créer un mappage de chaque école doctorale pour chaque UFR
@@ -141,6 +142,9 @@ public class EcoleDoctoratController {
 
         model.addAttribute("thesesParUFR", thesesParUFR);
         model.addAttribute("ecoleDoctoraleData", ecoleDoctoraleData);
+        for (Map.Entry<String, List<These>> entry : thesesParUFR.entrySet()) {
+            System.out.println("UFR: " + entry.getKey() + " - Thèses: " + entry.getValue().size());
+        }
 
         return "doctorat"; // nom de la vue qui affiche la liste des thèses
     }

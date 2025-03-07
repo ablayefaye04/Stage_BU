@@ -138,6 +138,12 @@ public class UtilisateurController {
         return "Responsable"; // Assurez-vous que ce nom correspond au fichier Thymeleaf (ex: responsables.html)
     }
 
+    @GetMapping("/ajouterUtilisateur")
+        public String AjouterUser(){
+        return "ajoutUser";
+    }
+
+
     @PostMapping("/ajouterResponsable")
     public String ajouterResponsable(Utilisateur user){
         utilisateurService.ajouter_Utilisateur(user);
@@ -188,6 +194,7 @@ public class UtilisateurController {
     public String modifierMotDePasse(
             @RequestParam String ancienPassword,
             @RequestParam String nouveauPassword,
+            @RequestParam String confirmationPassword, // Ajout de la confirmation
             Principal principal,
             RedirectAttributes redirectAttributes) {
 
@@ -195,11 +202,17 @@ public class UtilisateurController {
             return "redirect:/login";
         }
 
+        // Vérifier que le nouveau mot de passe et sa confirmation correspondent
+        if (!nouveauPassword.equals(confirmationPassword)) {
+            redirectAttributes.addFlashAttribute("erreurMotDePasse", "Le nouveau mot de passe et sa confirmation ne correspondent pas !");
+            return "redirect:/profil";
+        }
+
         Utilisateur utilisateur = utilisateurService.recherche_Utilisateur(principal.getName());
 
         // Vérifier si l'ancien mot de passe est correct
         if (!passwordEncoder.matches(ancienPassword, utilisateur.getPassword())) {
-            redirectAttributes.addFlashAttribute("erreur", "Ancien mot de passe incorrect !");
+            redirectAttributes.addFlashAttribute("erreurMotDePasse", "Ancien mot de passe incorrect !");
             return "redirect:/profil";
         }
 
@@ -207,9 +220,10 @@ public class UtilisateurController {
         utilisateur.setPassword(passwordEncoder.encode(nouveauPassword));
         utilisateurService.modifierUtilisateur(utilisateur);
 
-        redirectAttributes.addFlashAttribute("message", "Mot de passe modifié avec succès !");
+        redirectAttributes.addFlashAttribute("messageMotDePasse", "Mot de passe modifié avec succès !");
         return "redirect:/profil";
     }
+
     @PostMapping("/modifierProfil")
     public String modifierProfil(
             @RequestParam String nom,
@@ -239,7 +253,7 @@ public class UtilisateurController {
         utilisateurService.modifierUtilisateur(utilisateur);
 
         redirectAttributes.addFlashAttribute("message", "Informations mises à jour avec succès !");
-        return "redirect:/profil";
+        return "redirect:/listeResponsables";
     }
 
 

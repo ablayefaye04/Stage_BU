@@ -330,7 +330,7 @@ public class MemoireService {
     }
 
 
-    //liste de licences
+    //liste de licences filtres
     /**
      * Récupère uniquement les mémoires de Licence selon les filtres (UFR, Département, Filière).
      */
@@ -344,29 +344,34 @@ public class MemoireService {
         return memoireRepository.findAll(spec);
     }
 
+    //liste de memoires filtres
+    /**
+     * Récupère uniquement les mémoires de masters selon les filtres (UFR, Département, Filière).
+     */
+    public List<Memoire> getMemoiresMastersFiltres(String ufrNom, String departementNom, String filiereNom) {
+        Specification<Memoire> spec = Specification
+                .where(MemoireSpecifications.withType(TypeMemoire.MASTER))
+                .and(MemoireSpecifications.withUFR(ufrNom))
+                .and(MemoireSpecifications.withDepartement(departementNom))
+                .and(MemoireSpecifications.withFiliere(filiereNom));
+
+        return memoireRepository.findAll(spec);
+    }
+
+    //listes des licences
     public List<Memoire> getAllMemoiresLicence() {
         return memoireRepository.findAll(MemoireSpecifications.withType(TypeMemoire.LICENCE));
     }
 
-    //listes des licences
-    public Map<String, Map<String, List<Memoire>>> getMemoiresLicencesGroupes() {
-        // Récupérer tous les mémoires de type Master
-        List<Memoire> memoiresLicence = memoireRepository.findByType(TypeMemoire.LICENCE);
-
-        if (memoiresLicence == null || memoiresLicence.isEmpty()) {
-            return new HashMap<>(); // Retourne un map vide s'il n'y a pas de mémoire
-        }
-
-        // Grouper les mémoires par UFR > Département
-        return memoiresLicence.stream()
-                .collect(Collectors.groupingBy(
-                        memoire -> memoire.getFiliere().getDepartement().getUfr().getNom(),
-                        Collectors.groupingBy(
-                                memoire -> memoire.getFiliere().getDepartement().getNom()
-                        )
-                ));
+    //listes des Masters
+    public List<Memoire> getAllMemoiresMaster() {
+        return memoireRepository.findAll(MemoireSpecifications.withType(TypeMemoire.MASTER));
     }
 
+    //listes des these
+    public List<Memoire> getAllMemoiresThese() {
+        return memoireRepository.findAll(MemoireSpecifications.withType(TypeMemoire.DOCTORAT));
+    }
 
     //liste de masters
     public Map<String, Map<String, List<Memoire>>> getMemoiresMasterGroupes() {

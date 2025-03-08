@@ -1,156 +1,174 @@
-function initCharts(stats, annees, licenceCounts, masterCounts, doctoratCounts) {
-    // Graphique en barre des mémoires par type
-     console.log("Données injectées pour les graphiques :", {
-            stats,
-            annees,
-            licenceCounts,
-            masterCounts,
-            doctoratCounts,
-        });
+<!-- Responsive-->
+var win = navigator.platform.indexOf('Win') > -1;
+if (win && document.querySelector('#sidenav-scrollbar')) {
+  var options = {
+    damping: '0.5'
+  }
+  Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+}
 
-  //diagrame en barre avec courbe
-  const statsChartCtx = document.getElementById('statsChart').getContext('2d');
-  new Chart(statsChartCtx, {
-      type: 'bar',
-      data: {
-          labels: ['Licence', 'Master', 'Doctorat'],
-          datasets: [
-              {
-                  label: 'Nombre de Mémoires',
-                  data: stats,  // Les données des mémoires
-                  backgroundColor: 'rgba(27, 154, 118, 0.6)', // Vert clair translucide
-                  borderColor: '#1b9a76', // Contour des barres
-                  borderWidth: 1,
-                  barThickness: 30 // Épaisseur des barres
-              },
-              {
-                  label: 'Tendance',
-                  data: stats, // Les mêmes données, utilisées pour la courbe
-                  type: 'line',
-                  borderColor: '#004d40', // Une couleur sombre pour la courbe
-                  tension: 0.4, // Lissage de la courbe
-                  pointBackgroundColor: '#004d40', // Couleur des points sur la courbe
-                  pointRadius: 4, // Taille des points
-                  fill: false // Désactive le remplissage
-              }
-          ]
-      },
-      options: {
-          responsive: true,
-          maintainAspectRatio: true,  // Conserver un rapport d'aspect constant
-          plugins: {
-              legend: {
-                  position: 'top',
-              },
-              tooltip: {
-                  callbacks: {
-                      label: function(tooltipItem) {
-                          return tooltipItem.raw + ' mémoires';
-                      }
-                  }
-              }
-          },
-          scales: {
-              x: {
-                  beginAtZero: true
-              },
-              y: {
-                  beginAtZero: true
-              }
-          }
-      }
-  });
+/*<![CDATA[*/  <!-- donnes comptes des memoires-->
+var annees = /*[[${annees}]]*/ [];
+var licencesCounts = /*[[${licencesCounts}]]*/ [];
+var mastersCounts = /*[[${mastersCounts}]]*/ [];
+var thesesCounts = /*[[${thesesCounts}]]*/ [];
+/*]]>*/
 
-//diagrammes circulaires des types de memoires
-const pieChartCtx = document.getElementById('pieChart').getContext('2d');
-new Chart(pieChartCtx, {
-    type: 'pie',
-    data: {
-        labels: ['Licence', 'Master', 'Doctorat'],
-        datasets: [
-            {
-                data: stats,  // Les données des mémoires
-                backgroundColor: [
-                    '#98FF98', // Vert clair
-                    '#1b9a76', // Vert moyen
-                    '#004d40'  // Vert sombre
-                ],
-                borderColor: '#ffffff', // Bordure blanche pour une meilleure séparation
-                borderWidth: 2
-            }
-        ]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,  // Garder un rapport d'aspect constant
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(tooltipItem) {
-                        const label = tooltipItem.label;
-                        const value = tooltipItem.raw;
-                        return `${label}: ${value} mémoires`;
-                    }
-                }
-            }
-        }
-    }
-});
+<!-- Graphes-->
+document.addEventListener("DOMContentLoaded", function () {
+    var ctxLicence = document.getElementById("chart-licence").getContext("2d");
+    var ctxMaster = document.getElementById("chart-master").getContext("2d");
+    var ctxDoctorat = document.getElementById("chart-doctorat").getContext("2d");
 
-    // Graphique linéaire de l'évolution des mémoires par année
-    const evolutionChartCtx = document.getElementById('evolutionCharts').getContext('2d');
-    new Chart(evolutionChartCtx, {
-        type: 'line',
+    // Vérification des données injectées par Thymeleaf
+    console.log("Années:", annees);
+    console.log("Licences:", licencesCounts);
+    console.log("Masters:", mastersCounts);
+    console.log("Doctorats:", thesesCounts);
+
+    // Graphique Licence
+    new Chart(ctxLicence, {
+        type: "bar",
         data: {
-            labels: annees,  // Utiliser les années
-            datasets: [
-                {
-                    label: 'Licence',
-                    data: licenceCounts,  // Nombre de mémoires de Licence par année
-                     borderColor: '#98FF98', // Vert clair pour la courbe
-                     fill: false,
-                    tension: 0.4 // Courbe plus lissée
-                },
-                {
-                    label: 'Master',
-                    data: masterCounts,  // Nombre de mémoires de Master par année
-                    borderColor: '#1b9a76', // Une nuance de vert un peu plus foncée pour Master
-                    fill: false,
-                    tension: 0.4
-                },
-                {
-                    label: 'Doctorat',
-                    data: doctoratCounts,  // Nombre de mémoires de Doctorat par année
-                    borderColor: '#004d40', // Une couleur encore plus foncée pour Doctorat
-                    fill: false,
-                    tension: 0.4
-                }
-            ]
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Licences",
+                data: licencesCounts,
+                backgroundColor: "#43A047",
+                borderWidth: 1,
+                borderRadius: 4,
+                borderSkipped: false,
+                barThickness: 'flex'
+            }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.raw + ' mémoires';
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        // Utilisation de `stepSize` pour garantir l'affichage des entiers
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
                         }
                     }
                 }
             },
-            scales: {
-                x: {
-                    beginAtZero: true
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
                 }
             }
         }
     });
+
+   // Graphique Master
+    new Chart(ctxMaster, {
+        type: "line",
+        data: {
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Masters",
+                data: mastersCounts,
+                pointRadius: 3,
+                pointBackgroundColor: "#43A047",
+                pointBorderColor: "transparent",
+                borderColor: "#43A047",
+                backgroundColor: "transparent",
+                tension: 0.4, // Ajoute une courbe lissée
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+      // Graphique Doctorat
+      new Chart(ctxDoctorat, {
+          type: "bar",
+          data: {
+              labels: annees,
+              datasets: [{
+                  label: "Nombre de Doctorats",
+                  data: thesesCounts,
+                  tension: 0,
+                  borderWidth: 2,
+                  pointRadius: 3,
+                  pointBackgroundColor: "#43A047",
+                  pointBorderColor: "transparent",
+                  borderColor: "#43A047",
+                  backgroundColor: "transparent",
+                  fill: true
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: false, // Ne commence pas à 0
+                      suggestedMin: 1 // Fixe 1 comme valeur minimale de l'axe Y
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function (context) {
+                              return context.dataset.label + ": " + context.raw;
+                          }
+                      }
+                  }
+              }
+          }
+      });
+});
+
+
+function deleteRow(element) {
+            element.closest("tr").remove();
 }
 
+function editMemoire(element) {
+    let row = element.closest("tr");
+    let data = [];
+    row.querySelectorAll("td").forEach((td, index) => {
+        if (index < 10) {
+            data.push(td.innerText);
+        }
+    });
+
+    localStorage.setItem("memoireToEdit", JSON.stringify(data));
+    window.location.href = "modifierMemoireLicence.html";
+}

@@ -66,13 +66,6 @@ public class UtilisateurController {
         return "redirect:/login";
     }
 
-
-
-    @GetMapping("/dashbord/stager")
-    public String affdashbord(){
-        return "dashboard" ;
-    }
-
     /**
      * Affiche la page de succès après une inscription réussie.
      */

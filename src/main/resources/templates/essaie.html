@@ -214,14 +214,47 @@
           </ul>
         </li>
         <li class="nav-item d-flex align-items-center">
-          <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
-            <i class="material-symbols-rounded">account_circle</i>
+          <a href="#" data-bs-toggle="modal" data-bs-target="#rechercheModal">
+            <i class="material-symbols-rounded fs-3 text-primary">download</i>
           </a>
+
         </li>
       </ul>
     </div>
     </div>
   </nav>
+
+
+  <div class="modal fade" id="rechercheModal" tabindex="-1" aria-labelledby="rechercheModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="rechercheModalLabel">Recherche Mémoire</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/rechercheParAnnee" method="get">
+            <div class="mb-3">
+              <label for="annee" class="form-label">Année</label>
+              <input type="number" class="form-control" name="annee" id="annee" required>
+            </div>
+            <div class="mb-3">
+              <label for="type" class="form-label">Type</label>
+              <select class="form-select" name="type" id="type">
+                <option value="LICENCE">Licence</option>
+                <option value="MASTER">Master</option>
+                <option value="DOCTORANT">Doctorant</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              Rechercher
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- End Navbar -->
   <div class="container-fluid py-2">
     <div class="row">

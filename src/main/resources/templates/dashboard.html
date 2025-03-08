@@ -1,480 +1,863 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de Bord - Gestion des Mémoires</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+        integrity="sha512-6f7HT84a/AplPkpSRSKWqbseRTG4aRrhadjZezYQ0oVk/B+nm/US5KzQkyyOyh0Mn9cyDdChRdS9qaxJRHayww=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet"/>
 
-  <!-- FontAwesome CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="../static/css/dashboard.css" th:href="@{/css/style.css}"/>
-  <script src="../static/js/charts.js" th:src="@{/js/charts.js}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>
+    Gestion des mémoire de la BUZ
+  </title>
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
+  <!-- Nucleo Icons -->
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- Material Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
 </head>
-<body>
 
-<style>
-  .sidebar-custom {
-    background-color: #004d40; /* Vert foncé */
-    color: white;
-    height: 100vh;
-  }
+<body class="g-sidenav-show  bg-gray-100">
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
+  <div class="sidenav-header">
+    <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+    <a class="navbar-brand px-4 py-3 m-0" href="#" target="_blank">
+      <img th:src="@{/img/logo1.png}" class="navbar-brand-img" width="35" height="39" alt="main_logo">
+      <span class="ms-1 text-sm text-dark">BU - UASZ</span>
+    </a>
+  </div>
+  <hr class="horizontal dark mt-0 mb-2">
+  <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link active bg-gradient-dark text-white" href="../pages/dashboard.html">
+          <i class="material-symbols-rounded opacity-5">dashboard</i>
+          <span class="nav-link-text ms-1">Tableau de bord</span>
+        </a>
+      </li>
 
-  .sidebar-custom .nav-link {
-    color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-
-  .sidebar-custom .nav-link:hover {
-    background-color: #00796b; /* Vert un peu plus clair */
-    color: #ffffff;
-  }
-
-  .sidebar-custom .nav-link.active {
-    background-color: #00574b; /* Accent vert pour le lien actif */
-    color: white;
-  }
-
-  .sidebar-custom .dropdown-toggle::after {
-    color: white;
-  }
-
-  .sidebar-custom .collapse .nav-link {
-  }
-  .custom-header {
-  background-color: #064e3b; /* Vert foncé */
-  width: 100%; /* S'étend sur toute la largeur de l'écran */
-}
-
-.navbar-dark .navbar-nav .nav-link {
-  color: #ffffff; /* Texte en blanc pour contraster avec le fond */
-}
-
-.navbar-dark .navbar-nav .nav-link:hover {
-  color: #b3e6c1; /* Couleur légèrement différente au survol */
-}
-.custom-header {
-  margin: 15px; /* Évite toute marge externe */
-  padding: 0; /* Évite tout espace interne */
-  width: 100%;/* Garantie que la largeur s'étend */
-  height: 70px
-}
-
-</style>
+      <li class="nav-item">
+        <a class="nav-link text-dark" href="/ajoutMemoire">
+          <i class="material-symbols-rounded opacity-5">receipt_long</i>
+          <span class="nav-link-text ms-1">Ajout mémoires</span>
+        </a>
+      </li>
 
 
-<!-- Conteneur principal -->
-<div class="container-fluid">
-  <!-- Contenu principal -->
-    <main >
-      <div class="header">
-        <!-- Header -->
-        <nav class="navbar navbar-expand-lg navbar-dark custom-header">
-          <div class="container">
+      <li class="nav-item">
+        <a class="nav-link text-dark" href="#" data-bs-toggle="modal" data-bs-target="#rechercheModal">
+          <i class="material-symbols-rounded opacity-5">download</i>
+          <span class="nav-link-text ms-1">Télécharger</span>
+        </a>
+      </li>
 
 
-            <a class="navbar-brand" href="#">Université Assane SECK</a>
-            <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                    aria-controls="navbarNav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-            >
-              <span class="navbar-toggler-icon"></span>
+      <li class="nav-item">
+        <a class="nav-link text-dark" href="../pages/notifications.html">
+          <i class="material-symbols-rounded opacity-5">notifications</i>
+          <span class="nav-link-text ms-1">Notifications</span>
+        </a>
+      </li>
+      <li class="nav-item mt-3">
+        <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Informations</h6>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-dark" href="../pages/profile.html">
+          <i class="material-symbols-rounded opacity-5">person</i>
+          <span class="nav-link-text ms-1">Profile</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-dark" href="/logout">
+          <i class="material-symbols-rounded opacity-5">login</i>
+          <span class="nav-link-text ms-1">Se Déconnecter</span>
+        </a>
+      </li>
+
+    </ul>
+  </div>
+  <div class="sidenav-footer position-absolute w-100 bottom-0 ">
+    <div class="mx-3">
+      <a href="https://uasz.sn"><b>A propos</b></a> <i class="fa fa-university" aria-hidden="true"></i> <br>
+    </div>
+  </div>
+</aside>
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+  <!-- Navbar -->
+  <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+    <div class="container-fluid py-1 px-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+          <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+          <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Tableau de bord</li>
+        </ol>
+      </nav>
+      <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+        <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+
+        </div>
+      </div>
+      <ul class="navbar-nav d-flex align-items-center  justify-content-end">
+
+        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+          <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item px-3 d-flex align-items-center">
+          <a href="javascript:;" class="nav-link text-body p-0">
+            <i class="material-symbols-rounded fixed-plugin-button-nav">settings</i>
+          </a>
+        </li>
+        <li class="nav-item dropdown pe-3 d-flex align-items-center">
+          <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="material-symbols-rounded">notifications</i>
+          </a>
+
+      </ul>
+    </div>
+    </div>
+  </nav>
+
+
+  <div class="modal fade" id="rechercheModal" tabindex="-1" aria-labelledby="rechercheModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="rechercheModalLabel">Recherche Mémoire</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/rechercheParAnnee" method="get">
+            <div class="mb-3">
+              <label for="annee" class="form-label">Année</label>
+              <input type="number" class="form-control" name="annee" id="annee" required>
+            </div>
+            <div class="mb-3">
+              <label for="type" class="form-label">Type</label>
+              <select class="form-select" name="type" id="type">
+                <option value="LICENCE">Licence</option>
+                <option value="MASTER">Master</option>
+                <option value="DOCTORANT">Doctorant</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              Rechercher
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Tableau de bord</a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a
-                          class="nav-link dropdown-toggle"
-                          id="licenceDropdown"
-                          href="#"
-                          role="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                  >
-                    Licence
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown" aria-labelledby="licenceDropdown">
-                    <li><a class="dropdown-item" href="/ajoutMemoire">Ajout</a></li>
-                    <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                    <li><a class="dropdown-item" href="/memoires/licences">Liste</a></li>
-                  </ul>
-                </li>
-                <li class="nav-item dropdown">
-                  <a
-                          class="nav-link dropdown-toggle"
-                          id="memoirsDropdown"
-                          href="#"
-                          role="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                  >
-                    Memoires
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown" aria-labelledby="memoirsDropdown">
-                    <li><a class="dropdown-item" href=/ajoutMaster>Ajout</a></li>
-                    <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                    <li><a class="dropdown-item" href="/memoires/masters">Liste</a></li>
-                  </ul>
-                </li>
-                <li class="nav-item dropdown">
-                  <a
-                          class="nav-link dropdown-toggle"
-                          id="thesesDropdown"
-                          href="#"
-                          role="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                  >
-                    Theses
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown" aria-labelledby="thesesDropdown">
-                    <li><a class="dropdown-item" href="/ajoutThese">Ajout</a></li>
-                    <li><a class="dropdown-item" href="/modifier">Modification</a></li>
-                    <li><a class="dropdown-item" href="/memoires/doctorats">Liste</a></li>
-                  </ul>
-                </li>
-                <li class="nav-item dropdown">
-                  <a
-                          class="nav-link dropdown-toggle"
-                          id="usersDropdown"
-                          href="#"
-                          role="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                  >
-                    Gestion des utilisateurs
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown" aria-labelledby="usersDropdown">
-                    <li><a class="dropdown-item" href="listeResponsables">Ajout</a></li>
-                    <li><a class="dropdown-item" href="listeResponsables">Modification</a></li>
-                    <li><a class="dropdown-item" href="listeResponsables">Liste</a></li>
-                  </ul>
-                </li>
-              </ul>
-              <!-- Right Section -->
-              <div class="d-flex align-items-center right-icons">
-                <button class="btn btn-share me-2">
-                  <i class="fas fa-share-alt"></i> Partager
-                </button>
-                <button class="btn btn-download me-2">
-                  <i class="fas fa-download"></i> Télécharger
-                </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                <!-- Icône de notification -->
-                <i class="fas fa-bell notification-icon me-2" onclick="toggleSidebar('sidebar-notification')"></i>
-
-                <!-- Icône utilisateur -->
-                <div class="user-icon" onclick="toggleSidebar('sidebar-user')">
-                  <i class="fas fa-user"></i>
-                </div>
-
-                <!-- Menu contextuel utilisateur -->
-                <!-- Menu contextuel utilisateur -->
-                <div id="sidebar-user" class="dropdown-menu p-3" style="display: none; position: absolute; right: 10px; top: 50px;">
-                  <p class="mb-2 font-weight-bold">Connecté en tant que :</p>
-                  <p class="mb-2" th:text="'Nom : ' + ${nom}">Nom</p>
-                  <p class="mb-2" th:text="'Prénom : ' + ${prenom}">Prénom</p>
-                  <p class="mb-2" th:text="'Rôle : ' + ${roles}">Rôle(s)</p>
+  <!-- End Navbar -->
+  <div class="container-fluid py-2">
+    <div class="row">
+      <div class="ms-3">
+        <h3 class="mb-0 h4 font-weight-bolder">Tableau de bord</h3>
+        <style>
+        
+        
+          /* Animation d'écriture */
+          @keyframes typing {
+            from {
+              width: 0;
+            }
+            to {
+              width: 100%;
+            }
+          }
+        
+          /* Conteneur principal */
+          .conteneur-defilement {
+            width: 100%;
+            text-align: center;
+            overflow: hidden;
+            padding: 10px 0;
+            background-color: #f8f9fa; /* Couleur de fond légère */
+          }
+        
+          /* Texte avec effet d'écriture */
+          .texte-defilant {
+            display: inline-block;
+            border-right: 3px solid #333; /* Curseur */
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap; /* Empêche le retour à la ligne */
+            overflow: hidden; /* Cache le texte non écrit */
+            width: 0; /* Point de départ */
+            animation: typing 9s steps(100, end) forwards, blink 0.8s step-start infinite;
+          }
+        </style>
 
 
-                  <!-- Bouton de déconnexion avec redirection -->
-                  <a class="btn btn-danger btn-sm w-100" href="/logout">Se déconnecter</a>
 
-                  <hr />
 
-                  <div class="d-flex align-items-center">
-                    <i class="fas fa-bell me-2 text-primary"></i>
-                    <span id="notification-count" class="badge bg-danger">3</span>
-                    <span class="ms-2">Notifications</span>
-                  </div>
-                </div>
 
+
+        <!-- Bloc Thymeleaf avec texte défilant -->
+        <div class="conteneur-defilement">
+          <p class="texte-defilant">
+            Bienvenue dans votre page de gestion des mémoires et thèses de l'Université Assane SECK de Ziguinchor.
+          </p>
+        </div>
+
+      </div>
+      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+          <div class="card-header p-2 ps-3">
+            <div class="d-flex justify-content-between">
+              <div>
+                <p class="text-sm mb-0 text-capitalize">Licences</p>
+                <h4 class="mb-0" th:text="${licenceCount}"></h4>
               </div>
+              <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                <i class="fa fa-book" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <hr class="dark horizontal my-0">
+          <div class="card-footer p-2 ps-3">
+            <style>
+                .btn-rechercher {
+                    background-color: rgb(34, 34, 37);
+                    color: white;
+                    padding: 6px 8px;
+                    border: none;
+                    cursor: pointer;
+                    border-radius: 18px;
+                    transition: background-color 0.3s ease;
+                }
+            
+                .btn-rechercher:hover {
+                    background-color: rgb(54, 54, 57);
+                }
+            </style>
+            <a href="/licence" class="btn-rechercher">Voir plus</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+          <div class="card-header p-2 ps-3">
+            <div class="d-flex justify-content-between">
+              <div>
+                <p class="text-sm mb-0 text-capitalize">Masters</p>
+                <h4 class="mb-0" th:text="${masterCount}"></h4>
+                <!-- NOMBRE DE MASTER-->
+              </div>
+              <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <hr class="dark horizontal my-0">
+          <div class="card-footer p-2 ps-3">
+            <style>
+                .btn-rechercher {
+                    background-color: rgb(34, 34, 37);
+                    color: white;
+                    padding: 6px 8px;
+                    border: none;
+                    cursor: pointer;
+                    border-radius: 18px;
+                    transition: background-color 0.3s ease;
+                }
 
-              <script>
-  function toggleSidebar(id) {
-    const sidebar = document.getElementById(id);
-    sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
-  }
+                .btn-rechercher:hover {
+                    background-color: rgb(54, 54, 57);
+                }
+            </style>
 
-  function logout() {
-    alert('Déconnexion réussie !');
-    // Remplacez par la logique de déconnexion réelle ou une redirection.
-    window.location.href = '/logout';
-  }
+            <form th:action="@{/ }" method="get">
+              <a href="/memoires/masters" class="btn-rechercher">Voir plus</a>
 
-  window.onclick = function (event) {
-    const userSidebar = document.getElementById('sidebar-user');
-    const notificationSidebar = document.getElementById('sidebar-notification');
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+          <div class="card-header p-2 ps-3">
+            <div class="d-flex justify-content-between">
+              <div>
+                <p class="text-sm mb-0 text-capitalize">Doctorats</p>
+                <h4 class="mb-0" th:text="${doctoratCount}"></h4>
+                <!--Affichage nombre totale DOCTORAT -->
+              </div>
+              <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                <i class="fa fa-university" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <hr class="dark horizontal my-0">
+          <div class="card-footer p-2 ps-3">
+            <style>
+                .btn-rechercher {
+                    background-color: rgb(34, 34, 37);
+                    color: white;
+                    padding: 6px 8px;
+                    border: none;
+                    cursor: pointer;
+                    border-radius: 18px;
+                    transition: background-color 0.3s ease;
+                }
 
-    if (!event.target.closest('.user-icon') && userSidebar) {
-      userSidebar.style.display = 'none';
-    }
-    if (!event.target.closest('.notification-icon') && notificationSidebar) {
-      notificationSidebar.style.display = 'none';
-    }
-  };
+                .btn-rechercher:hover {
+                    background-color: rgb(54, 54, 57);
+                }
+            </style>
+
+            <form th:action="@{/ }" method="get">
+              <a href="/memoires/doctorats" class="btn-rechercher">Voir plus</a>
+            </form>
+
+
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-xl-3 col-sm-6">
+        <div class="card">
+          <div class="card-header p-2 ps-3">
+            <div class="d-flex justify-content-between">
+              <div>
+                <p class="text-sm mb-0 text-capitalize"><b> <h4>Explorez</h4> </b></p>
+              </div>
+              <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <hr class="dark horizontal my-0">
+          <div class="card-footer p-2 ps-3">
+            <style>
+                .btn-rechercher {
+                    background-color: rgb(34, 34, 37);
+                    color: white;
+                    padding: 6px 12px;
+                    border: none;
+                    cursor: pointer;
+                    border-radius: 18px;
+                    transition: background-color 0.3s ease;
+                }
+
+                .btn-rechercher:hover {
+                    background-color: rgb(83, 83, 86);
+                }
+            </style>
+
+            <form th:action="@{/rechercher}" method="get">
+              <button type="submit" class="btn-rechercher">
+                Rechercher
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--LICENCE-->
+    <div class="row">
+      <!-- Licence -->
+      <div class="col-lg-4 col-md-6 mt-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="mb-0"> Licence</h6>
+            <div class="pe-2">
+              <div class="chart">
+                <canvas id="chart-licence" class="chart-canvas" height="170"></canvas>
+              </div>
+            </div>
+            <hr class="dark horizontal">
+            <div class="d-flex">
+              <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
+              <p class="mb-0 text-sm">Mis à jour récemment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Master -->
+      <div class="col-lg-4 col-md-6 mt-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="mb-0"> Master</h6>
+            <div class="pe-2">
+              <div class="chart">
+                <canvas id="chart-master" class="chart-canvas" height="170"></canvas>
+              </div>
+            </div>
+            <hr class="dark horizontal">
+            <div class="d-flex">
+              <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
+              <p class="mb-0 text-sm">Mis à jour récemment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctorat -->
+      <div class="col-lg-4 mt-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="mb-0"> Doctorat</h6>
+            <div class="pe-2">
+              <div class="chart">
+                <canvas id="chart-doctorat" class="chart-canvas" height="170"></canvas>
+              </div>
+            </div>
+            <hr class="dark horizontal">
+            <div class="d-flex">
+              <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
+              <p class="mb-0 text-sm">Mis à jour récemment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        var annees = /*[[${annees}]]*/ [];
+        var licencesCounts = /*[[${licencesCounts}]]*/ [];
+        var mastersCounts = /*[[${mastersCounts}]]*/ [];
+        var thesesCounts = /*[[${thesesCounts}]]*/ [];
+        /*]]>*/
+      </script>
+
+    </div>
+
+
+  </div>
+
+
+    <footer class="footer py-4  ">
+      <div class="container-fluid">
+        <div class="row align-items-center justify-content-lg-between">
+          <div class="col-lg-6 mb-lg-0 mb-4">
+            <div class="copyright text-center text-sm text-muted text-lg-start">
+              © <script>
+                  document.write(new Date().getFullYear())
+                </script>,
+
+              <a href="#" class="font-weight-bold" target="_blank">Université Assane Seck de Ziguinchor</a>
+              Tous droits réserver.
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+              <li class="nav-item">
+                <a href="https://uasz.sn" class="nav-link text-muted" target="_blank">UASZ</a>
+              </li>
+              <li class="nav-item">
+                <a href="https://www.bibliotheque.uasz.sn" class="nav-link text-muted" target="_blank">BU</a>
+              </li>
+              <li class="nav-item">
+                <a href="https://rivieredusud.uasz.sn" class="nav-link text-muted" target="_blank">Riviére du Sud</a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link pe-0 text-muted" target="_blank"></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</main>
+<div class="fixed-plugin">
+  <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
+    <i class="material-symbols-rounded py-2">settings</i>
+  </a>
+  <div class="card shadow-lg">
+    <div class="card-header pb-0 pt-3">
+      <div class="float-start">
+        <h5 class="mt-3 mb-0">Configuration du Théme</h5>
+        <p>Les Options du tableau de bord.</p>
+      </div>
+      <div class="float-end mt-4">
+        <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
+          <i class="material-symbols-rounded">clear</i>
+        </button>
+      </div>
+      <!-- End Toggle Button -->
+    </div>
+    <hr class="horizontal dark my-1">
+    <div class="card-body pt-sm-3 pt-0">
+      <!-- Sidebar Backgrounds -->
+      <div>
+        <h6 class="mb-0">Couleur du Navbar</h6>
+      </div>
+      <a href="javascript:void(0)" class="switch-trigger background-color">
+        <div class="badge-colors my-2 text-start">
+          <span class="badge filter bg-gradient-primary" data-color="primary" onclick="sidebarColor(this)"></span>
+          <span class="badge filter bg-gradient-dark active" data-color="dark" onclick="sidebarColor(this)"></span>
+          <span class="badge filter bg-gradient-info" data-color="info" onclick="sidebarColor(this)"></span>
+          <span class="badge filter bg-gradient-success" data-color="success" onclick="sidebarColor(this)"></span>
+          <span class="badge filter bg-gradient-warning" data-color="warning" onclick="sidebarColor(this)"></span>
+          <span class="badge filter bg-gradient-danger" data-color="danger" onclick="sidebarColor(this)"></span>
+        </div>
+      </a>
+      <!-- Sidenav Type -->
+      <div class="mt-3">
+        <h6 class="mb-0">Théme du Tableau de bord</h6>
+        <p class="text-sm">Choississez le type de couleur.</p>
+      </div>
+      <div class="d-flex">
+        <button class="btn bg-gradient-dark px-3 mb-2" data-class="bg-gradient-dark" onclick="sidebarType(this)">Sombre</button>
+        <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarType(this)">Transparent</button>
+        <button class="btn bg-gradient-dark px-3 mb-2  active ms-2" data-class="bg-white" onclick="sidebarType(this)">Blanc</button>
+      </div>
+      <p class="text-sm d-xl-none d-block mt-2">You can change the sidenav type just on desktop view.</p>
+      <!-- Navbar Fixed -->
+      <div class="mt-3 d-flex">
+        <h6 class="mb-0">Fixer la Navbar</h6>
+        <div class="form-check form-switch ps-0 ms-auto my-auto">
+          <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="navbarFixed(this)">
+        </div>
+      </div>
+      <hr class="horizontal dark my-3">
+      <div class="mt-2 d-flex">
+        <h6 class="mb-0">Blanc / Sombre</h6>
+        <div class="form-check form-switch ps-0 ms-auto my-auto">
+          <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onclick="darkMode(this)">
+        </div>
+      </div>
+      <div class="w-100 text-center">
+
+        <h6 class="mt-3">Tous droit réserve a L'UASZ</h6>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!--   Core JS Files   -->
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="../assets/js/plugins/chartjs.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    var ctxLicence = document.getElementById("chart-licence").getContext("2d");
+    var ctxMaster = document.getElementById("chart-master").getContext("2d");
+    var ctxDoctorat = document.getElementById("chart-doctorat").getContext("2d");
+
+    // Vérification des données injectées par Thymeleaf
+    console.log("Années:", annees);
+    console.log("Licences:", licencesCounts);
+    console.log("Masters:", mastersCounts);
+    console.log("Doctorats:", thesesCounts);
+
+    // Graphique Licence
+    new Chart(ctxLicence, {
+        type: "bar",
+        data: {
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Licences",
+                data: licencesCounts,
+                backgroundColor: "#43A047",
+                borderWidth: 1,
+                borderRadius: 4,
+                borderSkipped: false,
+                barThickness: 'flex'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        // Utilisation de `stepSize` pour garantir l'affichage des entiers
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+   // Graphique Master
+    new Chart(ctxMaster, {
+        type: "line",
+        data: {
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Masters",
+                data: mastersCounts,
+                pointRadius: 3,
+                pointBackgroundColor: "#43A047",
+                pointBorderColor: "transparent",
+                borderColor: "#43A047",
+                backgroundColor: "transparent",
+                tension: 0.4, // Ajoute une courbe lissée
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+      // Graphique Doctorat
+      new Chart(ctxDoctorat, {
+          type: "bar",
+          data: {
+              labels: annees,
+              datasets: [{
+                  label: "Nombre de Doctorats",
+                  data: thesesCounts,
+                  tension: 0,
+                  borderWidth: 2,
+                  pointRadius: 3,
+                  pointBackgroundColor: "#43A047",
+                  pointBorderColor: "transparent",
+                  borderColor: "#43A047",
+                  backgroundColor: "transparent",
+                  fill: true
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: false, // Ne commence pas à 0
+                      suggestedMin: 1 // Fixe 1 comme valeur minimale de l'axe Y
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function (context) {
+                              return context.dataset.label + ": " + context.raw;
+                          }
+                      }
+                  }
+              }
+          }
+      });
+  });
+
 </script>
 
-            </div>
-          </div>
-        </nav>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    var ctxLicence = document.getElementById("chart-licence").getContext("2d");
+    var ctxMaster = document.getElementById("chart-master").getContext("2d");
+    var ctxDoctorat = document.getElementById("chart-doctorat").getContext("2d");
 
-      </div>
-      <br>
-      <hr>
-      <!-- Main Content Here -->
-      <div class="content">
-        <!-- Statistiques -->
-        <div class="row mb-4">
-          <!-- Message d'erreur général -->
-          <div th:if="${errorMessage != null}" class="alert alert-danger">
-            <p th:text="${errorMessage}"></p>
-          </div>
+    // Vérification des données injectées par Thymeleaf
+    console.log("Années:", annees);
+    console.log("Licences:", licencesCounts);
+    console.log("Masters:", mastersCounts);
+    console.log("Doctorats:", thesesCounts);
 
-          <div th:unless="${errorMessage != null}" class="row mb-4">
-            <div class="row">
-              <!-- Licence -->
-              <div class="col-lg-3 col-md-4 mb-4">
-                <div class="card stats-card h-100">
-                  <div class="card-header">Licence</div>
-                  <div class="card-body">
-                    <h3 class="fw-bold" th:text="${licenceCount}">0</h3>
-                    <p class="small">Mémoires enregistrés</p>
-                    <a href="/memoires/licences" class="btn btn-details">Voir Détails</a>
-                  </div>
-                </div>
-              </div>
+    // Graphique Licence
+    new Chart(ctxLicence, {
+        type: "bar",
+        data: {
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Licences",
+                data: licencesCounts,
+                backgroundColor: "#43A047",
+                borderWidth: 1,
+                borderRadius: 4,
+                borderSkipped: false,
+                barThickness: 'flex'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        // Utilisation de `stepSize` pour garantir l'affichage des entiers
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
 
-              <!-- Master -->
-              <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card stats-card h-100">
-                  <div class="card-header">Master</div>
-                  <div class="card-body">
-                    <h3 class="fw-bold" th:text="${masterCount}">0</h3>
-                    <p class="small">Mémoires enregistrés</p>
-                    <a href="/memoires/masters" class="btn btn-details">Voir Détails</a>
-                  </div>
-                </div>
-              </div>
+   // Graphique Master
+    new Chart(ctxMaster, {
+        type: "line",
+        data: {
+            labels: annees,
+            datasets: [{
+                label: "Nombre de Masters",
+                data: mastersCounts,
+                pointRadius: 3,
+                pointBackgroundColor: "#43A047",
+                pointBorderColor: "transparent",
+                borderColor: "#43A047",
+                backgroundColor: "transparent",
+                tension: 0.4, // Ajoute une courbe lissée
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Ne commence pas à 0
+                    suggestedMin: 1, // Fixe 1 comme valeur minimale de l'axe Y
+                    ticks: {
+                        stepSize: 1, // Force l'affichage des entiers uniquement
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : ''; // Assure l'affichage d'entiers
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ": " + context.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
 
-              <!-- Doctorat -->
-              <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card stats-card h-100">
-                  <div class="card-header">Doctorat</div>
-                  <div class="card-body">
-                    <h3 class="fw-bold" th:text="${doctoratCount}">0</h3>
-                    <p class="small">Mémoires enregistrés</p>
-                    <a href="/memoires/doctorats" class="btn btn-details">Voir Détails</a>
-                  </div>
-                </div>
-              </div>
 
-              <!-- Statistiques -->
-              <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card stats-card h-100">
-                  <div class="card-header">Statistiques</div>
-                  <div class="card-body">
-                    <h3 class="fw-bold">2024</h3>
-                    <p class="small">Année académique</p>
-                    <a href="Statistique.html" class="btn btn-details">Voir Détails</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- diagramme en barre des memoires-->
-        <div class="charts-container">
-          <div class="chart-wrapper">
-            <h4 class="chart-title">Diagramme en Barres</h4>
-            <canvas id="statsChart"></canvas>
-          </div>
-          <div class="chart-wrapper">
-            <h4 class="chart-title">Diagramme en Courbes</h4>
-            <canvas id="evolutionCharts"></canvas>
-          </div>
-          <div class="chart-wrapper">
-            <h4 class="chart-title">Diagramme Circulaire</h4>
-            <canvas id="pieChart"></canvas>
-          </div>
-        </div>
+      // Graphique Doctorat
+      new Chart(ctxDoctorat, {
+          type: "bar",
+          data: {
+              labels: annees,
+              datasets: [{
+                  label: "Nombre de Doctorats",
+                  data: thesesCounts,
+                  tension: 0,
+                  borderWidth: 2,
+                  pointRadius: 3,
+                  pointBackgroundColor: "#43A047",
+                  pointBorderColor: "transparent",
+                  borderColor: "#43A047",
+                  backgroundColor: "transparent",
+                  fill: true
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: false, // Ne commence pas à 0
+                      suggestedMin: 1 // Fixe 1 comme valeur minimale de l'axe Y
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function (context) {
+                              return context.dataset.label + ": " + context.raw;
+                          }
+                      }
+                  }
+              }
+          }
+      });
+  });
 
-        <h4 class="text-center mb-4">Recherche de Mémoires</h4>
-        <!-- Formulaire de recherche -->
-        <form id="searchForm" class="mb-4" action="/memoires/liste" method="get">
-          <div class="row align-items-end">
-            <!-- Critère : Côte -->
-            <div class="col-md-2 mb-2">
-              <label for="searchCote" class="form-label">Côte</label>
-              <input type="text" class="form-control" id="searchCote" name="cote" placeholder="Ex. LAF13/2">
-            </div>
+</script>
 
-            <!-- Critère : Titre -->
-            <div class="col-md-2 mb-2">
-              <label for="searchTitre" class="form-label">Titre</label>
-              <input type="text" class="form-control" id="searchTitre" name="titre" placeholder="Titre du mémoire">
-            </div>
 
-            <!-- Critère : Étudiant -->
-            <div class="col-md-2 mb-2">
-              <label for="searchEtudiant" class="form-label">Étudiant</label>
-              <input type="text" class="form-control" id="searchEtudiant" name="etudiant" placeholder="Nom de l'étudiant">
-            </div>
-            <!-- Critère : Encadrant -->
-            <div class="col-md-2 mb-2">
-              <label for="searchEncadrant" class="form-label">Encadrant</label>
-              <input type="text" class="form-control" id="searchEncadrant" name="encadrant" placeholder="Nom de l'encadrant">
-            </div>
-
-            <!-- Critère : Année -->
-            <div class="col-md-2 mb-2">
-              <label for="searchAnnee" class="form-label">Année</label>
-              <input type="number" class="form-control" id="searchAnnee" name="annee" placeholder="Ex. 2024">
-            </div>
-
-            <!-- Critère : Filière -->
-            <div class="col-md-2 mb-2">
-              <label for="searchFiliere" class="form-label">Filière</label>
-              <input type="text" class="form-control" id="searchFiliere" name="filiere" placeholder="Agroforesterie">
-            </div>
-            <!-- Bouton de recherche avec une icône -->
-            <div class="col-md-2 mb-2">
-              <button type="submit" class="btn btn-success w-80">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <!-- Liste des Mémoires -->
-        <div class="container">
-          <!-- Résultats de la recherche  -->
-          <div th:if="${memoires != null && !memoires.isEmpty()}">
-            <h2 class="text-success mb-3"> Résultats de la recherche</h2>
-            <table class="table table-hover">
-              <thead>
-              <tr>
-                <th>Numéro</th>
-                <th>Cote</th>
-                <th>Titre</th>
-                <th>Étudiant</th>
-                <th>Encadrant</th>
-                <th>Filière</th>
-                <th>Année</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr th:each="memoire, iterStat : ${memoires}">
-                <td th:text="${iterStat.index + 1}"></td>
-                <td th:text="${memoire.cote}"></td>
-                <td th:text="${memoire.titre}"></td>
-                <td th:text="${memoire.etudiant.nom} + ' ' + ${memoire.etudiant.prenom}"></td>
-                <td th:text="${memoire.encadrant.nom} + ' ' + ${memoire.encadrant.prenom}"></td>
-                <td th:text="${memoire.filiere.nom}"></td>
-                <td th:text="${memoire.annee}"></td>
-                <td>
-                  <a th:href="@{/memoires/modifier/{id}(id=${memoire.id})}" class="btn btn-edit btn-sm me-1">
-                    <i class="fas fa-edit"></i> Modifier
-                  </a>
-                  <a th:href="@{/memoires/supprimer/{id}(id=${memoire.id})}"
-                     class="btn btn-delete btn-sm"
-                     onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce mémoire ?')">
-                    <i class="fas fa-trash-alt"></i> Supprimer
-                  </a>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Message si aucun résultat trouvé après recherche -->
-          <div th:if="${memoires != null and #lists.isEmpty(memoires)}" class="alert alert-warning">
-            <strong>Attention!</strong> Aucun mémoire trouvé pour les critères de recherche.
-          </div>
-
-          <!-- Liste complète des mémoires groupés -->
-          <div th:if="${memoires == null}">
-            <div th:each="ufrEntry : ${memoiresGroupes}">
-              <div class="table-container">
-                <h2 class="text-success mb-3" th:text="${ufrEntry.key}">Nom de l'UFR</h2>
-
-                <div th:each="departementEntry : ${ufrEntry.value}">
-                  <h4 class="text-success mb-3" th:text="${departementEntry.key}">Nom du Département</h4>
-
-                  <table class="table table-hover">
-                    <thead>
-                    <tr>
-                      <th>Numéro</th>
-                      <th>Cote</th>
-                      <th>Titre</th>
-                      <th>Étudiant</th>
-                      <th>Encadrant</th>
-                      <th>Filière</th>
-                      <th>Année</th>
-                      <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="memoire, iterStat : ${departementEntry.value}">
-                      <td th:text="${iterStat.index + 1}"></td>
-                      <td th:text="${memoire.cote}"></td>
-                      <td th:text="${memoire.titre}"></td>
-                      <td th:text="${memoire.etudiant.nom} + ' ' + ${memoire.etudiant.prenom}"></td>
-                      <td th:text="${memoire.encadrant.nom} + ' ' + ${memoire.encadrant.prenom}"></td>
-                      <td th:text="${memoire.filiere.nom}"></td>
-                      <td th:text="${memoire.annee}"></td>
-                      <td>
-                        <a th:href="@{/memoires/modifier/{id}(id=${memoire.id})}" class="btn btn-edit btn-sm me-1">
-                          <i class="fas fa-edit"></i> Modifier
-                        </a>
-                        <a th:href="@{/memoires/supprimer/{id}(id=${memoire.id})}"
-                           class="btn btn-delete btn-sm"
-                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce mémoire ?')">
-                          <i class="fas fa-trash-alt"></i> Supprimer
-                        </a>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-</div>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script th:inline="javascript">
-        /*<![CDATA[*/
-        var stats = /*[[${stats}]]*/;  // Injecter la liste stats ici
-        var annees = /*[[${annees}]]*/;  // Injecter la liste des années
-        var licenceCounts = /*[[${licenceCounts}]]*/;  // Nombre de mémoires de Licence par année
-        var masterCounts = /*[[${masterCounts}]]*/;  // Nombre de mémoires de Master par année
-        var doctoratCounts = /*[[${doctoratCounts}]]*/;  // Nombre de mémoires de Doctorat par année
-        console.log("Données Thymeleaf :", { stats, annees, licenceCounts, masterCounts, doctoratCounts });
-        // Appeler initCharts avec les données
-        initCharts(stats, annees, licenceCounts, masterCounts, doctoratCounts);
-        /*]]>*/
-    </script>
 </html>

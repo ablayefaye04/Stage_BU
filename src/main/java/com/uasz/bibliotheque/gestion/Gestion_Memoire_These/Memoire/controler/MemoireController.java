@@ -435,7 +435,7 @@ public class MemoireController {
         }
     }
 
-    @GetMapping("/rechercheParAnnee")
+  /*  @GetMapping("/rechercheParAnnee")
     public String rechercheParAnnee(@RequestParam("annee") int annee,
                                     @RequestParam("type") TypeMemoire type,
                                     Model model) {
@@ -454,7 +454,29 @@ public class MemoireController {
             model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
         }
         return "resultatsRecherche";
+    }*/
+
+    @GetMapping("/rechercheParAnnee")
+    public String rechercheParAnnee(@RequestParam("annee") int annee,
+                                    @RequestParam("type") String type,
+                                    Model model) {
+        try {
+            TypeMemoire typeEnum = TypeMemoire.valueOf(type.toUpperCase());
+            List<Memoire> resultats = memoireService.findByAnneeAndType(annee, String.valueOf(typeEnum));
+            model.addAttribute("resultats", resultats);
+            model.addAttribute("anneeRecherchee", annee);
+            model.addAttribute("typeRecherche", typeEnum);
+            if (resultats.isEmpty()) {
+                model.addAttribute("message", "Aucun mémoire trouvé pour l'année " + annee + " et le type " + typeEnum);
+            }
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("erreur", "Type de mémoire invalide : " + type);
+        } catch (Exception e) {
+            model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
+        }
+        return "resultatsRecherche";
     }
+
 
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)

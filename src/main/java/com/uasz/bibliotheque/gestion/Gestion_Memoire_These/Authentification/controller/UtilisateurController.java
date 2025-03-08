@@ -57,7 +57,7 @@ public class UtilisateurController {
                     case "Responsable":
                         return "redirect:/memoires/liste";
                     case "Stager":
-                        return "redirect:/memoires/liste";
+                        return "redirect:/dashbord/stager";
                     default:
                         return "redirect:/login?error=role_inconnu";
                 }
@@ -66,6 +66,12 @@ public class UtilisateurController {
         return "redirect:/login";
     }
 
+
+
+    @GetMapping("/dashbord/stager")
+    public String affdashbord(){
+        return "dashboard" ;
+    }
 
     /**
      * Affiche la page de succès après une inscription réussie.

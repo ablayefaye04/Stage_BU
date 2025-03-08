@@ -65,14 +65,25 @@
 
 
       <li class="nav-item">
-        <a class="nav-link text-dark" href="../pages/notifications.html">
+        <a class="nav-link text-dark" href="#" id="notificationBtn">
           <i class="material-symbols-rounded opacity-5">notifications</i>
           <span class="nav-link-text ms-1">Notifications</span>
+          <span class="notification-count" th:text="${notifications != null && !notifications.isEmpty() ? notifications.size() : '0'}"
+                th:style="${notifications == null || notifications.isEmpty() ? 'display: none;' : ''}">0</span>
         </a>
       </li>
+
       <li class="nav-item mt-3">
         <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Informations</h6>
       </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-dark" href="#" id="openChatBtn">
+          <i class="material-symbols-rounded opacity-5">person</i>
+          <span class="nav-link-text ms-1">Chat</span>
+        </a>
+      </li>
+
       <li class="nav-item">
         <a class="nav-link text-dark" href="../pages/profile.html">
           <i class="material-symbols-rounded opacity-5">person</i>
@@ -135,6 +146,311 @@
     </div>
   </nav>
 
+  <!-- Popup de chat -->
+  <div class="chat-popup" id="chatPopup">
+    <!-- En-tête du popup -->
+    <div class="chat-popup-header">
+      <span>Chat Général</span>
+      <button class="close-btn" id="closeChatBtn">&times;</button>
+    </div>
+
+    <!-- Corps du popup (messages) -->
+    <div class="chat-popup-body" id="chatMessages">
+      <!-- Les messages seront chargés ici dynamiquement -->
+    </div>
+
+    <!-- Formulaire d'envoi de message -->
+    <form class="chat-popup-form" id="chatForm">
+      <input type="text" id="messageInput" placeholder="Écrire un message..." required>
+      <button type="submit"><i class="fas fa-paper-plane"></i></button>
+    </form>
+  </div>
+
+  <!--  style notification-->
+  <style>
+
+    /* Styles pour le popup de notifications */
+        .notification-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .notification-popup-content {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            position: relative;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notification-icon {
+            position: relative;
+        }
+
+  </style>
+
+  <style>
+   /* Style de base pour le popup */
+
+   /* Messages envoyés par l'utilisateur */
+.message.sent {
+  background-color: #3498db;
+  color: white;
+  align-self: flex-end;
+  text-align: right;
+}
+
+/* Messages reçus */
+.message.received {
+  background-color: #f1f1f1;
+  color: black;
+  align-self: flex-start;
+  text-align: left;
+}
+
+/* Conteneur des messages en flex pour aligner correctement */
+.chat-popup-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-popup {
+  display: none; /* Masqué par défaut */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* En-tête du popup */
+.chat-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Bouton pour fermer le popup */
+.chat-popup-header .close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+/* Corps du popup */
+.chat-popup-body {
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Style pour les messages */
+.message {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 5px;
+  background-color: #f1f1f1;
+}
+
+/* Formulaire d'envoi de message */
+.chat-popup-form {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.chat-popup-form input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.chat-popup-form button {
+  padding: 8px 12px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chat-popup-form button:hover {
+  background-color: #2980b9;
+}
+  </style>
+  <script>
+  // Récupérer les éléments du DOM
+  const openChatBtn = document.getElementById('openChatBtn');
+  const closeChatBtn = document.getElementById('closeChatBtn');
+  const chatPopup = document.getElementById('chatPopup');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatForm = document.getElementById('chatForm');
+  const messageInput = document.getElementById('messageInput');
+
+  // Récupérer l'utilisateur actuel (injecté par Thymeleaf)
+  const currentUser = "[[${currentUser}]]";
+
+  // Ouvrir le popup lors du clic sur le bouton "Chat"
+  openChatBtn.addEventListener('click', (e) => {
+    e.preventDefault(); // Empêcher le comportement par défaut du lien
+    chatPopup.style.display = 'block'; // Afficher le popup
+    loadMessages(); // Charger les messages
+  });
+
+  // Fermer le popup lors du clic sur la croix
+  closeChatBtn.addEventListener('click', () => {
+    chatPopup.style.display = 'none'; // Masquer le popup
+  });
+
+  // Fermer le popup si l'utilisateur clique en dehors
+  window.addEventListener('click', (e) => {
+    if (e.target === chatPopup) {
+      chatPopup.style.display = 'none'; // Masquer le popup
+    }
+  });
+
+  // Charger les messages depuis l'API
+  async function loadMessages() {
+    try {
+      const response = await fetch('/api/messages'); // Remplace par ton endpoint API
+      if (!response.ok) throw new Error('Erreur lors du chargement des messages');
+      const messages = await response.json();
+      chatMessages.innerHTML = ''; // Vider les messages actuels
+
+      messages.forEach(message => {
+        const messageElement = document.createElement('div');
+        messageElement.className = message.auteur.username === currentUser ? 'message sent' : 'message received';
+        messageElement.innerHTML = `
+          <div class="message-actions">
+            ${message.auteur.username === currentUser ? `
+              <button onclick="editMessage('${message.id}')"><i class="fas fa-edit"></i></button>
+              <button onclick="deleteMessage('${message.id}')"><i class="fas fa-trash"></i></button>
+            ` : ''}
+          </div>
+
+          <strong>${message.auteur.nom} ${message.auteur.prenom}</strong>
+          <p>${message.contenu}</p>
+          <span class="message-date">${new Date(message.dateEnvoi).toLocaleString()}</span>
+        `;
+        chatMessages.appendChild(messageElement);
+      });
+
+      // Faire défiler vers le bas pour voir le dernier message
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (error) {
+      console.error(error);
+      alert('Erreur lors du chargement des messages');
+    }
+  }
+
+  // Envoyer un message
+  chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const contenu = messageInput.value.trim();
+
+    if (contenu) {
+      try {
+        const response = await fetch('/messages', { // Remplace par ton endpoint API
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `contenu=${encodeURIComponent(contenu)}`,
+        });
+
+        if (!response.ok) throw new Error('Erreur lors de l\'envoi du message');
+        messageInput.value = ''; // Vider le champ de saisie
+        loadMessages(); // Recharger les messages
+      } catch (error) {
+        console.error(error);
+        alert('Erreur lors de l\'envoi du message');
+      }
+    }
+  });
+
+  // Fonction pour supprimer un message
+  async function deleteMessage(messageId) {
+    if (confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) {
+      try {
+        const response = await fetch(`/messages/${messageId}`, { method: 'DELETE' });
+        if (!response.ok) throw new Error('Erreur lors de la suppression du message');
+        loadMessages(); // Recharger les messages
+      } catch (error) {
+        console.error(error);
+        alert('Erreur lors de la suppression du message');
+      }
+    }
+  }
+
+  // Fonction pour modifier un message
+  async function editMessage(messageId) {
+    const newContent = prompt("Modifier le message :");
+    if (newContent) {
+      try {
+        const response = await fetch(`/messages/${messageId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ contenu: newContent }),
+        });
+        if (!response.ok) throw new Error('Erreur lors de la modification du message');
+        loadMessages(); // Recharger les messages
+      } catch (error) {
+        console.error(error);
+        alert('Erreur lors de la modification du message');
+      }
+    }
+  }
+</script>
 
   <div class="modal fade" id="rechercheModal" tabindex="-1" aria-labelledby="rechercheModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -144,27 +460,64 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
         </div>
         <div class="modal-body">
-          <form action="/rechercheParAnnee" method="get">
+          <form action="/recherche" method="get">
             <div class="mb-3">
               <label for="annee" class="form-label">Année</label>
-              <input type="number" class="form-control" name="annee" id="annee" required>
+              <input type="number" class="form-control" name="annee">
             </div>
             <div class="mb-3">
               <label for="type" class="form-label">Type</label>
-              <select class="form-select" name="type" id="type">
-                <option value="LICENCE">Licence</option>
-                <option value="MASTER">Master</option>
-                <option value="DOCTORANT">Doctorant</option>
+              <select class="form-select" name="type">
+                <option value="">Tous</option>
+                <option value="MEMOIRE">Mémoire</option>
+                <option value="THESE">Thèse</option>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-              Rechercher
-            </button>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="ufrNom" class="form-label">UFR</label>
+                  <select id="ufrNom" name="ufrNom" class="form-select" onchange="updateDepartements()" required>
+                    <option value="">-- Sélectionner un UFR --</option>
+                    <option value="UFR Sciences et Techniques (ST)">UFR Sciences et Techniques (ST)</option>
+                    <option value="UFR Lettres, Art, Sciences Humaines (LASHU)">UFR Lettres, Art, Sciences Humaines (LASHU)</option>
+                    <option value="UFR Sciences Economiques et Sociales (SES)">UFR Sciences Economiques et Sociales (SES)</option>
+                    <option value="UFR Sciences Santé (SS)">UFR Sciences Santé (SS)</option>
+                    <option value="Tous">Tous</option> <!-- Option pour ne pas spécifier -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="departementNom" class="form-label">Département</label>
+                  <select id="departementNom" name="departementNom" class="form-select" onchange="updateFilieres()" required>
+                    <option value="">-- Sélectionner un département --</option>
+                    <option value="Tous">Tous</option> <!-- Option pour ne pas spécifier -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="filiereNom" class="form-label">Filière</label>
+                  <select id="filiereNom" name="filiereNom" class="form-select" required>
+                    <option value="">-- Sélectionner une filière --</option>
+                    <option value="Tous">Tous</option> <!-- Option pour ne pas spécifier -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+
+
+            <button type="submit" class="btn btn-primary">Rechercher</button>
           </form>
         </div>
       </div>
     </div>
   </div>
+
 
   <!-- End Navbar -->
   <div class="container-fluid py-2">
@@ -550,6 +903,76 @@
     </div>
   </div>
 </div>
+
+<script>
+
+const data = {
+  "UFR Sciences et Techniques (ST)": {
+    "Géographie": ["Aménagement du territoire", "Environnement"],
+    "Mathématiques": ["Mathématiques appliquées", "Mathématiques Pures"],
+    "Informatique": ["Génie logiciel", "Réseaux", "Intelligence Artificielle (IA)"],
+    "Chimie": ["Chimie du Solide et des Materiaux (CSM)", "Synthèse Organique des Produits Naturels (SOPN)"],
+    "Physique": ["Physique des matériaux", "Science des Atmosphères des Océans (SAO)", "Energies Renouvelables"],
+    "Agroforésterie": ["Agroforésterie"]
+  },
+  "UFR Lettres, Art, Sciences Humaines (LASHU)": {
+    "Histoire": ["Archéologie", "Géopolitique", "Histoire de la Séné-Gambie", "Egyptologie"],
+    "Lettres Modernes (LM)": ["Etudes Littéraires", "Sciences du Langage"],
+    "Langues Etrangères Appliquées (LEA)": ["Tourisme", "Développement Local", "Langues et Civilisations"]
+  },
+  "UFR Sciences Economiques et Sociales (SES)": {
+    "Management Informatique des Organisations(MIO)": ["Méthodes Informatiques Appliquées à la Gestion (MIAGE)", "Management Informatique des Organisations(MIO)", "Management des Systèmes Informatique Appliqué(MSIA)"],
+    "Sociologie": ["Sociologie"],
+    "Economie-Gestion (ECO-GES)": ["Finance et Développement", "Evaluation d'impact", "Economie", "Gestion"],
+    "Droit": ["Droit des Collectivités Locales", "Droit Humanitaire", "Droit des affaires"],
+    "Tourisme": ["Tourisme"]
+  },
+  "UFR Sciences Santé (SS)": {
+    "Santé": ["Médecine", "Pharmacie", "Sciences infirmières", "Biologie", "Obstétrique"]
+  }
+};
+
+function updateDepartements() {
+  const ufrSelect = document.getElementById("ufrNom");
+  const departementSelect = document.getElementById("departementNom");
+  const selectedUFR = ufrSelect.value;
+
+  departementSelect.innerHTML = '<option value="">-- Sélectionner un département --</option><option value="Tous">Tous</option>';
+
+  // Si un UFR est sélectionné
+  if (selectedUFR && data[selectedUFR]) {
+    // Remplir la liste des départements en fonction de l'UFR
+    Object.keys(data[selectedUFR]).forEach(departement => {
+      const option = document.createElement("option");
+      option.value = departement;
+      option.textContent = departement;
+      departementSelect.appendChild(option);
+    });
+  }
+
+  // Si "Tous" est sélectionné, on vide les filières
+  document.getElementById("filiereNom").innerHTML = '<option value="">-- Sélectionner une filière --</option><option value="Tous">Tous</option>';
+}
+
+function updateFilieres() {
+  const departementSelect = document.getElementById("departementNom");
+  const filiereSelect = document.getElementById("filiereNom");
+  const selectedUFR = document.getElementById("ufrNom").value;
+  const selectedDepartement = departementSelect.value;
+
+  filiereSelect.innerHTML = '<option value="">-- Sélectionner une filière --</option><option value="Tous">Tous</option>';
+
+  // Si un département est sélectionné, on remplit la liste des filières
+  if (selectedUFR && selectedDepartement && data[selectedUFR] && data[selectedUFR][selectedDepartement]) {
+    data[selectedUFR][selectedDepartement].forEach(filiere => {
+      const option = document.createElement("option");
+      option.value = filiere;
+      option.textContent = filiere;
+      filiereSelect.appendChild(option);
+    });
+  }
+}
+</script>
 <!--   Core JS Files   -->
 <script src="../assets/js/core/popper.min.js"></script>
 <script src="../assets/js/core/bootstrap.min.js"></script>
@@ -854,6 +1277,155 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
   </script>
+
+<!-- Ajouter à la fin de votre fichier dashboard.html, juste avant la fermeture de la balise body -->
+
+<!-- Popup de notifications -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="notificationModalLabel">📬 Notifications</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group notification-list">
+          <li th:each="notification : ${notifications}"
+              class="list-group-item notification-item d-flex justify-content-between align-items-center"
+              th:classappend="${notification.lue} ? '' : 'list-group-item-success'">
+            <div class="notification-message">
+              <span th:text="${notification.message}">Message de notification</span>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-sm btn-success me-1 mark-read-btn"
+                      th:attr="data-id=${notification.id}"
+                      th:if="${!notification.lue}">Lue</button>
+              <button class="btn btn-sm btn-danger delete-btn"
+                      th:attr="data-id=${notification.id}">Supprimer</button>
+            </div>
+          </li>
+          <li th:if="${notifications.isEmpty()}" class="list-group-item text-center">
+            Aucune notification
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript pour les notifications -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ouvrir le modal de notification
+    document.getElementById('notificationBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      var notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+      notificationModal.show();
+    });
+
+    // Gérer le marquage comme lu
+    document.querySelectorAll('.mark-read-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const item = this.closest('.notification-item');
+
+        // Requête AJAX pour marquer comme lu
+        fetch(`/notifications/api/lire/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            // Mettre à jour l'interface
+            item.classList.remove('list-group-item-success');
+            this.remove();
+
+            // Mettre à jour le compteur
+            updateNotificationCount(-1);
+          }
+        });
+      });
+    });
+
+    // Gérer la suppression
+    document.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const item = this.closest('.notification-item');
+
+        // Requête AJAX pour supprimer
+        fetch(`/notifications/api/supprimer/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            // Supprimer de l'interface
+            item.remove();
+
+            // Vérifier s'il reste des notifications
+            const remainingItems = document.querySelectorAll('.notification-item').length;
+            if (remainingItems === 0) {
+              const emptyMessage = document.createElement('li');
+              emptyMessage.className = 'list-group-item text-center';
+              emptyMessage.textContent = 'Aucune notification';
+              document.querySelector('.notification-list').appendChild(emptyMessage);
+            }
+
+            // Mettre à jour le compteur
+            updateNotificationCount(-1);
+          }
+        });
+      });
+    });
+
+    // Fonction pour mettre à jour le compteur
+    function updateNotificationCount(change) {
+      const countElement = document.querySelector('.notification-count');
+      let count = parseInt(countElement.textContent);
+      count += change;
+
+      if (count <= 0) {
+        countElement.style.display = 'none';
+        countElement.textContent = '0';
+      } else {
+        countElement.style.display = '';
+        countElement.textContent = count;
+      }
+    }
+  });
+</script>
+
+<!-- CSS pour les notifications -->
+<style>
+  .notification-count {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .notification-item {
+    transition: all 0.3s ease;
+  }
+</style>
+
 <!-- Github buttons -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->

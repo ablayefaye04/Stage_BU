@@ -37,11 +37,11 @@
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
-            background: #222; /* Fond sombre */
+            background: #fff; /* Fond sombre */
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-                        height: 60px; /* Ajuste la hauteur pour correspondre aux selects */
+            height: 60px; /* Ajuste la hauteur pour correspondre aux selects */
 
         }
 
@@ -50,13 +50,13 @@
             flex: 1;
             min-width: 50px;
             padding: 6px;
-            border: 1px solid #444;
+            border: 1px solid #222;
             font-size: 14px; /* Texte plus petit */
             height: 33px; /* Ajuste la hauteur pour correspondre aux selects */
 
             border-radius: 5px;
-            background: #333;
-            color: #fff;
+            background: #fff;
+            color: #222;
             outline: none;
             transition: all 0.3s ease-in-out;
         }
@@ -64,27 +64,24 @@
         /* Effet au survol des champs */
         .search-container input:focus {
             border-color: #007bff; /* blue fluo */
-            background: #444;
+            background: #fff;
         }
 
         /* Bouton de recherche */
         .search-button {
-            background: #000; /* Fond noir */
-            color: #fff;
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: 0.3s;
-            font-size: 18px;
-            height: 30px; /* Ajuste la hauteur pour correspondre aux selects */
-
+            font-size: 14px;
+            transition: background 0.3s ease-in-out;
         }
 
-        /* Effet au survol du bouton */
+        /* Effet hover sur le bouton */
         .search-button:hover {
-            background: #007bff; /* Vert fluo */
-            color: #000;
+            background-color: #0056b3;
         }
        .btn-custom {
             border: 2px solid #343a40; /* Bordure foncée */

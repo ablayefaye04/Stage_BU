@@ -12,21 +12,44 @@
       margin: 0;
       padding: 0;
       display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+    }
+
+    /* Liste des conversations */
+    .conversation-list {
+      width: 300px;
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .conversation-list h2 {
+      margin-top: 0;
+    }
+
+    .conversation-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .conversation-list li {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #34495e;
+    }
+
+    .conversation-list li:hover {
+      background-color: #34495e;
     }
 
     /* Section de chat */
     .chat-section {
-      width: 600px;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      overflow: hidden;
+      flex: 1;
       display: flex;
       flex-direction: column;
-      height: 80vh;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .chat-header {
@@ -72,8 +95,7 @@
     }
 
     .message:hover .message-actions {
-      display: flex;
-      gap: 5px;
+      display: block;
     }
 
     .message-actions button {
@@ -81,7 +103,7 @@
       border: none;
       color: inherit;
       cursor: pointer;
-      font-size: 0.9em;
+      margin-left: 5px;
     }
 
     .message-actions button:hover {
@@ -137,6 +159,16 @@
   </style>
 </head>
 <body>
+<!-- Liste des conversations -->
+<div class="conversation-list">
+  <h2>Conversations</h2>
+  <ul>
+    <li>Conversation 1</li>
+    <li>Conversation 2</li>
+    <li>Conversation 3</li>
+  </ul>
+</div>
+
 <!-- Section de chat -->
 <div class="chat-section">
   <div class="chat-header">
@@ -151,7 +183,7 @@
   <!-- Formulaire d'envoi de message -->
   <form class="chat-form" id="chatForm">
     <input type="text" id="messageInput" placeholder="Écrire un message..." required>
-    <button type="submit"><i class="fas fa-paper-plane"></i> Envoyer</button>
+    <button type="submit">Envoyer</button>
   </form>
 </div>
 
@@ -159,14 +191,12 @@
 <div class="notification" id="notification">Ce message a été supprimé.</div>
 
 <script>
-  // Récupérer l'utilisateur actuel (injecté par Thymeleaf)
-  const currentUser = "[[${currentUser}]]";
+    // Récupérer l'utilisateur actuel
+    const currentUser = "[[${currentUser}]]"; // Utilisateur connecté (injecté par Thymeleaf)
 
-  // Fonction pour charger les messages depuis l'API
-  async function loadMessages() {
-    try {
+    // Fonction pour charger les messages depuis l'API
+    async function loadMessages() {
       const response = await fetch('/api/messages');
-      if (!response.ok) throw new Error('Erreur lors du chargement des messages');
       const messages = await response.json();
       const messagesDiv = document.getElementById('chat-messages');
       messagesDiv.innerHTML = ''; // Vider les messages actuels
@@ -175,11 +205,9 @@
         const messageElement = document.createElement('div');
         messageElement.className = message.auteur.username === currentUser ? 'message sent' : 'message received';
         messageElement.innerHTML = `
-          <div class="message-actions">
-            ${message.auteur.username === currentUser ? `
-              <button onclick="editMessage('${message.id}')"><i class="fas fa-edit"></i></button>
-              <button onclick="deleteMessage('${message.id}')"><i class="fas fa-trash"></i></button>
-            ` : ''}
+          <div class="message-actions" ${message.auteur.username === currentUser ? '' : 'style="display: none;"'}>
+            <button onclick="editMessage('${message.id}')"><i class="fas fa-edit"></i></button>
+            <button onclick="deleteMessage('${message.id}')"><i class="fas fa-trash"></i></button>
           </div>
           <strong>${message.auteur.username}</strong>
           <p>${message.contenu}</p>
@@ -190,22 +218,18 @@
 
       // Faire défiler vers le dernier message
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    } catch (error) {
-      console.error(error);
-      showNotification("Erreur lors du chargement des messages.");
     }
-  }
 
-  // Charger les messages au chargement de la page
-  loadMessages();
+    // Charger les messages au chargement de la page
+    loadMessages();
 
-  // Fonction pour envoyer un message
-  document.getElementById('chatForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const messageInput = document.getElementById('messageInput');
-    const contenu = messageInput.value;
+    // Fonction pour envoyer un message
+    document.getElementById('chatForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const messageInput = document.getElementById('messageInput');
+      const contenu = messageInput.value;
 
-    try {
+      // Envoyer le message au backend
       const response = await fetch('/messages', {
         method: 'POST',
         headers: {
@@ -214,45 +238,40 @@
         body: `contenu=${encodeURIComponent(contenu)}`,
       });
 
-      if (!response.ok) throw new Error('Erreur lors de l\'envoi du message');
-      messageInput.value = ''; // Vider le champ de saisie
-      loadMessages(); // Recharger les messages
-    } catch (error) {
-      console.error(error);
-      showNotification("Erreur lors de l'envoi du message.");
-    }
-  });
-
-  // Fonction pour afficher une notification
-  function showNotification(message) {
-    const notification = document.getElementById('notification');
-    notification.textContent = message;
-    notification.style.display = 'block';
-    setTimeout(() => {
-      notification.style.display = 'none';
-    }, 3000);
-  }
-
-  // Fonction pour supprimer un message
-  async function deleteMessage(messageId) {
-    if (confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) {
-      try {
-        const response = await fetch(`/messages/${messageId}`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Erreur lors de la suppression du message');
-        showNotification("Ce message a été supprimé.");
+      if (response.ok) {
+        messageInput.value = ''; // Vider le champ de saisie
         loadMessages(); // Recharger les messages
-      } catch (error) {
-        console.error(error);
-        showNotification("Erreur lors de la suppression du message.");
+      }
+    });
+
+    // Fonction pour afficher une notification
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+
+    // Fonction pour supprimer un message
+    async function deleteMessage(messageId) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) {
+        const response = await fetch(`/messages/${messageId}`, { method: 'DELETE' });
+        if (response.ok) {
+          showNotification("Ce message a été supprimé.");
+          const messageElement = document.querySelector(`.message[data-id="${messageId}"]`);
+          if (messageElement) {
+            messageElement.innerHTML = '<p style="color: #777;">Message supprimé</p>';
+          }
+        }
       }
     }
-  }
 
-  // Fonction pour modifier un message
-  async function editMessage(messageId) {
-    const newContent = prompt("Modifier le message :");
-    if (newContent) {
-      try {
+    // Fonction pour modifier un message
+    async function editMessage(messageId) {
+      const newContent = prompt("Modifier le message :");
+      if (newContent) {
         const response = await fetch(`/messages/${messageId}`, {
           method: 'PUT',
           headers: {
@@ -260,14 +279,11 @@
           },
           body: JSON.stringify({ contenu: newContent }),
         });
-        if (!response.ok) throw new Error('Erreur lors de la modification du message');
-        loadMessages(); // Recharger les messages
-      } catch (error) {
-        console.error(error);
-        showNotification("Erreur lors de la modification du message.");
+        if (response.ok) {
+          loadMessages(); // Recharger les messages
+        }
       }
     }
-  }
-</script>
+  </script>
 </body>
 </html>

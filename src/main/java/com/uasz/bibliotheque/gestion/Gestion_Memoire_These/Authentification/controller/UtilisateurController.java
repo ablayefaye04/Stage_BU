@@ -135,6 +135,7 @@ public class UtilisateurController {
         List<Utilisateur> responsables = utilisateurService.listUtilisateur();
         model.addAttribute("listeResponsables", responsables); // Transfert des données au modèle
         model.addAttribute("notifications", notificationService.getNotificationNonLue());
+
         return "Responsable"; // Assurez-vous que ce nom correspond au fichier Thymeleaf (ex: responsables.html)
     }
 

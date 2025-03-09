@@ -3,6 +3,7 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.controler;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Role;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.*;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,9 @@ public class MemoireController {
 
     @Autowired
     private MemoireService memoireService;
+
+    @Autowired
+    private NotificationService notificationService ;
     @Autowired
     EtudiantService etudiantService;
 
@@ -188,6 +192,7 @@ public class MemoireController {
                 // Ajouter les informations de l'utilisateur au modèle
                 model.addAttribute("nom", utilisateur.getNom());
                 model.addAttribute("prenom", utilisateur.getPrenom());
+                model.addAttribute("notifications", notificationService.getNotificationNonLue());
 
                 // Extraire les rôles et les ajouter
                 String roles = utilisateur.getRoles().stream()

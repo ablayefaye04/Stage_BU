@@ -14,11 +14,7 @@
     <h1 class="mb-4">
         Résultats des : <span id="typeRecherche" th:text="${typeRecherche}"></span>
         pour l'année : <span id="anneeRecherchee" th:text="${anneeRecherchee}"></span>
-        <span th:if="${ufrRecherchee != null}"> - UFR : <span th:text="${ufrRecherchee}"></span></span>
-        <span th:if="${departementRecherchee != null}"> - Département : <span th:text="${departementRecherchee}"></span></span>
-        <span th:if="${filiereRecherchee != null}"> - Filière : <span th:text="${filiereRecherchee}"></span></span>
     </h1>
-
 
     <table class="table table-striped table-bordered">
         <thead class="table-success">
@@ -30,10 +26,6 @@
             <th>Encadrant</th>
             <th>Filière</th>
             <th>Année</th>
-            <th>UFR</th>
-            <th>Département</th>
-            <th>Filière</th>
-
         </tr>
         </thead>
         <tbody>
@@ -45,10 +37,6 @@
             <td th:text="${memoire.encadrant != null ? memoire.encadrant.nom + ' ' + memoire.encadrant.prenom : 'Non défini'}"></td>
             <td th:text="${memoire.filiere != null ? memoire.filiere.nom : 'Non défini'}"></td>
             <td th:text="${memoire.annee}"></td>
-            <td th:text="${memoire.ufr != null ? memoire.ufr.nom : 'Non défini'}"></td>
-            <td th:text="${memoire.departement != null ? memoire.departement.nom : 'Non défini'}"></td>
-            <td th:text="${memoire.filiere != null ? memoire.filiere.nom : 'Non défini'}"></td>
-
         </tr>
         </tbody>
     </table>

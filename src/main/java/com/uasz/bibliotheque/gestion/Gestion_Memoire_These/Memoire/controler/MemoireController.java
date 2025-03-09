@@ -3,6 +3,7 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.controler;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Role;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,9 @@ public class MemoireController {
 
     @Autowired
     private MemoireService memoireService;
+
+    @Autowired
+    private TheseService theseService;
     @Autowired
     EtudiantService etudiantService;
 
@@ -410,11 +414,11 @@ public class MemoireController {
     @GetMapping("/doctorat")
     public String afficherToutesLesMemoiresTheses(Model model) {
         // Récupérer toutes les mémoires de type These
-        List<Memoire> memoires = memoireService.getAllMemoiresThese();
+        List<These> memoires = theseService.getAllThese();
 
-        // Ajouter les mémoires et les UFR au modèle
+        // Ajouter les mémoires au modèle
         model.addAttribute("memoires", memoires);
-        return "doctorat";
+        return "doctorat"; // Assure-toi que "doctorat" est le nom du fichier Thymeleaf
     }
 
     /**
@@ -483,4 +487,33 @@ public class MemoireController {
         return "master";
     }
 
+    @PostMapping("/filtre/these")
+    public String filtrerThese(
+            @RequestParam String ufrNom,
+            @RequestParam String ecoleDoctoraleNom,
+            Model model) {
+
+        // Récupérer uniquement les mémoires de type Doctorat
+        List<These> memoires = theseService.getMemoiresTheseFiltres(ufrNom, ecoleDoctoraleNom);
+
+        // Grouper les mémoires par UFR > Département > Filière
+        Map<String, Map<String, List<These>>> memoiresGroupes = memoires.stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getEcoleDoctorat().getUfr().getNom(), // Accès à UFR via EcoleDoctorat
+                        Collectors.groupingBy(
+                                m -> m.getEcoleDoctorat().getUfr().getNom() // Accès au Département
+                        )
+                ));
+
+        // Ajouter les données au modèle
+        model.addAttribute("ufrs", ufrService.findAllUfrs()); // Liste des UFRs
+        model.addAttribute("memoiresGroupes", memoiresGroupes); // Groupes de mémoires
+        model.addAttribute("selection", Map.of(
+                "ufr", ufrNom,
+                "ecoleDoctorale", ecoleDoctoraleNom
+        ));
+        model.addAttribute("rechercheEffectuees", true); // Indicateur que la recherche a été effectuée
+
+        return "doctorat"; // Vue à retourner
+    }
 }

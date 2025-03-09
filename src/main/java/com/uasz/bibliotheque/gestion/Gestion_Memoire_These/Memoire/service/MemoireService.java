@@ -368,30 +368,6 @@ public class MemoireService {
         return memoireRepository.findAll(MemoireSpecifications.withType(TypeMemoire.MASTER));
     }
 
-    //listes des these
-    public List<Memoire> getAllMemoiresThese() {
-        return memoireRepository.findAll(MemoireSpecifications.withType(TypeMemoire.DOCTORAT));
-    }
-
-    //liste de masters
-    public Map<String, Map<String, List<Memoire>>> getMemoiresMasterGroupes() {
-        // Récupérer tous les mémoires de type Master
-        List<Memoire> memoiresMaster = memoireRepository.findByType(TypeMemoire.MASTER);
-
-        if (memoiresMaster == null || memoiresMaster.isEmpty()) {
-            return new HashMap<>(); // Retourne un map vide s'il n'y a pas de mémoire
-        }
-
-        // Grouper les mémoires par UFR > Département
-        return memoiresMaster.stream()
-                .collect(Collectors.groupingBy(
-                        memoire -> memoire.getFiliere().getDepartement().getUfr().getNom(),
-                        Collectors.groupingBy(
-                                memoire -> memoire.getFiliere().getDepartement().getNom()
-                        )
-                ));
-    }
-
     //liste de these
     public Map<String, Map<String, List<Memoire>>> getMemoiresDoctoratGroupes() {
         // Récupérer tous les mémoires de type Doctorat

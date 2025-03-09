@@ -3,6 +3,12 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repository.UtilisateurRepository;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.model.*;
@@ -420,4 +426,41 @@ public class MemoireService {
             throw new RuntimeException("Type de mémoire invalide : " + type, e);
         }
     }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Transactional// Si la méthode ne modifie pas la base de données
+    public List<Memoire> rechercherMemoire(Integer annee, TypeMemoire type, String ufr, String departement, String filiere) {
+        // Construire un exemple de critère de recherche
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Memoire> query = cb.createQuery(Memoire.class);
+        Root<Memoire> memoire = query.from(Memoire.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Ajouter les conditions selon les paramètres fournis
+        if (annee != null) {
+            predicates.add(cb.equal(memoire.get("annee"), annee));
+        }
+        if (type != null) {
+            predicates.add(cb.equal(memoire.get("type"), type));
+        }
+        if (ufr != null && !ufr.equals("Tous")) {  // Ignorer si "Tous" est sélectionné
+            predicates.add(cb.equal(memoire.get("ufr"), ufr));
+        }
+        if (departement != null && !departement.equals("Tous")) {  // Ignorer si "Tous" est sélectionné
+            predicates.add(cb.equal(memoire.get("departement"), departement));
+        }
+        if (filiere != null && !filiere.equals("Tous")) {  // Ignorer si "Tous" est sélectionné
+            predicates.add(cb.equal(memoire.get("filiere"), filiere));
+        }
+
+        // Appliquer les filtres avec "and" (tous les critères doivent correspondre)
+        query.where(cb.and(predicates.toArray(new Predicate[0])));
+
+        return entityManager.createQuery(query).getResultList();
+    }
+
+
+
 }

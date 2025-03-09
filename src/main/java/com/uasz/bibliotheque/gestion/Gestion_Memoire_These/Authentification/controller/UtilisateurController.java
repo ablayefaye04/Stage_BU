@@ -6,6 +6,7 @@ import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.mode
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repository.UtilisateurRepository;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.service.EmailService;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.service.UtilisateurService;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +68,12 @@ public class UtilisateurController {
     }
 
 
-
+    @Autowired
+    private NotificationService notificationService ;
     @GetMapping("/dashbord/stager")
-    public String affdashbord(){
+    public String affdashbord(Model model){
+
+        model.addAttribute("notifications", notificationService.getNotificationNonLue());
         return "dashboard" ;
     }
 
@@ -141,6 +145,7 @@ public class UtilisateurController {
         // Récupère la liste des responsables depuis le service
         List<Utilisateur> responsables = utilisateurService.listUtilisateur();
         model.addAttribute("listeResponsables", responsables); // Transfert des données au modèle
+        model.addAttribute("notifications", notificationService.getNotificationNonLue());
         return "Responsable"; // Assurez-vous que ce nom correspond au fichier Thymeleaf (ex: responsables.html)
     }
 

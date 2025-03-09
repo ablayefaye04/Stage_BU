@@ -456,7 +456,7 @@ public class MemoireController {
         return "resultatsRecherche";
     }*/
 
-    @GetMapping("/rechercheParAnnee")
+   /* @GetMapping("/rechercheParAnnee")
     public String rechercheParAnnee(@RequestParam("annee") int annee,
                                     @RequestParam("type") String type,
                                     Model model) {
@@ -475,7 +475,9 @@ public class MemoireController {
             model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
         }
         return "resultatsRecherche";
-    }
+    }*/
+
+
 
 
 
@@ -530,5 +532,80 @@ public class MemoireController {
 
         return "licence";
     }
+ /*   @GetMapping("/recherche")
+    public String recherche(
+            @RequestParam(value = "annee", required = false) Integer annee,
+            @RequestParam(value = "type", required = false) TypeMemoire type,
+            @RequestParam(value = "ufr", required = false) String ufr,
+            @RequestParam(value = "departement", required = false) String departement,
+            @RequestParam(value = "filiere", required = false) String filiere,
+            Model model
+    ) {
+        try {
+            // Si "Tous" est sélectionné pour les filtres, on les met à null pour ignorer
+            if ("Tous".equals(departement)) {
+                departement = null;
+            }
+            if ("Tous".equals(filiere)) {
+                filiere = null;
+            }
+            if ("Tous".equals(ufr)) {
+                ufr = null;
+            }
+
+            // Appel du service avec les paramètres optionnels
+            List<Memoire> resultats = memoireService.rechercherMemoire(annee, type, ufr, departement, filiere);
+
+            // Ajout des résultats à la vue
+            model.addAttribute("resultats", resultats);
+
+            if (resultats.isEmpty()) {
+                model.addAttribute("message", "Aucun résultat trouvé pour ces critères.");
+            }
+        } catch (Exception e) {
+            model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
+        }
+
+        return "resultatsRecherche"; // Page avec les résultats
+    }*/
+
+    @GetMapping("/recherche")
+    public String recherche(
+            @RequestParam(value = "annee", required = false) Integer annee,
+            @RequestParam(value = "type", required = false) TypeMemoire type,
+            @RequestParam(value = "ufr", required = false) String ufr,
+            @RequestParam(value = "departement", required = false) String departement,
+            @RequestParam(value = "filiere", required = false) String filiere,
+            Model model
+    ) {
+        try {
+            // Si "Tous" est sélectionné pour les filtres, on les met à null pour ignorer
+            if ("Tous".equals(departement)) {
+                departement = null;
+            }
+            if ("Tous".equals(filiere)) {
+                filiere = null;
+            }
+            if ("Tous".equals(ufr)) {
+                ufr = null;
+            }
+
+            // Appel du service avec les paramètres optionnels
+            List<Memoire> resultats = memoireService.rechercherMemoire(annee, type, ufr, departement, filiere);
+
+            // Ajout des résultats à la vue
+            model.addAttribute("resultats", resultats);
+
+            if (resultats.isEmpty()) {
+                model.addAttribute("message", "Aucun résultat trouvé pour ces critères.");
+            }
+        } catch (Exception e) {
+            model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
+        }
+
+        return "resultatsRecherche"; // Page avec les résultats
+    }
 
 }
+
+

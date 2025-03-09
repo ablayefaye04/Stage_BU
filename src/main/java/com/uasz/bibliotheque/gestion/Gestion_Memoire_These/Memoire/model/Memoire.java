@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Memoire {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ID unique auto-généré

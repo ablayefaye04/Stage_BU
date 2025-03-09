@@ -17,13 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.security.Principal;
 import java.util.List;
 
 @Controller
 public class UtilisateurController {
-
     @Autowired
     private UtilisateurService utilisateurService;
 
@@ -36,6 +34,8 @@ public class UtilisateurController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private NotificationService notificationService ;
 
     /**
      * Affiche la page de connexion.
@@ -58,7 +58,7 @@ public class UtilisateurController {
                     case "Responsable":
                         return "redirect:/memoires/liste";
                     case "Stager":
-                        return "redirect:/dashbord/stager";
+                        return "redirect:/dashbord/stagiaire";
                     default:
                         return "redirect:/login?error=role_inconnu";
                 }
@@ -67,16 +67,11 @@ public class UtilisateurController {
         return "redirect:/login";
     }
 
-
-    @Autowired
-    private NotificationService notificationService ;
-    @GetMapping("/dashbord/stager")
+    @GetMapping("/dashbord/stagiaire")
     public String affdashbord(Model model){
-
         model.addAttribute("notifications", notificationService.getNotificationNonLue());
         return "dashboard" ;
     }
-
     /**
      * Affiche la page de succès après une inscription réussie.
      */
@@ -84,7 +79,6 @@ public class UtilisateurController {
     public String afficherPageSucces() {
         return "success";
     }
-
     /**
      * Gère l'inscription d'un nouvel utilisateur.
      */
@@ -111,7 +105,6 @@ public class UtilisateurController {
         if (roleEntity == null) {
             roleEntity = utilisateurService.ajouter_role(new Role(role));
         }
-
         // Associer le rôle à l'utilisateur
         utilisateur.getRoles().add(roleEntity);
 
@@ -123,9 +116,6 @@ public class UtilisateurController {
 
         return "redirect:/listeResponsables"; // Redirection après succès
     }
-
-
-
     /**
      * Gère la déconnexion de l'utilisateur et redirige vers la page de connexion.
      */
@@ -136,7 +126,6 @@ public class UtilisateurController {
         }
         return "redirect:/login?logout=true";
     }
-
     /**
      * Affiche la liste des utilisateurs.
      */
@@ -154,7 +143,6 @@ public class UtilisateurController {
         return "ajoutUser";
     }
 
-
     @PostMapping("/ajouterResponsable")
     public String ajouterResponsable(Utilisateur user){
         utilisateurService.ajouter_Utilisateur(user);
@@ -165,7 +153,6 @@ public class UtilisateurController {
     public String modifierResponsable(@ModelAttribute Utilisateur utilisateur) {
         Utilisateur User = utilisateurRepository.findById(utilisateur.getId())
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
-
         // Mettre à jour uniquement les champs modifiables
         User.setNom(utilisateur.getNom());
         User.setPrenom(utilisateur.getPrenom());
@@ -174,23 +161,16 @@ public class UtilisateurController {
         return "redirect:/listeResponsables";
     }
 
-
     @PostMapping("/supprimerResponsable")
     public String supprimerResponsable(Utilisateur user) {
-
-
         if (user.getUsername() != null && !user.getUsername().isEmpty()) {
             emailService.sendAccountDeletionEmail(user.getUsername());
         } else {
             System.err.println("L'adresse e-mail est nulle, impossible d'envoyer le mail.");
         }
-
         utilisateurService.supprimerResponsable(user);
-
         return "redirect:/listeResponsables";
     }
-
-
 
     @GetMapping("/profil")
     public String afficherProfil(Model model, Principal principal) {
@@ -208,29 +188,23 @@ public class UtilisateurController {
             @RequestParam String confirmationPassword, // Ajout de la confirmation
             Principal principal,
             RedirectAttributes redirectAttributes) {
-
         if (principal == null) {
             return "redirect:/login";
         }
-
         // Vérifier que le nouveau mot de passe et sa confirmation correspondent
         if (!nouveauPassword.equals(confirmationPassword)) {
             redirectAttributes.addFlashAttribute("erreurMotDePasse", "Le nouveau mot de passe et sa confirmation ne correspondent pas !");
             return "redirect:/profil";
         }
-
         Utilisateur utilisateur = utilisateurService.recherche_Utilisateur(principal.getName());
-
         // Vérifier si l'ancien mot de passe est correct
         if (!passwordEncoder.matches(ancienPassword, utilisateur.getPassword())) {
             redirectAttributes.addFlashAttribute("erreurMotDePasse", "Ancien mot de passe incorrect !");
             return "redirect:/profil";
         }
-
         // Mettre à jour le mot de passe avec le nouveau haché
         utilisateur.setPassword(passwordEncoder.encode(nouveauPassword));
         utilisateurService.modifierUtilisateur(utilisateur);
-
         redirectAttributes.addFlashAttribute("messageMotDePasse", "Mot de passe modifié avec succès !");
         return "redirect:/profil";
     }
@@ -242,31 +216,24 @@ public class UtilisateurController {
             @RequestParam String username,
             Principal principal,
             RedirectAttributes redirectAttributes) {
-
         if (principal == null) {
             return "redirect:/login";
         }
-
         Utilisateur utilisateur = utilisateurService.recherche_Utilisateur(principal.getName());
-
         // Vérifier si l'email est déjà utilisé par un autre utilisateur
         Utilisateur utilisateurExistant = utilisateurService.recherche_Utilisateur(username);
         if (utilisateurExistant != null && !utilisateurExistant.getUsername().equals(utilisateur.getUsername())) {
             redirectAttributes.addFlashAttribute("erreur", "Cet email est déjà utilisé !");
             return "redirect:/profil";
         }
-
         // Mise à jour des informations
         utilisateur.setNom(nom);
         utilisateur.setPrenom(prenom);
         utilisateur.setUsername(username);
-
         utilisateurService.modifierUtilisateur(utilisateur);
-
         redirectAttributes.addFlashAttribute("message", "Informations mises à jour avec succès !");
         return "redirect:/listeResponsables";
     }
-
 
     @GetMapping("/online")
     public String afficherUtilisateursEnLigne(Model model) {

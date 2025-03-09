@@ -38,6 +38,8 @@ public class MemoireController {
 
     @Autowired
     private DepartementService departementService;
+    private final StatistiquesService statistiquesService;
+
 
 
     //formulaire d'ajout Licence
@@ -170,69 +172,15 @@ public class MemoireController {
         }
     }
 
-    public MemoireController(MemoireService memoireService) {
+    public MemoireController(MemoireService memoireService, StatistiquesService statistiquesService) {
         this.memoireService = memoireService;
+        this.statistiquesService = statistiquesService;
     }
 
-    private void ajouterStatistiques(Model model) {
-        try {
-            logger.info("Récupération des statistiques des mémoires.");
-
-            // Compter les mémoires par type
-            long licenceCount = memoireService.countMemosByType(TypeMemoire.LICENCE);
-            long masterCount = memoireService.countMemosByType(TypeMemoire.MASTER);
-            long doctoratCount = memoireService.countTheses();
-
-            model.addAttribute("licenceCount", licenceCount);
-            model.addAttribute("masterCount", masterCount);
-            model.addAttribute("doctoratCount", doctoratCount);
-
-            // Préparation des données pour le graphique
-            List<Long> stats = List.of(licenceCount, masterCount, doctoratCount);
-            model.addAttribute("stats", stats);
-
-            // Récupération des statistiques par année et par type
-            Map<Integer, Long> licencesParAnnee = memoireService.countMemosByTypeAndYear(TypeMemoire.LICENCE);
-            Map<Integer, Long> mastersParAnnee = memoireService.countMemosByTypeAndYear(TypeMemoire.MASTER);
-            // Récupération des statistiques des thèses par année
-            Map<Integer, Long> thesesParAnnee = memoireService.countThesesByYear();
-
-            // Regrouper les années
-            Set<Integer> anneesSet = new TreeSet<>();
-            anneesSet.addAll(licencesParAnnee.keySet());
-            anneesSet.addAll(mastersParAnnee.keySet());
-            anneesSet.addAll(thesesParAnnee.keySet());
-
-            List<Integer> annees = new ArrayList<>(anneesSet);
-
-            // Préparer les données pour les graphiques
-            List<Long> licencesCounts = annees.stream().map(year -> licencesParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
-            List<Long> mastersCounts = annees.stream().map(year -> mastersParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
-            List<Long> thesesCounts = annees.stream().map(year -> thesesParAnnee.getOrDefault(year, 0L)).collect(Collectors.toList());
-
-            model.addAttribute("annees", annees);
-            model.addAttribute("licencesCounts", licencesCounts);
-            model.addAttribute("mastersCounts", mastersCounts);
-            model.addAttribute("thesesCounts", thesesCounts);
-
-        } catch (Exception e) {
-            logger.error("Erreur lors de la récupération des statistiques : ", e);
-            model.addAttribute("errorMessage", "Une erreur est survenue lors de la récupération des statistiques.");
-        }
-    }
 
     //liste de tous les memoires
     @RequestMapping(value = "/memoires/liste", method = RequestMethod.GET)
-    public String afficherMemoires(
-            @RequestParam(required = false) String cote,
-            @RequestParam(required = false) String filiere,
-            @RequestParam(required = false) String titre,
-            @RequestParam(required = false) String etudiant,
-            @RequestParam(required = false) String encadrant,
-            @RequestParam(required = false) Integer annee,
-            Model model, Principal principal
-    ) {
-
+    public String afficherMemoires(Model model, Principal principal) {
         // Gestion de l'utilisateur connecté
         if (principal != null) {
             Utilisateur utilisateur = memoireService.recherche_Utilisateur(principal.getName());
@@ -250,59 +198,11 @@ public class MemoireController {
             }
         }
 
-        // Définir une spécification de base
-        Specification<Memoire> spec = Specification.where(null);
-
-        // Ajouter des conditions de recherche si des paramètres sont fournis
-        boolean hasSearchParams = false; // Variable pour savoir si une recherche a été effectuée
-
-        // Si un champ est rempli, ajouter une condition à la recherche
-        if (cote != null && !cote.isEmpty()) {
-            spec = spec.and(MemoireSpecifications.withCote(cote));
-            hasSearchParams = true;
-            System.out.println("Recherche par Cote : " + cote);  // Débogage
-        }
-        if (titre != null && !titre.isEmpty()) {
-            spec = spec.and(MemoireSpecifications.withTitre(titre));
-            hasSearchParams = true;
-            System.out.println("Recherche par Titre : " + titre);  // Débogage
-        }
-        if (filiere != null && !filiere.isEmpty()) {
-            spec = spec.and(MemoireSpecifications.withFiliere(filiere));
-            hasSearchParams = true;
-            System.out.println("Recherche par filiere : " + filiere);  // Débogage
-        }
-        if (etudiant != null && !etudiant.isEmpty()) {
-            spec = spec.and(MemoireSpecifications.withEtudiant(etudiant));
-            hasSearchParams = true;
-            System.out.println("Recherche par Etudiant : " + etudiant);  // Débogage
-        }
-        if (encadrant != null && !encadrant.isEmpty()) {
-            spec = spec.and(MemoireSpecifications.withEncadrant(encadrant));
-            hasSearchParams = true;
-            System.out.println("Recherche par Encadrant : " + encadrant);  // Débogage
-        }
-        if (annee != null) {
-            spec = spec.and(MemoireSpecifications.withAnnee(annee));
-            hasSearchParams = true;
-            System.out.println("Recherche par Année : " + annee);  // Débogage
-        }
-
-        // Exécuter la recherche si des paramètres de recherche sont présents
-        if (hasSearchParams) {
-            List<Memoire> memoires = memoireService.searchMemos(spec);
-            model.addAttribute("memoires", memoires);
-
-            if (memoires.isEmpty()) {
-                model.addAttribute("message", "Aucun mémoire trouvé pour les critères spécifiés.");
-            }
-        } else {
             // Si aucun critère n'est fourni, récupérer tous les mémoires groupés
             Map<String, Map<String, List<Memoire>>> memoiresGroupes = memoireService.getMemoiresGroupes();
             model.addAttribute("memoiresGroupes", memoiresGroupes);
-        }
 
-        ajouterStatistiques(model); // Appel de la méthode pour ajouter les statistiques
+        statistiquesService.ajouterStatistiques(model);
 
         return "essaie"; // Vue pour afficher les résultats de recherche
     }
@@ -499,6 +399,25 @@ public class MemoireController {
         return "licence";
     }
 
+    @GetMapping("/master")
+    public String afficherToutesLesMemoiresMasters(Model model) {
+        // Récupérer toutes les mémoires de type Master
+        List<Memoire> memoires = memoireService.getAllMemoiresMaster();
+
+        // Ajouter les mémoires et les UFR au modèle
+        model.addAttribute("memoires", memoires);
+        return "master";
+    }
+
+    @GetMapping("/doctorat")
+    public String afficherToutesLesMemoiresTheses(Model model) {
+        // Récupérer toutes les mémoires de type These
+        List<Memoire> memoires = memoireService.getAllMemoiresThese();
+
+        // Ajouter les mémoires et les UFR au modèle
+        model.addAttribute("memoires", memoires);
+        return "doctorat";
+    }
 
     /**
      * Filtre et affiche uniquement les mémoires de Licence.
@@ -604,6 +523,39 @@ public class MemoireController {
         }
 
         return "resultatsRecherche"; // Page avec les résultats
+    }
+
+    /**
+     * Filtre et affiche uniquement les mémoires de Master.
+     */
+    @PostMapping("/filtre/master")
+    public String filtrerMemoiresMaster(
+            @RequestParam String ufrNom,
+            @RequestParam String departementNom,
+            @RequestParam String filiereNom,
+            Model model) {
+
+        // Récupérer uniquement les mémoires de type Master
+        List<Memoire> memoires = memoireService.getMemoiresMastersFiltres(ufrNom, departementNom, filiereNom);
+
+        // Grouper les mémoires par UFR > Département
+        Map<String, Map<String, List<Memoire>>> memoiresGroupes = memoires.stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getFiliere().getDepartement().getUfr().getNom(),
+                        Collectors.groupingBy(m -> m.getFiliere().getDepartement().getNom())
+                ));
+
+        // Ajouter les données au modèle
+        model.addAttribute("ufrs", ufrService.findAllUfrs());
+        model.addAttribute("memoiresGroupes", memoiresGroupes);
+        model.addAttribute("selection", Map.of(
+                "ufr", ufrNom,
+                "departement", departementNom,
+                "filiere", filiereNom
+        ));
+        model.addAttribute("rechercheEffectuees", true); // Ajoute un indicateur de recherche
+
+        return "master";
     }
 
 }

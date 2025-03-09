@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class MessageController {
@@ -38,6 +40,18 @@ public class MessageController {
         return messageService.getMessages();
     }
 
+    // Obtenir le nombre de messages non lus
+    @GetMapping("/api/messages/unread")
+    @ResponseBody
+    public ResponseEntity<Map<String, Integer>> getUnreadCount(@RequestParam Long lastSeenId) {
+        List<Message> messages = messageService.getMessages();
+        long count = messages.stream()
+                .filter(message -> message.getId() > lastSeenId)
+                .count();
+
+        return ResponseEntity.ok(Map.of("count", (int) count));
+    }
+
     @PostMapping("/messages")
     public String envoyerMessage(@RequestParam String contenu, Principal principal) {
         Utilisateur auteur = utilisateurRepository.findByUsername(principal.getName());
@@ -49,6 +63,23 @@ public class MessageController {
         message.setAuteur(auteur);
         messageService.envoyerMessage(message);
         return "redirect:/messages";
+    }
+
+    // API pour envoyer un message (pour les requêtes AJAX)
+    @PostMapping("/api/messages")
+    @ResponseBody
+    public ResponseEntity<Message> envoyerMessageApi(@RequestParam String contenu, Principal principal) {
+        Utilisateur auteur = utilisateurRepository.findByUsername(principal.getName());
+        if (auteur == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Message message = new Message();
+        message.setContenu(contenu);
+        message.setAuteur(auteur);
+        Message savedMessage = messageService.envoyerMessage(message);
+
+        return ResponseEntity.ok(savedMessage);
     }
 
     // Supprimer un message
@@ -66,10 +97,18 @@ public class MessageController {
     // Modifier un message
     @PutMapping("/messages/{id}")
     @ResponseBody
-    public ResponseEntity<String> editMessage(@PathVariable Long id, @RequestParam String contenu, Principal principal) {
+    public ResponseEntity<String> editMessage(@PathVariable Long id, @RequestBody(required = false) Map<String, String> payload,
+                                              @RequestParam(required = false) String contenu, Principal principal) {
+        // Permet de gérer les deux formats de requête (JSON et form-data)
+        String newContent = payload != null ? payload.get("contenu") : contenu;
+
+        if (newContent == null || newContent.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Le contenu ne peut pas être vide");
+        }
+
         Message message = messageService.getMessageById(id);
         if (message != null && message.getAuteur().getUsername().equals(principal.getName())) {
-            message.setContenu(contenu);
+            message.setContenu(newContent);
             messageService.modifierMessage(message);
             return ResponseEntity.ok("Message modifié");
         }

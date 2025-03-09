@@ -7,6 +7,7 @@ import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.repo
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.service.EmailService;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.service.UtilisateurService;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.chat.service.MessageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ import java.util.List;
 public class UtilisateurController {
     @Autowired
     private UtilisateurService utilisateurService;
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;
@@ -58,7 +61,7 @@ public class UtilisateurController {
                     case "Responsable":
                         return "redirect:/memoires/liste";
                     case "Stager":
-                        return "redirect:/dashbord/stagiaire";
+                        return "redirect:/dashbord/stager";
                     default:
                         return "redirect:/login?error=role_inconnu";
                 }
@@ -67,11 +70,11 @@ public class UtilisateurController {
         return "redirect:/login";
     }
 
-    @GetMapping("/dashbord/stagiaire")
+   /* @GetMapping("/dashbord/stagiaire")
     public String affdashbord(Model model){
         model.addAttribute("notifications", notificationService.getNotificationNonLue());
         return "dashboard" ;
-    }
+    }*/
     /**
      * Affiche la page de succès après une inscription réussie.
      */
@@ -130,11 +133,13 @@ public class UtilisateurController {
      * Affiche la liste des utilisateurs.
      */
     @GetMapping("/listeResponsables")
-    public String listeResponsables(Model model) {
+    public String listeResponsables(Model model, Principal principal) {
         // Récupère la liste des responsables depuis le service
         List<Utilisateur> responsables = utilisateurService.listUtilisateur();
         model.addAttribute("listeResponsables", responsables); // Transfert des données au modèle
         model.addAttribute("notifications", notificationService.getNotificationNonLue());
+        model.addAttribute("messages", messageService.getMessages());
+        model.addAttribute("currentUser", principal.getName()); // Ajouter l'utilisateur actuel
 
         return "Responsable"; // Assurez-vous que ce nom correspond au fichier Thymeleaf (ex: responsables.html)
     }

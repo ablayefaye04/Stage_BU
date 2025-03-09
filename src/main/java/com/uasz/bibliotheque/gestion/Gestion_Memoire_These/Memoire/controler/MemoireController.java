@@ -3,6 +3,8 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.controler;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Role;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.*;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
+import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.chat.service.MessageService;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,7 +31,12 @@ public class MemoireController {
     private MemoireService memoireService;
 
     @Autowired
+    private MessageService messageService;
+
+    @Autowired
     private TheseService theseService;
+    @Autowired
+    private NotificationService notificationService ;
     @Autowired
     EtudiantService etudiantService;
 
@@ -166,6 +173,8 @@ public class MemoireController {
             // Ajouter un message de succès au modèle
             model.addAttribute("message", "Mémoire ajouté avec succès !");
 
+
+
             return "redirect:/memoires/liste";
 
         } catch (RuntimeException e) {
@@ -205,6 +214,9 @@ public class MemoireController {
         // Si aucun critère n'est fourni, récupérer tous les mémoires groupés
         Map<String, Map<String, List<Memoire>>> memoiresGroupes = memoireService.getMemoiresGroupes();
         model.addAttribute("memoiresGroupes", memoiresGroupes);
+        model.addAttribute("notifications", notificationService.getNotificationNonLue());
+        model.addAttribute("messages", messageService.getMessages());
+        model.addAttribute("currentUser", principal.getName()); // Ajouter l'utilisateur actuel
 
         statistiquesService.ajouterStatistiques(model);
 

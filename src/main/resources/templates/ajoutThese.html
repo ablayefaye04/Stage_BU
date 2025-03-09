@@ -165,74 +165,44 @@
             </div>
             <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
                 <div class="card card-plain">
-                    <H3><b>Ajouter mémoire Doctorat</b></H3>
+                    <h3><b>Ajouter mémoire Doctorat</b></h3>
                     <div class="card-body">
                         <form id="theseForm" th:action="@{/theses/ajouter}" method="post">
                             <input type="hidden" name="type" value="DOCTORAT">
                             <div class="input-group input-group-outline mb-3">
-                                <label for="titreTHESE" class="form-label"> Titre</label>
-                                <input type="text" class="form-control"  id="titreTHESE" name="titre" required>
+                                <label for="titreTHESE" class="form-label">Titre</label>
+                                <input type="text" class="form-control" id="titreTHESE" name="titre" required>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label for="etudiantNomTHESE" class="form-label">Nom(Etudiant)</label>
-                                        <input type="text" class="form-control" id="etudiantNomTHESE" name="etudiantNom" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div for="etudiantPrenomTHESE" class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Prénom </label>
-                                        <input type="text" class="form-control"id="etudiantPrenomTHESE" name="etudiantPrenom" required>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Autres champs de formulaire -->
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label for="encadrantNomTHESE" class="form-label">Nom(Encadreur)</label>
-                                        <input type="text" class="form-control"  id="encadrantNomTHESE" name="encadrantNom" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label for="encadrantPrenomTHESE" class="form-label">Prénom</label>
-                                        <input type="text" class="form-control"  id="encadrantPrenomTHESE" name="encadrantPrenom" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex gap-3">
-                                <div class="flex-fill">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label  for="anneeTHESE"  class="form-label">Année</label>
-                                        <input type="number" class="form-control" id="anneeTHESE" name="annee" min="1900" max="2099" required>
-                                    </div>
-                                </div>
-                                <div class="flex-fill">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label for="exemplairesTHESE" class="form-label">Exemplaire</label>
-                                        <input type="number" class="form-control" id="exemplairesTHESE" name="exemplaires" min="1" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Ajout du champ de sélection -->
+                            <!-- Sélection de l'UFR -->
                             <div class="mb-3">
-                                <label for="ecoleDoctorale" class="form-label">Ecole Doctorale</label>
-                                <select id="ecoleDoctorale" name="ecoleDoctorale" class="form-select" onchange="updateUFRDisplay()" required
-                                        oninvalid="this.setCustomValidity('Veuillez sélectionner une école doctorale.')"
-                                        oninput="this.setCustomValidity('')">
-                                    <option value="">-- Sélectionner une Ecole Doctorale --</option>
-                                    <option value="Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)">Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)</option>
-                                    <option value="Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)">Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)</option>
+                                <label for="ufrSelect" class="form-label">Sélectionner l'UFR</label>
+                                <select id="ufrSelect" name="ufr" class="form-select" onchange="updateEcoleDoctorale()" required>
+                                    <option value="">-- Sélectionner une UFR --</option>
+                                    <option value="UFR_Science">UFR Sciences</option>
+                                    <option value="UFR_Sante">UFR Santé</option>
+                                    <option value="UFR_Lettres">UFR Lettres et Sciences humaines</option>
+                                    <!-- Ajoute d'autres UFRs si nécessaire -->
                                 </select>
                             </div>
+
+                            <!-- Sélection dynamique de l'école doctorale -->
+                            <div class="mb-3">
+                                <label for="ecoleDoctorale" class="form-label">Ecole Doctorale</label>
+                                <select id="ecoleDoctorale" name="ecoleDoctorale" class="form-select" required>
+                                    <option value="">-- Sélectionner une Ecole Doctorale --</option>
+                                    <option value="ED-STI">Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)</option>
+                                    <option value="ED-ESH">Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)</option>
+                                </select>
+                            </div>
+
                             <!-- Affichage dynamique de l'UFR -->
                             <div class="input-group input-group-outline mb-3">
                                 <label for="ufrAffichage" class="form-label">UFR Associé</label>
                                 <input type="text" class="form-control" id="ufrAffichage" name="ufrAffichage" readonly>
                             </div>
+
                             <div class="text-center">
                                 <button type="submit" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0">Ajouter</button>
                             </div>
@@ -263,69 +233,30 @@
 <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
 
 <script>
-    function showForm(formId) {
-      const forms = ['licenceForm', 'masterForm', 'doctoratForm'];
-      forms.forEach(id => {
-        document.getElementById(id).style.display = id === formId ? 'block' : 'none';
-      });
-    }
+    // Fonction pour mettre à jour l'école doctorale en fonction de l'UFR sélectionnée
+    function updateEcoleDoctorale() {
+        const ufrSelect = document.getElementById("ufrSelect");
+        const ecoleDoctorale = document.getElementById("ecoleDoctorale");
+        const ufrAffichage = document.getElementById("ufrAffichage");
 
-    const ecoleDoctoraleData = {
-      "Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)": "UFR Sciences et Techniques (ST)",
-      "Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)": "UFR Lettres, Art, Sciences Humaines (LASHU)"
-    };
+        const ufrValue = ufrSelect.value;
 
-    function updateUFRDisplay() {
-      const ecoleSelect = document.getElementById("ecoleDoctorale");
-      const ufrInput = document.getElementById("ufrAffichage");
-      const selectedEcole = ecoleSelect.value;
+        // Mise à jour de l'UFR dans le champ en lecture seule
+        ufrAffichage.value = ufrSelect.options[ufrSelect.selectedIndex].text;
 
-      ufrInput.value = ecoleDoctoraleData[selectedEcole] || "";
-    }
-
-    document.getElementById("theseForm").addEventListener("submit", function(event) {
-      const ufrInput = document.getElementById("ufrAffichage");
-      if (!ufrInput.value) {
-        event.preventDefault();
-        alert("Veuillez sélectionner une École Doctorale valide.");
-      }
-    });
-  </script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".input-group-outline input").forEach(function (input) {
-      input.addEventListener("focus", function () {
-        this.parentNode.classList.add("focus");
-      });
-
-      input.addEventListener("blur", function () {
-        if (this.value !== "") {
-          this.parentNode.classList.add("filled");
+        // Logique pour l'école doctorale en fonction de l'UFR sélectionnée
+        if (ufrValue === "UFR_Sante") {
+            ecoleDoctorale.innerHTML = "<option value=''>-- Aucune école doctorale pour cet UFR --</option>";
+            ecoleDoctorale.disabled = true;  // Désactive le champ si aucune école doctorale n'est liée
         } else {
-          this.parentNode.classList.remove("filled");
+            ecoleDoctorale.innerHTML = `
+                <option value="ED-STI">Ecole Doctorat Sciences, Technologies et Ingénierie (ED-STI)</option>
+                <option value="ED-ESH">Ecole Doctorat Espaces, Sociétés et Humanités (ED-ESH)</option>
+            `;
+            ecoleDoctorale.disabled = false;  // Réactive le champ
         }
-        this.parentNode.classList.remove("focus");
-      });
-    });
-  });
+    }
 </script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-      document.querySelectorAll(".input-group-outline input").forEach(function (input) {
-          input.addEventListener("input", function () {
-              if (this.value.trim() !== "") {
-                  this.parentNode.classList.add("filled");
-              } else {
-                  this.parentNode.classList.remove("filled");
-              }
-          });
-      });
-  });
-  </script>
-
-
-
 
 </body>
 

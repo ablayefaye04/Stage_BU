@@ -3,7 +3,7 @@ package com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.controler;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Role;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Authentification.modele.Utilisateur;
 import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Memoire.service.*;
-import com.uasz.bibliotheque.gestion.Gestion_Memoire_These.Notification.service.NotificationService;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -29,7 +29,7 @@ public class MemoireController {
     private MemoireService memoireService;
 
     @Autowired
-    private NotificationService notificationService ;
+    private TheseService theseService;
     @Autowired
     EtudiantService etudiantService;
 
@@ -192,7 +192,6 @@ public class MemoireController {
                 // Ajouter les informations de l'utilisateur au modèle
                 model.addAttribute("nom", utilisateur.getNom());
                 model.addAttribute("prenom", utilisateur.getPrenom());
-                model.addAttribute("notifications", notificationService.getNotificationNonLue());
 
                 // Extraire les rôles et les ajouter
                 String roles = utilisateur.getRoles().stream()
@@ -203,9 +202,9 @@ public class MemoireController {
             }
         }
 
-            // Si aucun critère n'est fourni, récupérer tous les mémoires groupés
-            Map<String, Map<String, List<Memoire>>> memoiresGroupes = memoireService.getMemoiresGroupes();
-            model.addAttribute("memoiresGroupes", memoiresGroupes);
+        // Si aucun critère n'est fourni, récupérer tous les mémoires groupés
+        Map<String, Map<String, List<Memoire>>> memoiresGroupes = memoireService.getMemoiresGroupes();
+        model.addAttribute("memoiresGroupes", memoiresGroupes);
 
         statistiquesService.ajouterStatistiques(model);
 
@@ -361,7 +360,7 @@ public class MemoireController {
         return "resultatsRecherche";
     }*/
 
-   /* @GetMapping("/rechercheParAnnee")
+    @GetMapping("/rechercheParAnnee")
     public String rechercheParAnnee(@RequestParam("annee") int annee,
                                     @RequestParam("type") String type,
                                     Model model) {
@@ -380,9 +379,7 @@ public class MemoireController {
             model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
         }
         return "resultatsRecherche";
-    }*/
-
-
+    }
 
 
 
@@ -417,11 +414,11 @@ public class MemoireController {
     @GetMapping("/doctorat")
     public String afficherToutesLesMemoiresTheses(Model model) {
         // Récupérer toutes les mémoires de type These
-        List<Memoire> memoires = memoireService.getAllMemoiresThese();
+        List<These> memoires = theseService.getAllThese();
 
-        // Ajouter les mémoires et les UFR au modèle
+        // Ajouter les mémoires au modèle
         model.addAttribute("memoires", memoires);
-        return "doctorat";
+        return "doctorat"; // Assure-toi que "doctorat" est le nom du fichier Thymeleaf
     }
 
     /**
@@ -455,79 +452,6 @@ public class MemoireController {
         model.addAttribute("rechercheEffectuees", true); // Ajoute un indicateur de recherche
 
         return "licence";
-    }
- /*   @GetMapping("/recherche")
-    public String recherche(
-            @RequestParam(value = "annee", required = false) Integer annee,
-            @RequestParam(value = "type", required = false) TypeMemoire type,
-            @RequestParam(value = "ufr", required = false) String ufr,
-            @RequestParam(value = "departement", required = false) String departement,
-            @RequestParam(value = "filiere", required = false) String filiere,
-            Model model
-    ) {
-        try {
-            // Si "Tous" est sélectionné pour les filtres, on les met à null pour ignorer
-            if ("Tous".equals(departement)) {
-                departement = null;
-            }
-            if ("Tous".equals(filiere)) {
-                filiere = null;
-            }
-            if ("Tous".equals(ufr)) {
-                ufr = null;
-            }
-
-            // Appel du service avec les paramètres optionnels
-            List<Memoire> resultats = memoireService.rechercherMemoire(annee, type, ufr, departement, filiere);
-
-            // Ajout des résultats à la vue
-            model.addAttribute("resultats", resultats);
-
-            if (resultats.isEmpty()) {
-                model.addAttribute("message", "Aucun résultat trouvé pour ces critères.");
-            }
-        } catch (Exception e) {
-            model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
-        }
-
-        return "resultatsRecherche"; // Page avec les résultats
-    }*/
-
-    @GetMapping("/recherche")
-    public String recherche(
-            @RequestParam(value = "annee", required = false) Integer annee,
-            @RequestParam(value = "type", required = false) TypeMemoire type,
-            @RequestParam(value = "ufr", required = false) String ufr,
-            @RequestParam(value = "departement", required = false) String departement,
-            @RequestParam(value = "filiere", required = false) String filiere,
-            Model model
-    ) {
-        try {
-            // Si "Tous" est sélectionné pour les filtres, on les met à null pour ignorer
-            if ("Tous".equals(departement)) {
-                departement = null;
-            }
-            if ("Tous".equals(filiere)) {
-                filiere = null;
-            }
-            if ("Tous".equals(ufr)) {
-                ufr = null;
-            }
-
-            // Appel du service avec les paramètres optionnels
-            List<Memoire> resultats = memoireService.rechercherMemoire(annee, type, ufr, departement, filiere);
-
-            // Ajout des résultats à la vue
-            model.addAttribute("resultats", resultats);
-
-            if (resultats.isEmpty()) {
-                model.addAttribute("message", "Aucun résultat trouvé pour ces critères.");
-            }
-        } catch (Exception e) {
-            model.addAttribute("erreur", "Une erreur est survenue : " + e.getMessage());
-        }
-
-        return "resultatsRecherche"; // Page avec les résultats
     }
 
     /**
@@ -563,6 +487,33 @@ public class MemoireController {
         return "master";
     }
 
+    @PostMapping("/filtre/these")
+    public String filtrerThese(
+            @RequestParam String ufrNom,
+            @RequestParam String ecoleDoctoraleNom,
+            Model model) {
+
+        // Récupérer uniquement les mémoires de type Doctorat
+        List<These> memoires = theseService.getMemoiresTheseFiltres(ufrNom, ecoleDoctoraleNom);
+
+        // Grouper les mémoires par UFR > Département > Filière
+        Map<String, Map<String, List<These>>> memoiresGroupes = memoires.stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getEcoleDoctorat().getUfr().getNom(), // Accès à UFR via EcoleDoctorat
+                        Collectors.groupingBy(
+                                m -> m.getEcoleDoctorat().getUfr().getNom() // Accès au Département
+                        )
+                ));
+
+        // Ajouter les données au modèle
+        model.addAttribute("ufrs", ufrService.findAllUfrs()); // Liste des UFRs
+        model.addAttribute("memoiresGroupes", memoiresGroupes); // Groupes de mémoires
+        model.addAttribute("selection", Map.of(
+                "ufr", ufrNom,
+                "ecoleDoctorale", ecoleDoctoraleNom
+        ));
+        model.addAttribute("rechercheEffectuees", true); // Indicateur que la recherche a été effectuée
+
+        return "doctorat"; // Vue à retourner
+    }
 }
-
-

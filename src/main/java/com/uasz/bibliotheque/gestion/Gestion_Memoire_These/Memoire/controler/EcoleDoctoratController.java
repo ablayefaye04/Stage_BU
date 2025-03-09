@@ -68,6 +68,7 @@ public class EcoleDoctoratController {
                             @RequestParam int annee,
                             @RequestParam int exemplaires,
                             @RequestParam String ecoleDoctorale,
+                            @RequestParam String ufr,  // Ajout de l'UFR
                             Model model) {
         try {
             // Vérification des champs vides
@@ -90,20 +91,21 @@ public class EcoleDoctoratController {
                         return encadrantRepository.save(newEncadrant);
                     });
 
-            // Vérification de l'école doctorale
-            Optional<EcoleDoctorat> ecoleDoctoraleOpt = ecoleDoctoraleRepository.findByNom(ecoleDoctorale);
-            if (ecoleDoctoraleOpt.isEmpty()) {
-                model.addAttribute("error", "L'école doctorale sélectionnée est invalide.");
-                return "ajouterThese";
+            // Gestion de l'école doctorale
+            EcoleDoctorat ecoleDoctoratEntity = null;
+            if (!"UFR_Sante".equals(ufr)) {  // Si l'UFR n'est pas UFR_Sante, on vérifie l'école doctorale
+                Optional<EcoleDoctorat> ecoleDoctoraleOpt = ecoleDoctoraleRepository.findByNom(ecoleDoctorale);
+                if (ecoleDoctoraleOpt.isEmpty()) {
+                    model.addAttribute("error", "L'école doctorale sélectionnée est invalide.");
+                    return "ajouterThese";
+                }
+                ecoleDoctoratEntity = ecoleDoctoraleOpt.get();
             }
 
-            // Récupération de l'école doctorale
-            EcoleDoctorat ecoleDoctoratEntity = ecoleDoctoraleOpt.get();
+            // Extraire uniquement l'abréviation de l'école doctorale si elle existe
+            String shortName = ecoleDoctoratEntity != null ? extractShortName(ecoleDoctoratEntity.getNom()) : "";
 
-            // Extraire uniquement l'abréviation de l'école doctorale
-            String shortName = extractShortName(ecoleDoctoratEntity.getNom());
-
-            // Générer la cote en utilisant l'abréviation
+            // Générer la cote en utilisant l'abréviation si une école doctorale est définie
             String coteGeneree = generateCote(shortName, annee, exemplaires);
 
             // Création et sauvegarde de la thèse
@@ -114,11 +116,14 @@ public class EcoleDoctoratController {
             these.setEncadrant(encadrant);
             these.setAnnee(annee);
             these.setExemplaires(exemplaires);
-            these.setEcoleDoctorat(ecoleDoctoratEntity);
+            if (ecoleDoctoratEntity != null) {
+                these.setEcoleDoctorat(ecoleDoctoratEntity); // Associer l'école doctorale si elle existe
+            }
 
+            // Sauvegarde de la thèse
             theseRepository.save(these);
 
-            return "redirect:/memoires/doctorats";
+            return "redirect:/doctorat";
         } catch (Exception e) {
             model.addAttribute("error", "Erreur lors de l'ajout de la thèse : " + e.getMessage());
             return "ajouterThese";

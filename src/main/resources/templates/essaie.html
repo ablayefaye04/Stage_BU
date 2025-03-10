@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="../img/logo1.png">
+  <link rel="icon" type="image/png" href="../img/logo1.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
         integrity="sha512-6f7HT84a/AplPkpSRSKWqbseRTG4aRrhadjZezYQ0oVk/B+nm/US5KzQkyyOyh0Mn9cyDdChRdS9qaxJRHayww=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -172,6 +172,15 @@
                 <option value="DOCTORANT">Doctorant</option>
               </select>
             </div>
+            <!-- Nouveaux champs optionnels -->
+            <div class="mb-3">
+              <label for="ufr" class="form-label">UFR (optionnel)</label>
+              <input type="text" class="form-control" name="ufr" id="ufr">
+            </div>
+            <div class="mb-3">
+              <label for="departement" class="form-label">Département (optionnel)</label>
+              <input type="text" class="form-control" name="departement" id="departement">
+            </div>
             <button type="submit" class="btn btn-primary w-100">
               Rechercher
             </button>
@@ -180,7 +189,6 @@
       </div>
     </div>
   </div>
-
   <!-- End Navbar -->
   <div class="container-fluid py-2">
     <div class="row">
@@ -947,7 +955,7 @@
             <button onclick="editPopupMessage('${message.id}')"><i class="fas fa-edit"></i></button>
             <button onclick="deletePopupMessage('${message.id}')"><i class="fas fa-trash"></i></button>
           </div>
-          <strong>${message.auteur.username}</strong>
+          <strong>${message.auteur.prenom}  ${message.auteur.nom}</strong>
           <p>${message.contenu}</p>
           <span class="popup-message-date">${new Date(message.dateEnvoi).toLocaleString()}</span>
         `;

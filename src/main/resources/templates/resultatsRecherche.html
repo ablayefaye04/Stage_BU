@@ -10,12 +10,47 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
-<div class="container mt-5">
+<style>
+        .university-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .university-logo {
+            max-width: 150px;
+            margin-bottom: 15px;
+        }
+        .university-name {
+            color: #008000; /* Vert pour UASZ */
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .rectorat {
+            color: #0000FF; /* Bleu pour RECTORAT */
+            font-weight: bold;
+        }
+        .bibliotheque {
+            font-weight: bold;
+        }
+        .contact-info {
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+    </style>
+<<div class="container mt-5">
+    <!-- Début en-tête université -->
+    <div class="university-header">
+        <div class="university-name">UNIVERSITE ASSANE SECK DE ZIGUINCHOR</div>
+        <div class="rectorat">RECTORAT</div>
+        <div class="bibliotheque">BIBLIOTHEQUE CENTRALE</div>
+        <div class="contact-info">BP : 523 - Ziguinchor / Tél.: 76 637 88 40</div>
+        <img src="/img/logo1.png" alt="Logo UASZ" class="university-logo">
+    </div>
+    <!-- Fin en-tête université -->
+
     <h1 class="mb-4">
         Résultats des : <span id="typeRecherche" th:text="${typeRecherche}"></span>
         pour l'année : <span id="anneeRecherchee" th:text="${anneeRecherchee}"></span>
     </h1>
-
     <table class="table table-striped table-bordered">
         <thead class="table-success">
         <tr>

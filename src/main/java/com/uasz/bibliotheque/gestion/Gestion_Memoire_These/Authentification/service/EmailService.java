@@ -34,7 +34,12 @@ public class EmailService {
             logger.error("Erreur lors de l'envoi de l'email : {}", e.getMessage());
         }
     }
+
     public void sendAccountDeletionEmail(String toEmail) {
+        if (toEmail == null || toEmail.isEmpty()) {
+            throw new IllegalArgumentException("L'adresse e-mail du destinataire est invalide.");
+        }
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
@@ -46,10 +51,26 @@ public class EmailService {
                     "Cordialement,\nL'équipe.");
 
             mailSender.send(message);
-
+            logger.info("Email de suppression envoyé avec succès à {}", toEmail);
         } catch (MailException e) {
-            System.err.println("Erreur lors de l'envoi de l'e-mail : " + e.getMessage());
+            logger.error("Erreur lors de l'envoi de l'e-mail de suppression : {}", e.getMessage());
         }
     }
+
+    public void sendEmaile(String toEmail, String subject, String body) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject(subject);
+            message.setText(body);
+
+            logger.info("Envoi de l'email à {}", toEmail);
+            mailSender.send(message);
+            logger.info("Email envoyé avec succès !");
+        } catch (MailException e) {
+            logger.error("Erreur lors de l'envoi de l'email : {}", e.getMessage());
+        }
+    }
+
 
 }
